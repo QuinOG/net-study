@@ -6,6 +6,7 @@ import { FaTrophy } from 'react-icons/fa';
 import PortGame from './PortGame.js';
 import ProtocolGame from './ProtocolGame.js';
 import SubnettingChallenge from './SubnettingChallenge';
+import TechAcronymQuiz from './TechAcronymQuiz';
 import Sidebar from './Sidebar';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <Route path="/protocol" element={<ProtocolGame />} />
             <Route path="/port" element={<PortGame />} />
             <Route path="/subnet" element={<SubnettingChallenge />} />
+            <Route path="/acronym" element={<TechAcronymQuiz />} />
           </Routes>
           <RightPanel />
         </div>
@@ -114,6 +116,19 @@ function Home() {
             Practice calculating different addresses from a random IP!
           </p>
           <Link to="/subnet">
+            <button className="start-btn">Start</button>
+          </Link>
+        </div>
+
+        <div className="game-card">
+          <div className="card-icon">
+            <FiBookOpen size={32} />
+          </div>
+          <h4>IT Acronym Game</h4>
+          <p className="card-description">
+            Learn to match port numbers to the correct protocols and services!
+          </p>
+          <Link to="/acronym">
             <button className="start-btn">Start</button>
           </Link>
         </div>

@@ -292,6 +292,32 @@ body {
   font-size: 0.9rem;
 }
 
+/* Options container: 2x2 grid for multiple-choice buttons */
+.options-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;  /* Consistent gap both horizontally and vertically */
+  justify-items: center;
+  margin: 1rem 0;
+}
+
+/* Option button styling: blue shade matching your menu */
+.option-btn {
+  width: 90%;
+  background-color: #2e4b84; /* Blue shade */
+  color: #fff;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.option-btn:hover {
+  background-color: #1e2b5b; /* Slightly darker blue */
+}
+
 /* Mobile Styles */
 @media (max-width: 768px) {
   /* Stack main layout vertically */
