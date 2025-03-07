@@ -106,7 +106,7 @@ body {
 
 .section-title {
   margin-bottom: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 /* Game Grid & Cards */
@@ -223,4 +223,155 @@ body {
 
 .achievements-section p {
   color: #b1bdd0;
+}
+
+.game-interface {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 80vh; /* Adjust height as needed */
+  padding: 2rem;
+  position: relative;
+  text-align: center;
+}
+
+/* Remove absolute positioning from the button row */
+.button-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* The streak card remains at the top right */
+.streak-card {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #2a3e68;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* Example: Increase input width if needed */
+.game-interface input {
+  width: 55%;
+  padding: .5rem;
+  font-size: 1rem;
+}
+
+/* Ensure the start-btn styling is consistent for both buttons */
+.start-btn {
+  background-color: #4ce082;
+  color: #0d1b34;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.start-btn:hover {
+  background-color: #4ce082aa;
+}
+
+.collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2e4b84;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  /* Stack main layout vertically */
+  .main-layout {
+    flex-direction: column;
+  }
+  
+  /* Sidebar and right panel take full width */
+  .sidebar,
+  .right-panel {
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+  }
+  
+  /* Content adjusts to full width */
+  .content {
+    width: 100%;
+    margin: 0;
+    padding: 1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  /* Top Bar adjustments */
+  .top-bar {
+    padding: 1rem 1rem 1rem 1rem;
+    height: 60px;
+  }
+  
+  .top-bar-left .logo {
+    font-size: 1.2rem;
+  }
+  
+  .top-bar-right .user-avatar {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Game interface adjustments */
+  .game-interface {
+    padding: 1rem;
+    height: auto;
+  }
+  
+  /* Stack the buttons vertically */
+  .button-row {
+    flex-direction: column;
+    margin-top: 1em;
+    gap: 0.75rem;
+  }
+  
+  /* Adjust the streak card position */
+  .streak-card {
+    top: -2.5rem;
+    right: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Optionally adjust input width */
+  .game-interface input {
+    width: 80%;
+  }
+  /* Collapse Button for Sidebar */
+.collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2e4b84;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.collapse-btn:hover {
+  transform: scale(1.1);
+}
 }

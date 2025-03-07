@@ -5,6 +5,7 @@ import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen } from 'rea
 import { FaTrophy } from 'react-icons/fa';
 import PortGame from './PortGame.js';
 import ProtocolGame from './ProtocolGame.js';
+import Sidebar from './Sidebar';
 
 function App() {
   return (
@@ -34,47 +35,12 @@ function Header() {
       <div className="top-bar-right">
         <img
           className="user-avatar"
-          src="https://img.icons8.com/?size=160&id=IBgUXg3MQlTW&format=png"
+          // You can change the src to your preferred avatar image.
+          src="https://www.pngkey.com/png/full/159-1593637_photo-angry-face-meme.png"
           alt="User Avatar"
         />
       </div>
     </header>
-  );
-}
-
-function Sidebar() {
-  return (
-    <aside className="sidebar">
-      <h2 className="sidebar-title">Study App</h2>
-      <button className="add-resource-btn">
-        <FiPlus size={18} />
-        <span>Add Resource</span>
-      </button>
-      <nav className="nav-menu">
-        <ul>
-          <li className="active">
-            <FiHome />
-            <span>
-              <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-                Home
-              </Link>
-            </span>
-          </li>
-          <li>
-            <FiPlay />
-            <span>Games</span>
-          </li>
-          <li>
-            <FiBarChart2 />
-            <span>Stats</span>
-          </li>
-          <li>
-            <FiSettings />
-            <span>Settings</span>
-          </li>
-        </ul>
-      </nav>
-    </aside>
   );
 }
 

@@ -41,7 +41,7 @@ function PortGame() {
   const [result, setResult] = useState('');
   const [streak, setStreak] = useState(0);
 
-  // Utility: Get a random protocol from the dictionary values
+  // Get a random protocol from the dictionary values
   const getRandomProtocol = () => {
     const protocols = Object.values(portProtocols);
     const randomIndex = Math.floor(Math.random() * protocols.length);
@@ -49,8 +49,7 @@ function PortGame() {
   };
 
   const generateQuestion = () => {
-    const randomProtocol = getRandomProtocol();
-    setCurrentProtocol(randomProtocol);
+    setCurrentProtocol(getRandomProtocol());
   };
 
   useEffect(() => {
@@ -63,7 +62,7 @@ function PortGame() {
       setResult("Please provide an answer.");
       return;
     }
-    // Get all port numbers that match the current protocol (case-insensitive)
+    // Find all ports that match the current protocol (case-insensitive)
     const matchingPorts = Object.keys(portProtocols)
       .filter(
         (port) =>
@@ -102,7 +101,7 @@ function PortGame() {
       {result && <p className="result">{result}</p>}
       <p>Streak: {streak}</p>
       <button className="start-btn" onClick={() => navigate(-1)}>
-        Back
+        Back to Games
       </button>
     </main>
   );

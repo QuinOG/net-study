@@ -41,7 +41,7 @@ function ProtocolGame() {
   const [result, setResult] = useState('');
   const [streak, setStreak] = useState(0);
 
-  // Utility: Get a random port number from the dictionary keys
+  // Utility: Get a random port from the dictionary keys
   const getRandomPort = () => {
     const keys = Object.keys(portProtocols);
     const randomIndex = Math.floor(Math.random() * keys.length);
@@ -49,8 +49,7 @@ function ProtocolGame() {
   };
 
   const generateQuestion = () => {
-    const randomPort = getRandomPort();
-    setCurrentPort(randomPort);
+    setCurrentPort(getRandomPort());
   };
 
   useEffect(() => {
@@ -77,26 +76,38 @@ function ProtocolGame() {
 
   return (
     <main className="content">
-      <h3 className="section-title">Protocol Game</h3>
-      {currentPort && (
-        <p>
-          What is the protocol for port <strong>{currentPort}</strong>?
-        </p>
-      )}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          placeholder="Your answer"
-        />
-        <button type="submit">Submit</button>
-      </form>
-      {result && <p className="result">{result}</p>}
-      <p>Streak: {streak}</p>
-      <button className="start-btn" onClick={() => navigate(-1)}>
-        Back
-      </button>
+      <div className="game-interface">
+        <h3 className="section-title">Guess That Protocol</h3>
+        {currentPort && (
+          <p>
+            What is the protocol for port <strong>{currentPort}</strong>?
+          </p>
+        )}
+        <form onSubmit={handleSubmit} id="gameForm">
+          <input
+            type="text"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            placeholder="Type your answer here"
+          />
+        </form>
+        {result && <p className="result">{result}</p>}
+
+        {/* Bottom row: Back button left, Submit button right */}
+        <div className="button-row">
+          <button type="submit" form="gameForm" className="start-btn submit-btn">
+            Submit
+          </button>
+          <button className="start-btn back-btn" onClick={() => navigate(-1)}>
+            Game Menu
+          </button>
+        </div>
+
+        {/* Streak Card at Top Right */}
+        <div className="streak-card">
+          Streak: {streak}
+        </div>
+      </div>
     </main>
   );
 }
