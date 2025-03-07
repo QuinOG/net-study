@@ -26,9 +26,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1b2b52;
+  /* Replaces solid background with a subtle left-to-right gradient */
+  background: linear-gradient(90deg, #1b2b52, #243b6c);
   padding: 0 1rem;
   height: 60px;
+  /* Adds a bit of shadow for depth */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .top-bar-left .logo {
@@ -52,10 +55,13 @@ body {
 /* Sidebar */
 .sidebar {
   width: 240px;
-  background-color: #1e2f57;
+  /* Vertical gradient for sidebar */
+  background: linear-gradient(180deg, #1e2f57, #223463);
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  /* Subtle box shadow if desired */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .sidebar-title {
@@ -116,8 +122,10 @@ body {
   gap: 1rem;
 }
 
+/* Diagonal gradient & glow for game cards */
 .game-card {
-  background-color: #2a3e68;
+  position: relative;
+  background: linear-gradient(135deg, #2a3e68, #324978);
   border-radius: 6px;
   padding: 1rem;
   min-height: 150px;
@@ -125,6 +133,30 @@ body {
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.game-card::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, rgba(76,224,130,0.2) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;  /* Ensure clicks pass through the glow */
+}
+
+.game-card:hover {
+  transform: scale(1.01);
+}
+
+.game-card:hover::before {
+  opacity: 1;
 }
 
 .card-icon {
@@ -134,18 +166,22 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  z-index: 1; /* above the glow */
 }
 
 .game-card h4 {
   margin-top: 0.5rem;
   font-size: 1.1rem;
+  z-index: 1;
 }
 
 .card-description {
   font-size: 0.9rem;
   color: #b1bdd0;
+  z-index: 1;
 }
 
+/* Start button with neon glow effect on hover */
 .start-btn {
   margin-top: auto;
   background-color: #4ce082;
@@ -155,16 +191,25 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
+  transition: background-color 1s ease, box-shadow 1.5s ease, padding-right 3s ease;
+}
+
+.start-btn:hover {
+  background-color: #4ce082aa;
+  box-shadow: 0 0 8px #4ce082, 0 0 16px #4ce082;
+  padding-right: 13.5em;
 }
 
 /* Right Panel */
 .right-panel {
   width: 280px;
-  background-color: #1e2f57;
+  /* Vertical gradient for right panel */
+  background: linear-gradient(180deg, #1e2f57, #223463);
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .panel-title {
@@ -175,9 +220,16 @@ body {
 
 /* Streak Section */
 .streak-section {
-  background-color: #2a3e68;
+  /* Gradient + glow on hover */
+  background: linear-gradient(135deg, #2a3e68, #2f4472);
   padding: 1rem;
   border-radius: 6px;
+  transition: box-shadow 0.3s ease;
+}
+
+.streak-section:hover {
+  /* Soft greenish glow around the streak section */
+  box-shadow: 0 0 12px rgba(76,224,130, 0.4);
 }
 
 .streak-section p {
@@ -262,20 +314,30 @@ body {
   font-size: 1rem;
 }
 
-/* Ensure the start-btn styling is consistent for both buttons */
-.start-btn {
-  background-color: #4ce082;
-  color: #0d1b34;
+/* Options container: 2x2 grid for multiple-choice buttons */
+.options-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  justify-items: center;
+  margin: 1rem 0;
+}
+
+/* Style for multiple-choice buttons (option-btn) */
+.option-btn {
+  width: 80%;
+  background-color: #2e4b84; /* Blue shade matching your menu/add-resource button */
+  color: #fff;
+  padding: 0.8rem;
   border: none;
-  padding: 0.5rem 0.75rem;
   border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  font-weight: 600;
   transition: background-color 0.3s ease;
 }
 
-.start-btn:hover {
-  background-color: #4ce082aa;
+.option-btn:hover {
+  background-color: #1e2b5b; /* Slightly darker on hover */
 }
 
 .collapse-btn {
@@ -288,34 +350,13 @@ body {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   font-size: 0.9rem;
+  transition: box-shadow .5s ease;
 }
 
-/* Options container: 2x2 grid for multiple-choice buttons */
-.options-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;  /* Consistent gap both horizontally and vertically */
-  justify-items: center;
-  margin: 1rem 0;
-}
-
-/* Option button styling: blue shade matching your menu */
-.option-btn {
-  width: 90%;
-  background-color: #2e4b84; /* Blue shade */
-  color: #fff;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.option-btn:hover {
-  background-color: #1e2b5b; /* Slightly darker blue */
+.collapse-btn:hover {
+  box-shadow: 0 0 12px rgba(76,224,130, 0.4);
 }
 
 /* Mobile Styles */
@@ -346,6 +387,8 @@ body {
   .top-bar {
     padding: 1rem 1rem 1rem 1rem;
     height: 60px;
+    box-shadow: none;
+    background: #1b2b52; /* For smaller screens, keep simpler if you like */
   }
   
   .top-bar-left .logo {
@@ -382,22 +425,23 @@ body {
   .game-interface input {
     width: 80%;
   }
-  /* Collapse Button for Sidebar */
-.collapse-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: #2e4b84;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-}
 
-.collapse-btn:hover {
-  transform: scale(1.1);
-}
+  /* Collapse Button for Sidebar */
+  .collapse-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #2e4b84;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .collapse-btn:hover {
+    transform: scale(1.1);
+  }
 }
