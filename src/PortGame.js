@@ -41,7 +41,7 @@ function PortGame() {
   const [result, setResult] = useState('');
   const [streak, setStreak] = useState(0);
 
-  // Get a random protocol from the dictionary values
+  // Utility: Get a random protocol from the dictionary values
   const getRandomProtocol = () => {
     const protocols = Object.values(portProtocols);
     const randomIndex = Math.floor(Math.random() * protocols.length);
@@ -62,7 +62,7 @@ function PortGame() {
       setResult("Please provide an answer.");
       return;
     }
-    // Find all ports that match the current protocol (case-insensitive)
+    // Find all port numbers that match the current protocol (case-insensitive)
     const matchingPorts = Object.keys(portProtocols)
       .filter(
         (port) =>
@@ -83,26 +83,36 @@ function PortGame() {
 
   return (
     <main className="content">
-      <h3 className="section-title">Port Game</h3>
-      {currentProtocol && (
-        <p>
-          What is the port number for protocol <strong>{currentProtocol}</strong>?
-        </p>
-      )}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          placeholder="Your answer"
-        />
-        <button type="submit">Submit</button>
-      </form>
-      {result && <p className="result">{result}</p>}
-      <p>Streak: {streak}</p>
-      <button className="start-btn" onClick={() => navigate(-1)}>
-        Back to Games
-      </button>
+      <div className="game-interface">
+        <h3 className="section-title">Guess That Port</h3>
+        {currentProtocol && (
+          <p>
+            What is the port number for protocol <strong>{currentProtocol}</strong>?
+          </p>
+        )}
+        <form onSubmit={handleSubmit} id="gameForm">
+          <input
+            type="text"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            placeholder="Type your answer here"
+          />
+        </form>
+        {result && <p className="result">{result}</p>}
+        {/* Bottom row: Submit button on top, Back button below */}
+        <div className="button-row">
+          <button type="submit" form="gameForm" className="start-btn submit-btn">
+            Submit
+          </button>
+          <button className="start-btn back-btn" onClick={() => navigate(-1)}>
+            Game Menu
+          </button>
+        </div>
+        {/* Streak Card at Top Right */}
+        <div className="streak-card">
+          Streak: {streak}
+        </div>
+      </div>
     </main>
   );
 }

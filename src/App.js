@@ -5,6 +5,7 @@ import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen } from 'rea
 import { FaTrophy } from 'react-icons/fa';
 import PortGame from './PortGame.js';
 import ProtocolGame from './ProtocolGame.js';
+import SubnettingChallenge from './SubnettingChallenge';
 import Sidebar from './Sidebar';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/protocol" element={<ProtocolGame />} />
             <Route path="/port" element={<PortGame />} />
+            <Route path="/subnet" element={<SubnettingChallenge />} />
           </Routes>
           <RightPanel />
         </div>
@@ -99,6 +101,19 @@ function Home() {
             Learn to match port numbers to the correct protocols and services!
           </p>
           <Link to="/port">
+            <button className="start-btn">Start</button>
+          </Link>
+        </div>
+        {/* Subnet Game Card */}
+        <div className="game-card">
+          <div className="card-icon">
+            <FiBookOpen size={32} />
+          </div>
+          <h4>Subnetting Game</h4>
+          <p className="card-description">
+            Practice calculating different addresses from a random IP!
+          </p>
+          <Link to="/subnet">
             <button className="start-btn">Start</button>
           </Link>
         </div>
