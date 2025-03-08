@@ -73,6 +73,7 @@ function ProtocolGame() {
   // Game state
   const [gameMode, setGameMode] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
+  const [showDifficultySelect, setShowDifficultySelect] = useState(false);
   const [currentPort, setCurrentPort] = useState(null);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [answer, setAnswer] = useState('');
@@ -280,6 +281,55 @@ function ProtocolGame() {
     SoundManager.play('gameOver');
   };
 
+  // Render difficulty selection if Time Attack was clicked
+  if (showDifficultySelect) {
+    return (
+      <div className="protocol-game">
+        <h2 className="game-title">Select Difficulty</h2>
+        <div className="difficulty-select">
+          <div className="difficulty-cards">
+            {Object.entries(DIFFICULTY_LEVELS).map(([key, value]) => (
+              <div
+                key={key}
+                className="difficulty-card"
+                data-difficulty={key}
+                onClick={() => {
+                  setDifficulty(key);
+                  setShowDifficultySelect(false);
+                  initializeGame(GAME_MODES.TIME_ATTACK, key);
+                }}
+              >
+                <h4>{value.name}</h4>
+                <ul>
+                  <li>Time limit: {value.timeLimit}s</li>
+                  <li>Score multiplier: {value.multiplier}x</li>
+                  {key === 'EASY' ? (
+                    <>
+                      <li>Time penalty: -{value.timePenalty}s</li>
+                      <hr className="separator" />
+                      <li>Hints enabled</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>Time penalty: -{value.timePenalty}s</li>
+                      {value.showHints && <li>Hints enabled</li>}
+                    </>
+                  )}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <button 
+            className="back-button"
+            onClick={() => setShowDifficultySelect(false)}
+          >
+            Back to Game Modes
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Render game menu if no mode selected
   if (!gameMode) {
     return (
@@ -287,18 +337,17 @@ function ProtocolGame() {
         <h2 className="game-title">Protocol Master</h2>
         <div className="game-description">
           <p>Test your knowledge of network protocols and port numbers!</p>
-          <p>Choose your game mode and difficulty level to begin.</p>
+          <p>Choose your game mode to begin.</p>
         </div>
 
         <div className="game-setup">
           <div className="mode-select">
             <h3>Game Mode</h3>
             <div className="game-modes">
-              <div className="game-mode-card" onClick={() => {
-                if (difficulty || gameMode !== GAME_MODES.TIME_ATTACK) {
-                  initializeGame(GAME_MODES.TIME_ATTACK, difficulty || 'MEDIUM');
-                }
-              }}>
+              <div 
+                className="game-mode-card"
+                onClick={() => setShowDifficultySelect(true)}
+              >
                 <h4>Time Attack</h4>
                 <p>Race against the clock! Answer quickly for bonus points.</p>
                 <ul>
@@ -306,11 +355,11 @@ function ProtocolGame() {
                   <li>Time bonus for quick answers</li>
                   <li>Combo multiplier for streaks</li>
                 </ul>
-                {!difficulty && (
-                  <div className="mode-note">⚠️ Please select a difficulty level first</div>
-                )}
               </div>
-              <div className="game-mode-card" onClick={() => initializeGame(GAME_MODES.PRACTICE, 'EASY')}>
+              <div 
+                className="game-mode-card"
+                onClick={() => initializeGame(GAME_MODES.PRACTICE, 'EASY')}
+              >
                 <h4>Practice Mode</h4>
                 <p>Learn at your own pace without time pressure.</p>
                 <ul>
@@ -319,27 +368,6 @@ function ProtocolGame() {
                   <li>Perfect for learning</li>
                 </ul>
               </div>
-            </div>
-          </div>
-
-          <div className="difficulty-select">
-            <h3>Select Difficulty for Time Attack</h3>
-            <div className="difficulty-cards">
-              {Object.entries(DIFFICULTY_LEVELS).map(([key, value]) => (
-                <div
-                  key={key}
-                  className={`difficulty-card ${difficulty === key ? 'active' : ''}`}
-                  onClick={() => setDifficulty(key)}
-                >
-                  <h4>{value.name}</h4>
-                  <ul>
-                    <li>Time limit: {value.timeLimit}s</li>
-                    <li>Score multiplier: {value.multiplier}x</li>
-                    {value.showHints && <li>Hints enabled</li>}
-                    <li>Time penalty: -{value.timePenalty}s</li>
-                  </ul>
-                </div>
-              ))}
             </div>
           </div>
         </div>
