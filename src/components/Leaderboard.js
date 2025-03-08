@@ -89,12 +89,53 @@ const Leaderboard = ({ minimized = false }) => {
   if (minimized) {
     return (
       <div className="leaderboard-container minimized">
-        <div className="leaderboard-header minimized">
-          <h3>Top Players</h3>
-          <Link to="/stats" className="view-all-link">View All</Link>
+        <div className="leaderboard-header">
+          <h3>Leaderboard</h3>
+          <div className="leaderboard-tabs">
+            <button 
+              className={`tab-btn ${activeTab === 'xp' ? 'active' : ''}`}
+              onClick={() => setActiveTab('xp')}
+            >
+              XP
+            </button>
+            <button 
+              className={`tab-btn ${activeTab === 'streak' ? 'active' : ''}`}
+              onClick={() => setActiveTab('streak')}
+            >
+              Streak
+            </button>
+            <button 
+              className={`tab-btn ${activeTab === 'level' ? 'active' : ''}`}
+              onClick={() => setActiveTab('level')}
+            >
+              Level
+            </button>
+          </div>
+          <div className="timeframe-select">
+            <select 
+              value={selectedTimeFrame}
+              onChange={(e) => setSelectedTimeFrame(e.target.value)}
+            >
+              <option value="weekly">This Week</option>
+              <option value="monthly">This Month</option>
+              <option value="alltime">All Time</option>
+            </select>
+          </div>
+        </div>
+        
+        <div className="user-rank">
+          Your Rank: {userRank}
         </div>
         
         <div className="leaderboard-table minimized">
+          <div className="leaderboard-row header">
+            <div className="rank-cell">Rank</div>
+            <div className="name-cell">Name</div>
+            <div className="score-cell">
+              {activeTab === 'xp' ? 'XP' : activeTab === 'streak' ? 'Streak' : 'Level'}
+            </div>
+          </div>
+          
           {leaderboardData.map((user, index) => (
             <div 
               key={user.id} 
@@ -118,6 +159,10 @@ const Leaderboard = ({ minimized = false }) => {
               </div>
             </div>
           ))}
+        </div>
+        
+        <div className="view-all-container">
+          <Link to="/stats" className="view-all-link">View Full Leaderboard →</Link>
         </div>
       </div>
     );

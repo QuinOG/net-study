@@ -9,7 +9,7 @@
 .leaderboard-container.minimized {
   background-color: rgba(26, 32, 44, 0.6);
   border-radius: 10px;
-  padding: 12px;
+  padding: 15px;
   margin: 20px 0;
   max-width: 100%;
 }
@@ -31,21 +31,31 @@
   flex: 1;
 }
 
+.leaderboard-tabs {
+  display: flex;
+  gap: 5px;
+  margin-right: 15px;
+}
+
+.view-all-container {
+  text-align: center;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(74, 85, 104, 0.4);
+}
+
 .view-all-link {
   color: #4299e1;
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.2s;
+  display: inline-block;
+  padding: 5px 10px;
 }
 
 .view-all-link:hover {
   color: #63b3ed;
   text-decoration: underline;
-}
-
-.leaderboard-tabs {
-  display: flex;
-  gap: 5px;
 }
 
 .tab-btn {
@@ -103,6 +113,9 @@
   background-color: rgba(26, 32, 44, 0.7);
   font-weight: bold;
   color: #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .leaderboard-row.current-user {
@@ -172,4 +185,10 @@
   25% { opacity: 0.9; }
   50% { opacity: 0.95; }
   75% { opacity: 0.85; }
+}
+
+.leaderboard-table.minimized {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0; /* Remove bottom margin to make room for view all link */
 } 
