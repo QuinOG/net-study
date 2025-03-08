@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Apache 2.0 License](https://img.shields.io/badge/License-MIT-green.svg)]([https://choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/apache-2.0/))
+[![Apache 2.0 License](https://img.shields.io/badge/License-Apache-green.svg)]([https://choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/apache-2.0/))
 [![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/quinog/net-study/issues)
 
