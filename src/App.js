@@ -42,10 +42,10 @@ function AppContent() {
               <AchievementSystem userStats={userStats} />
             </div>
           } />
-          <Route path="/leaderboard" element={
+          <Route path="/stats" element={
             <div className="content">
-              <h3 className="section-title">Leaderboard</h3>
-              <Leaderboard />
+              <h3 className="section-title">Player Statistics</h3>
+              <Leaderboard minimized={false} />
             </div>
           } />
         </Routes>
@@ -157,14 +157,14 @@ function Home() {
     <main className="content">
       <h3 className="section-title">Choose a Game</h3>
       
-      {/* Leaderboard Preview */}
-      <Leaderboard />
+      {/* Minimized Leaderboard */}
+      <Leaderboard minimized={true} />
       
       <div className="game-grid">
         {/* Protocol Game Card */}
         <div className="game-card">
           <div className="card-icon">
-            <FiBookOpen size={32} />
+            <FiPlay size={32} />
           </div>
           <h4>Protocol Game</h4>
           <p className="card-description">
@@ -174,42 +174,44 @@ function Home() {
             <button className="start-btn">Start</button>
           </Link>
         </div>
+        
         {/* Port Game Card */}
         <div className="game-card">
           <div className="card-icon">
-            <FiBookOpen size={32} />
+            <FiPlay size={32} />
           </div>
           <h4>Port Game</h4>
           <p className="card-description">
             Learn to match port numbers to the correct protocols and services!
           </p>
-          <Link to="/port">
+          <Link to="/port" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
           </Link>
         </div>
+        
         {/* Subnet Game Card */}
         <div className="game-card">
           <div className="card-icon">
-            <FiBookOpen size={32} />
+            <FiPlay size={32} />
           </div>
           <h4>Subnetting Game</h4>
           <p className="card-description">
             Practice calculating different addresses from a random IP!
           </p>
-          <Link to="/subnet">
+          <Link to="/subnet" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
           </Link>
         </div>
 
         <div className="game-card">
           <div className="card-icon">
-            <FiBookOpen size={32} />
+            <FiPlay size={32} />
           </div>
           <h4>IT Acronym Game</h4>
           <p className="card-description">
-            Learn to match port numbers to the correct protocols and services!
+            Test your knowledge of common tech acronyms and terminology!
           </p>
-          <Link to="/acronym">
+          <Link to="/acronym" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
           </Link>
         </div>

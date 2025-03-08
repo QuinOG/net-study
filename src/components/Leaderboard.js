@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import { Link } from 'react-router-dom';
 import './Leaderboard.css';
+
+// Medal images
+import medal1 from '../1.png';
+import medal2 from '../2.png';
+import medal3 from '../3.png';
 
 // Simulated data - in a real app, this would come from a backend
 const dummyLeaderboardData = [
@@ -15,7 +21,7 @@ const dummyLeaderboardData = [
   { id: 'user9', name: 'IPChampion', xp: 2000, streak: 4, level: 6 },
 ];
 
-const Leaderboard = () => {
+const Leaderboard = ({ minimized = false }) => {
   const { userStats } = useContext(UserContext);
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [activeTab, setActiveTab] = useState('xp');
@@ -71,13 +77,53 @@ const Leaderboard = () => {
       const userIndex = sortedData.findIndex(user => user.isCurrentUser);
       setUserRank(userIndex + 1);
       
-      // Only show top 10
-      setLeaderboardData(sortedData.slice(0, 10));
+      // Only show top entries (3 for minimized, 10 for full)
+      const displayCount = minimized ? 3 : 10;
+      setLeaderboardData(sortedData.slice(0, displayCount));
     };
     
     loadLeaderboard();
-  }, [userStats, activeTab, selectedTimeFrame]);
+  }, [userStats, activeTab, selectedTimeFrame, minimized]);
   
+  // Render minimized leaderboard for home page
+  if (minimized) {
+    return (
+      <div className="leaderboard-container minimized">
+        <div className="leaderboard-header minimized">
+          <h3>Top Players</h3>
+          <Link to="/stats" className="view-all-link">View All</Link>
+        </div>
+        
+        <div className="leaderboard-table minimized">
+          {leaderboardData.map((user, index) => (
+            <div 
+              key={user.id} 
+              className={`leaderboard-row minimized ${user.isCurrentUser ? 'current-user' : ''}`}
+            >
+              <div className="rank-cell minimized">
+                {index === 0 && <img src={medal1} alt="1st Place" className="medal-icon" />}
+                {index === 1 && <img src={medal2} alt="2nd Place" className="medal-icon" />}
+                {index === 2 && <img src={medal3} alt="3rd Place" className="medal-icon" />}
+              </div>
+              <div className="name-cell minimized">{user.name}</div>
+              <div className="score-cell minimized">
+                {activeTab === 'xp' && user.xp}
+                {activeTab === 'streak' && (
+                  <div className="streak-display">
+                    <span className={`streak-flame ${getFlameColor(user.streak)}`}>🔥</span>
+                    {user.streak}
+                  </div>
+                )}
+                {activeTab === 'level' && `Lvl ${user.level}`}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  
+  // Full leaderboard for stats page
   return (
     <div className="leaderboard-container">
       <div className="leaderboard-header">
@@ -133,9 +179,9 @@ const Leaderboard = () => {
             className={`leaderboard-row ${user.isCurrentUser ? 'current-user' : ''} ${index < 3 ? 'top-three' : ''}`}
           >
             <div className="rank-cell">
-              {index === 0 && <span className="medal gold">🥇</span>}
-              {index === 1 && <span className="medal silver">🥈</span>}
-              {index === 2 && <span className="medal bronze">🥉</span>}
+              {index === 0 && <img src={medal1} alt="1st Place" className="medal-icon" />}
+              {index === 1 && <img src={medal2} alt="2nd Place" className="medal-icon" />}
+              {index === 2 && <img src={medal3} alt="3rd Place" className="medal-icon" />}
               {index > 2 && index + 1}
             </div>
             <div className="name-cell">{user.name}</div>

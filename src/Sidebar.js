@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus } from 'react-icons/fi';
+import { FiHome, FiPlay, FiBarChart2, FiSettings, FiAward } from 'react-icons/fi';
 
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -30,7 +30,19 @@ function Sidebar() {
             </li>
             <li>
               <FiBarChart2 />
-              <span>Stats</span>
+              <span>
+                <Link to="/stats" style={{ color: 'inherit', textDecoration: 'none' }}>
+                  Stats
+                </Link>
+              </span>
+            </li>
+            <li>
+              <FiAward />
+              <span>
+                <Link to="/achievements" style={{ color: 'inherit', textDecoration: 'none' }}>
+                  Achievements
+                </Link>
+              </span>
             </li>
             <li>
               <FiSettings />
