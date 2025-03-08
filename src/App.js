@@ -8,6 +8,7 @@ import ProtocolGame from './ProtocolGame.js';
 import SubnettingChallenge from './SubnettingChallenge';
 import TechAcronymQuiz from './TechAcronymQuiz';
 import Sidebar from './Sidebar';
+import Settings from './Settings';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/port" element={<PortGame />} />
             <Route path="/subnet" element={<SubnettingChallenge />} />
             <Route path="/acronym" element={<TechAcronymQuiz />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
           <RightPanel />
         </div>

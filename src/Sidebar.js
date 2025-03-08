@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiMinusCircle, FiFolderMinus } from 'react-icons/fi';
+import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus } from 'react-icons/fi';
 
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -8,31 +8,25 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <h2 className="sidebar-title">Study App</h2>
+      {/*<h2 className="sidebar-title">Study App</h2>
       <button className="add-resource-btn">
         <FiPlus size={18} />
         <span>Add Resource</span>
-      </button>
-      {/* Collapse Toggle Button */}
+      </button>*/}
       <button className="collapse-btn" onClick={toggleSidebar}>
-        <FiFolderMinus size={18} />
         {collapsed ? "Show Menu" : "Hide Menu"}
       </button>
       {/* Navigation Menu */}
       {!collapsed && (
         <nav className="nav-menu">
           <ul>
-            <li className="active">
-              <FiHome />
-              <span>
-                <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-                  Home
-                </Link>
-              </span>
-            </li>
             <li>
               <FiPlay />
-              <span>Games</span>
+              <span>
+                <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                  Games
+                </Link>
+              </span>
             </li>
             <li>
               <FiBarChart2 />
@@ -40,7 +34,11 @@ function Sidebar() {
             </li>
             <li>
               <FiSettings />
-              <span>Settings</span>
+              <span>
+                <Link to="/settings" style={{ color: 'inherit', textDecoration: 'none' }}>
+                  Settings
+                </Link>
+              </span>
             </li>
           </ul>
         </nav>
