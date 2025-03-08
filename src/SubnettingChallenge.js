@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SoundManager from './utils/SoundManager';
 
 // Expanded dictionary is not needed here since we're working with IP math.
 // Instead, we generate a random IP and prefix, then compute answers.
@@ -16,6 +17,10 @@ function SubnettingChallenge() {
   const [lastUsableAnswer, setLastUsableAnswer] = useState('');
   const [result, setResult] = useState('');
   const [streak, setStreak] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem('subnetHighScore');
+    return saved ? parseInt(saved, 10) : 0;
+  });
 
   // Helper functions to convert IP to/from integer.
   const ipToInt = (ip) => {
@@ -63,59 +68,78 @@ function SubnettingChallenge() {
 
   // Generate a random IP address and a random prefix (between /24 and /30)
   const generateChallenge = () => {
-    const randomIp = [
-      Math.floor(Math.random() * 254) + 1,
-      Math.floor(Math.random() * 256),
-      Math.floor(Math.random() * 256),
-      Math.floor(Math.random() * 254) + 1
-    ].join('.');
-    const randomPrefix = Math.floor(Math.random() * (30 - 24 + 1)) + 24;
+    // Generate random IP and prefix
+    const octet1 = Math.floor(Math.random() * 223) + 1; // Avoid 0 and 224-255
+    const octet2 = Math.floor(Math.random() * 256);
+    const octet3 = Math.floor(Math.random() * 256);
+    const octet4 = Math.floor(Math.random() * 256);
+    
+    // Generate random prefix (common ones: 24, 16, 8, etc.)
+    // For beginners, we'll use /24 or /16 to keep it simple.
+    const prefixes = [24, 16, 8, 28, 22, 20];
+    const randomPrefix = prefixes[Math.floor(Math.random() * 3)]; // First 3 are easier
+    
+    const randomIp = `${octet1}.${octet2}.${octet3}.${octet4}`;
+    
     setIp(randomIp);
     setPrefix(randomPrefix);
-    // Clear previous answers and result.
     setNetworkAnswer('');
     setBroadcastAnswer('');
     setFirstUsableAnswer('');
     setLastUsableAnswer('');
     setResult('');
+    
+    SoundManager.play('click');
   };
 
   useEffect(() => {
     generateChallenge();
+    // Cleanup
+    return () => {
+      // Any cleanup code here
+    };
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Ensure all fields are filled.
-    if (!networkAnswer || !broadcastAnswer || !firstUsableAnswer || !lastUsableAnswer) {
-      setResult("Please fill in all answers.");
-      return;
-    }
-    // Compute correct values.
+    
+    // Calculate correct answers.
     const correctNetwork = getNetworkAddress(ip, prefix);
     const correctBroadcast = getBroadcastAddress(ip, prefix);
-    const correctFirst = getFirstUsable(ip, prefix);
-    const correctLast = getLastUsable(ip, prefix);
-
-    // Compare answers.
-    const isNetworkCorrect = networkAnswer.trim() === correctNetwork;
-    const isBroadcastCorrect = broadcastAnswer.trim() === correctBroadcast;
-    const isFirstCorrect = firstUsableAnswer.trim() === correctFirst;
-    const isLastCorrect = lastUsableAnswer.trim() === correctLast;
-
-    if (isNetworkCorrect && isBroadcastCorrect && isFirstCorrect && isLastCorrect) {
-      setResult("All correct!");
-      setStreak((prev) => prev + 1);
+    const correctFirstUsable = getFirstUsable(ip, prefix);
+    const correctLastUsable = getLastUsable(ip, prefix);
+    
+    // Check user answers.
+    const networkCorrect = networkAnswer.trim() === correctNetwork;
+    const broadcastCorrect = broadcastAnswer.trim() === correctBroadcast;
+    const firstUsableCorrect = firstUsableAnswer.trim() === correctFirstUsable;
+    const lastUsableCorrect = lastUsableAnswer.trim() === correctLastUsable;
+    
+    if (networkCorrect && broadcastCorrect && firstUsableCorrect && lastUsableCorrect) {
+      setResult("All answers correct! Great job!");
+      setStreak(prev => {
+        const newStreak = prev + 1;
+        if (newStreak > highScore) {
+          setHighScore(newStreak);
+          localStorage.setItem('subnetHighScore', newStreak.toString());
+          SoundManager.play('achievement');
+        } else {
+          SoundManager.play('correct');
+        }
+        return newStreak;
+      });
+      generateChallenge();
     } else {
-      let errorMsg = "Incorrect. ";
-      if (!isNetworkCorrect) errorMsg += `Network should be ${correctNetwork}. `;
-      if (!isBroadcastCorrect) errorMsg += `Broadcast should be ${correctBroadcast}. `;
-      if (!isFirstCorrect) errorMsg += `First usable should be ${correctFirst}. `;
-      if (!isLastCorrect) errorMsg += `Last usable should be ${correctLast}.`;
-      setResult(errorMsg);
+      let feedback = "Incorrect answers:\n";
+      if (!networkCorrect) feedback += `Network address should be ${correctNetwork}\n`;
+      if (!broadcastCorrect) feedback += `Broadcast address should be ${correctBroadcast}\n`;
+      if (!firstUsableCorrect) feedback += `First usable address should be ${correctFirstUsable}\n`;
+      if (!lastUsableCorrect) feedback += `Last usable address should be ${correctLastUsable}\n`;
+      
+      setResult(feedback);
       setStreak(0);
+      SoundManager.play('incorrect');
     }
-    generateChallenge();
   };
 
   return (
@@ -156,10 +180,10 @@ function SubnettingChallenge() {
         {result && <p className="result">{result}</p>}
         {/* Button row: stacked vertically */}
         <div className="button-row">
-          <button type="submit" onClick={handleSubmit} className="start-btn submit-btn">
+          <button type="submit" onClick={handleSubmit} className="collapse-btn">
             Submit
           </button>
-          <button className="start-btn back-btn" onClick={() => navigate(-1)}>
+          <button className="collapse-btn" onClick={() => navigate(-1)}>
             Game Menu
           </button>
         </div>

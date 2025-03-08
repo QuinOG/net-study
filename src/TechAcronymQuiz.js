@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SoundManager from './utils/SoundManager';
 
 // Dictionary of 55 tech acronyms with variants (for CompTIA A+)
 // For each acronym, we include a "correct" answer and several similar alternatives.
@@ -503,66 +504,158 @@ const acronymVariants = {
   
 function TechAcronymQuiz() {
   const navigate = useNavigate();
-  const acronyms = Object.keys(acronymVariants);
-  const [currentAcronym, setCurrentAcronym] = useState('');
+  const [currentAcronym, setCurrentAcronym] = useState("");
   const [options, setOptions] = useState([]);
-  const [result, setResult] = useState('');
-  const [streak, setStreak] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(15);
+  const [result, setResult] = useState("");
+  const [score, setScore] = useState(0);
+  const [timer, setTimer] = useState(15);
+  const [gameOver, setGameOver] = useState(false);
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem('acronymQuizHighScore');
+    return saved ? parseInt(saved, 10) : 0;
+  });
   const timerRef = useRef(null);
 
   const generateQuestion = () => {
+    // Get all acronyms
+    const acronyms = Object.keys(acronymVariants);
+    
+    // Make sure we have acronyms to choose from
+    if (acronyms.length === 0) {
+      console.error("No acronyms available!");
+      return;
+    }
+    
+    // Select a random acronym
     const randomIndex = Math.floor(Math.random() * acronyms.length);
-    const newAcronym = acronyms[randomIndex];
-    setCurrentAcronym(newAcronym);
-    setResult('');
-    setTimeLeft(15);
-    // Use the variants for the current acronym.
-    const variants = acronymVariants[newAcronym].variants;
-    // Ensure there are exactly 4 options (assuming each entry has 4 variants).
-    // Shuffle the options.
-    const shuffledOptions = variants.sort(() => 0.5 - Math.random());
-    setOptions(shuffledOptions);
+    const selectedAcronym = acronyms[randomIndex];
+    
+    // Set the current acronym
+    setCurrentAcronym(selectedAcronym);
+    
+    // Get the correct answer and variants for this acronym
+    const { correct, variants } = acronymVariants[selectedAcronym];
+    
+    // Shuffle the variants and take 3 incorrect ones
+    const shuffledVariants = [...variants].sort(() => Math.random() - 0.5);
+    const incorrectOptions = shuffledVariants.filter(v => v !== correct).slice(0, 3);
+    
+    // Combine correct answer with 3 incorrect options and shuffle
+    const allOptions = [correct, ...incorrectOptions].sort(() => Math.random() - 0.5);
+    
+    // Set the options
+    setOptions(allOptions);
+    
+    // Reset result
+    setResult("");
+    
+    // Reset timer
+    setTimer(15);
+    
+    // Play sound
+    SoundManager.play('click');
   };
 
-  useEffect(() => {
-    generateQuestion();
-  }, []);
+  const handleTimeOut = () => {
+    // Check if currentAcronym is valid before accessing properties
+    if (currentAcronym && acronymVariants[currentAcronym]) {
+      setResult(`Time's up! The correct answer is: ${acronymVariants[currentAcronym].correct}`);
+    } else {
+      setResult(`Time's up!`);
+    }
+    setGameOver(true);
+    SoundManager.play('gameOver');
+  };
 
-  useEffect(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
+  const handleAnswerClick = (selectedAnswer) => {
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    // Check if currentAcronym is valid
+    if (!currentAcronym || !acronymVariants[currentAcronym]) {
+      setResult("Error: Invalid question. Starting a new one.");
+      generateQuestion();
+      startTimer();
+      return;
+    }
+    
+    // Check if the selected answer is correct
+    const isCorrect = selectedAnswer === acronymVariants[currentAcronym].correct;
+    
+    if (isCorrect) {
+      setResult("Correct!");
+      setScore(prev => prev + 1);
+      
+      // Check if new high score
+      if (score + 1 > highScore) {
+        setHighScore(score + 1);
+        localStorage.setItem('acronymQuizHighScore', (score + 1).toString());
+        SoundManager.play('achievement');
+      } else {
+        SoundManager.play('correct');
+      }
+      
+      // Generate a new question
+      generateQuestion();
+      
+      // Start the timer again
+      startTimer();
+    } else {
+      setResult(`Incorrect! The correct answer is: ${acronymVariants[currentAcronym].correct}`);
+      setGameOver(true);
+      SoundManager.play('incorrect');
+    }
+  };
+
+  const startTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
     timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
+      setTimer(prevTimer => {
+        if (prevTimer <= 1) {
           clearInterval(timerRef.current);
           handleTimeOut();
           return 0;
         }
-        return prev - 1;
+        // Sound warning when time is low
+        if (prevTimer === 5) {
+          SoundManager.play('countdown');
+        }
+        return prevTimer - 1;
       });
     }, 1000);
-    return () => clearInterval(timerRef.current);
-  }, [currentAcronym]);
-
-  const handleTimeOut = () => {
-    const correctAnswer = acronymVariants[currentAcronym].correct;
-    setResult(`Time's up! The correct answer was "${correctAnswer}".`);
-    setStreak(0);
-    setTimeout(() => generateQuestion(), 2000);
   };
 
-  const handleAnswerClick = (selectedAnswer) => {
-    clearInterval(timerRef.current);
-    const correctAnswer = acronymVariants[currentAcronym].correct;
-    if (selectedAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
-      setResult("Correct answer!");
-      setStreak((prev) => prev + 1);
-    } else {
-      setResult(`Incorrect. The correct answer is "${correctAnswer}".`);
-      setStreak(0);
-    }
-    setTimeout(() => generateQuestion(), 2000);
+  const startGame = () => {
+    setScore(0);
+    setGameOver(false);
+    generateQuestion();
+    startTimer();
+    SoundManager.play('click');
   };
+
+  // Set game context for proper volume adjustment
+  useEffect(() => {
+    // Set game context for volume balancing
+    SoundManager.setGameContext('TechAcronymQuiz');
+    
+    // Initialize the game
+    startGame();
+    
+    // Cleanup when component unmounts
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      // Reset game context when unmounting
+      SoundManager.setGameContext('default');
+    };
+  }, []);
 
   return (
     <main className="content">
@@ -571,12 +664,12 @@ function TechAcronymQuiz() {
         <p>
           What does the acronym <strong>{currentAcronym}</strong> stand for?
         </p>
-        <p className="timer">Time Left: {timeLeft} seconds</p>
+        <p className="timer">Time Left: {timer} seconds</p>
         <div className="options-container">
           {options.map((option, index) => (
             <button 
               key={index} 
-              className="start-btn option-btn" 
+              className="collapse-btn" 
               onClick={() => handleAnswerClick(option)}
             >
               {option}
@@ -585,12 +678,15 @@ function TechAcronymQuiz() {
         </div>
         {result && <p className="result">{result}</p>}
         <div className="button-row">
-          <button className="start-btn back-btn" onClick={() => navigate(-1)}>
+          <button className="collapse-btn" onClick={() => navigate(-1)}>
             Game Menu
           </button>
         </div>
         <div className="streak-card">
-          Streak: {streak}
+          Score: {score}
+        </div>
+        <div className="streak-card">
+          High Score: {highScore}
         </div>
       </div>
     </main>

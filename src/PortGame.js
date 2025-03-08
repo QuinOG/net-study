@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SoundManager from './utils/SoundManager';
 
 // Expanded dictionary for the Net+ exam
 const portProtocols = {
@@ -40,6 +41,10 @@ function PortGame() {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState('');
   const [streak, setStreak] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem('portGameHighScore');
+    return saved ? parseInt(saved, 10) : 0;
+  });
 
   // Utility: Get a random protocol from the dictionary values
   const getRandomProtocol = () => {
@@ -50,6 +55,7 @@ function PortGame() {
 
   const generateQuestion = () => {
     setCurrentProtocol(getRandomProtocol());
+    SoundManager.play('click');
   };
 
   useEffect(() => {
@@ -62,23 +68,47 @@ function PortGame() {
       setResult("Please provide an answer.");
       return;
     }
-    // Find all port numbers that match the current protocol (case-insensitive)
-    const matchingPorts = Object.keys(portProtocols)
-      .filter(
-        (port) =>
-          portProtocols[port].toUpperCase() === currentProtocol.toUpperCase()
-      )
-      .map(Number);
-    const userPort = parseInt(answer, 10);
-    if (matchingPorts.includes(userPort)) {
+
+    // Check for correct answer
+    let isCorrect = false;
+    // Get all ports that match the protocol
+    const matchingPorts = Object.entries(portProtocols)
+      .filter(([_, protocol]) => protocol === currentProtocol)
+      .map(([port, _]) => port);
+
+    isCorrect = matchingPorts.includes(answer.trim());
+
+    if (isCorrect) {
       setResult("Correct answer!");
-      setStreak((prev) => prev + 1);
+      setStreak((prev) => {
+        const newStreak = prev + 1;
+        // Update high score if streak is better
+        if (newStreak > highScore) {
+          setHighScore(newStreak);
+          localStorage.setItem('portGameHighScore', newStreak.toString());
+          SoundManager.play('achievement');
+        } else {
+          SoundManager.play('correct');
+        }
+        return newStreak;
+      });
     } else {
-      setResult(`Incorrect. The correct answer is "${matchingPorts.join(', ')}".`);
+      setResult(`Incorrect. The correct answer is port(s): ${matchingPorts.join(', ')}`);
       setStreak(0);
+      SoundManager.play('incorrect');
     }
+
     setAnswer('');
     generateQuestion();
+  };
+
+  const startGame = () => {
+    SoundManager.play('click');
+    generateQuestion();
+  };
+
+  const endGame = () => {
+    SoundManager.play('gameOver');
   };
 
   return (
@@ -101,10 +131,10 @@ function PortGame() {
         {result && <p className="result">{result}</p>}
         {/* Bottom row: Submit button on top, Back button below */}
         <div className="button-row">
-          <button type="submit" form="gameForm" className="start-btn submit-btn">
+          <button type="submit" form="gameForm" className="collapse-btn">
             Submit
           </button>
-          <button className="start-btn back-btn" onClick={() => navigate(-1)}>
+          <button className="collapse-btn" onClick={() => navigate(-1)}>
             Game Menu
           </button>
         </div>

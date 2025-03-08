@@ -74,26 +74,6 @@ function App() {
 }
 
 function Header() {
-  const initializeAudio = () => {
-    // This creates an AudioContext which will allow sounds to play
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (AudioContext) {
-      const audioCtx = new AudioContext();
-      
-      // Create and play a silent sound to initialize audio
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      gainNode.gain.value = 0; // Silent
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.01);
-    }
-    
-    // Then toggle sound
-    const isEnabled = SoundManager.toggleSound();
-  };
-
   return (
     <header className="top-bar">
       <div className="top-bar-left">
@@ -109,16 +89,8 @@ function Header() {
         </div>
       </div>
       <div className="top-bar-right">
-        <div className="sound-toggle" onClick={initializeAudio}>
-          {SoundManager.isSoundEnabled() ? (
-            <span role="img" aria-label="sound on">🔊</span>
-          ) : (
-            <span role="img" aria-label="sound off">🔇</span>
-          )}
-        </div>
         <img
           className="user-avatar"
-          // You can change the src to your preferred avatar image.
           src="https://www.pngkey.com/png/full/159-1593637_photo-angry-face-meme.png"
           alt="User Avatar"
         />

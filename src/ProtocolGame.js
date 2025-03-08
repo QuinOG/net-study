@@ -45,6 +45,7 @@ function ProtocolGame() {
     const saved = localStorage.getItem('protocolGameHighScore');
     return saved ? parseInt(saved, 10) : 0;
   });
+  const [prevStreak, setPrevStreak] = useState(0);
 
   // Utility: Get a random port from the dictionary keys
   const getRandomPort = () => {
@@ -104,9 +105,11 @@ function ProtocolGame() {
   };
 
   useEffect(() => {
-    if (streak === 0) {
+    // Only play game over sound when streak changes from non-zero to zero
+    if (prevStreak > 0 && streak === 0) {
       endGame();
     }
+    setPrevStreak(streak);
   }, [streak]);
 
   return (
@@ -130,10 +133,10 @@ function ProtocolGame() {
 
         {/* Bottom row: Back button left, Submit button right */}
         <div className="button-row">
-          <button type="submit" form="gameForm" className="start-btn submit-btn">
+          <button type="submit" form="gameForm" className="collapse-btn">
             Submit
           </button>
-          <button className="start-btn back-btn" onClick={() => navigate(-1)}>
+          <button className="collapse-btn" onClick={() => navigate(-1)}>
             Game Menu
           </button>
         </div>
