@@ -2,13 +2,11 @@
 
 <div align="center">
 
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![BSD4 License](https://img.shields.io/badge/License-BSD4-blue.svg)](https://spdx.org/licenses/BSD-4-Clause)
 [![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/yourusername/net-study/issues)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-blue.svg?style=flat)](https://github.com/quinog/net-study/issues)
 
 A modern, interactive platform for learning network protocols, IT acronyms, and essential networking concepts through engaging games and challenges.
-
-[View Demo](#) · [Report Bug](#) · [Request Feature](#)
 
 </div>
 
@@ -99,7 +97,7 @@ Contributions are always welcome! Here's how you can help:
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD 4 Clause - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
