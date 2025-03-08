@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Apache 2.0 License](https://img.shields.io/badge/License-MIT-green.svg)]([https://choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/apache-2.0/))
 [![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/yourusername/net-study/issues)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/quinog/net-study/issues)
 
 A modern, interactive platform for learning network protocols, IT acronyms, and essential networking concepts through engaging games and challenges.
 
