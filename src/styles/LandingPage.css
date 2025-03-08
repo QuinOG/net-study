@@ -1,0 +1,161 @@
+/* Landing Page Styles */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #333;
+}
+
+/* Header Styles */
+.landing-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.landing-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.landing-logo img {
+  height: 3.5rem;
+  width: auto;
+}
+
+.landing-logo h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+}
+
+/* Hero Section */
+.landing-hero {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 0 5%;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 2rem;
+  color: #2d3748;
+}
+
+.hero-title .highlight {
+  color: #3182ce;
+  position: relative;
+}
+
+.hero-title .highlight::after {
+  content: "";
+  position: absolute;
+  bottom: -0.2rem;
+  left: 0;
+  width: 100%;
+  height: 0.35rem;
+  background-color: #3182ce;
+  opacity: 0.3;
+  border-radius: 1rem;
+}
+
+.hero-mission {
+  font-size: 1.4rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 3rem;
+  max-width: 700px;
+}
+
+.login-button {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #3182ce;
+  color: white;
+  font-weight: 600;
+  font-size: 1.25rem;
+  padding: 1rem 2.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(49, 130, 206, 0.3);
+}
+
+.login-button:hover {
+  background-color: #2c5282;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(49, 130, 206, 0.4);
+}
+
+.icon-right {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Footer */
+.landing-footer {
+  background-color: #1a202c;
+  color: #e2e8f0;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.footer-copyright {
+  color: #a0aec0;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .hero-mission {
+    font-size: 1.2rem;
+  }
+  
+  .login-button {
+    font-size: 1.1rem;
+    padding: 0.875rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-logo img {
+    height: 2.5rem;
+  }
+  
+  .landing-logo h2 {
+    font-size: 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-mission {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+} 

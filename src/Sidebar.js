@@ -23,7 +23,7 @@ function Sidebar() {
             <li>
               <FiPlay />
               <span>
-                <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Link to="/dashboard" style={{ color: 'inherit', textDecoration: 'none' }}>
                   Games
                 </Link>
               </span>
@@ -31,7 +31,7 @@ function Sidebar() {
             <li>
               <FiBarChart2 />
               <span>
-                <Link to="/stats" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Link to="/dashboard/stats" style={{ color: 'inherit', textDecoration: 'none' }}>
                   Stats
                 </Link>
               </span>
@@ -39,7 +39,7 @@ function Sidebar() {
             <li>
               <FiAward />
               <span>
-                <Link to="/achievements" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Link to="/dashboard/achievements" style={{ color: 'inherit', textDecoration: 'none' }}>
                   Achievements
                 </Link>
               </span>
@@ -47,7 +47,7 @@ function Sidebar() {
             <li>
               <FiSettings />
               <span>
-                <Link to="/settings" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Link to="/dashboard/settings" style={{ color: 'inherit', textDecoration: 'none' }}>
                   Settings
                 </Link>
               </span>

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './App.css';
 import logo from './netquest.png';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 import PortGame from './PortGame.js';
@@ -10,6 +10,7 @@ import SubnettingChallenge from './SubnettingChallenge';
 import TechAcronymQuiz from './TechAcronymQuiz';
 import Sidebar from './Sidebar';
 import Settings from './Settings';
+import LandingPage from './components/LandingPage';
 
 // New Gamification components
 import { UserProvider, UserContext } from './context/UserContext';
@@ -23,43 +24,69 @@ import SoundManager from './utils/SoundManager';
 
 function AppContent() {
   const { userStats, showReward, rewardXP, handleRewardComplete } = useContext(UserContext);
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // For demo purposes
+  
+  // If you want to implement real authentication:
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const login = () => setIsAuthenticated(true);
+  // const logout = () => setIsAuthenticated(false);
   
   return (
-    <div className="app-container">
-      <Header />
-      <div className="main-layout">
-        <Sidebar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/protocol" element={<ProtocolGame />} />
-          <Route path="/port" element={<PortGame />} />
-          <Route path="/subnet" element={<SubnettingChallenge />} />
-          <Route path="/acronym" element={<TechAcronymQuiz />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/achievements" element={
-            <div className="content">
-              <h3 className="section-title">Your Achievements</h3>
-              <AchievementSystem userStats={userStats} />
-            </div>
-          } />
-          <Route path="/stats" element={
-            <div className="content">
-              <h3 className="section-title">Player Statistics</h3>
-              <Leaderboard minimized={false} />
-            </div>
-          } />
-        </Routes>
-        <RightPanel />
-      </div>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
       
-      {showReward && (
-        <RewardAnimation 
-          xpGained={rewardXP} 
-          show={showReward} 
-          onComplete={handleRewardComplete} 
-        />
-      )}
-    </div>
+      {/* Protected routes - wrap in authentication check */}
+      <Route path="/dashboard/*" element={
+        isAuthenticated ? (
+          <div className="app-container">
+            <Header />
+            <div className="main-layout">
+              <Sidebar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/protocol" element={<ProtocolGame />} />
+                <Route path="/port" element={<PortGame />} />
+                <Route path="/subnet" element={<SubnettingChallenge />} />
+                <Route path="/acronym" element={<TechAcronymQuiz />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/achievements" element={
+                  <div className="content">
+                    <h3 className="section-title">Your Achievements</h3>
+                    <AchievementSystem userStats={userStats} />
+                  </div>
+                } />
+                <Route path="/stats" element={
+                  <div className="content">
+                    <h3 className="section-title">Player Statistics</h3>
+                    <Leaderboard minimized={false} />
+                  </div>
+                } />
+              </Routes>
+              <RightPanel />
+            </div>
+            
+            {showReward && (
+              <RewardAnimation 
+                xpGained={rewardXP} 
+                show={showReward} 
+                onComplete={handleRewardComplete} 
+              />
+            )}
+          </div>
+        ) : (
+          <Navigate to="/" replace />
+        )
+      } />
+      
+      {/* Redirect for legacy routes */}
+      <Route path="/protocol" element={<Navigate to="/dashboard/protocol" replace />} />
+      <Route path="/port" element={<Navigate to="/dashboard/port" replace />} />
+      <Route path="/subnet" element={<Navigate to="/dashboard/subnet" replace />} />
+      <Route path="/acronym" element={<Navigate to="/dashboard/acronym" replace />} />
+      <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
+      <Route path="/achievements" element={<Navigate to="/dashboard/achievements" replace />} />
+      <Route path="/stats" element={<Navigate to="/dashboard/stats" replace />} />
+    </Routes>
   );
 }
 
@@ -137,7 +164,7 @@ function RightPanel() {
             <p>Complete challenges to earn achievements!</p>
           )}
         </div>
-        <Link to="/achievements" className="view-all-link">
+        <Link to="/dashboard/achievements" className="view-all-link">
           View All Achievements
         </Link>
       </div>
@@ -170,7 +197,7 @@ function Home() {
           <p className="card-description">
             Test your knowledge of common protocols and how they are used!
           </p>
-          <Link to="/protocol" onClick={handleGameSelect}>
+          <Link to="/dashboard/protocol" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
           </Link>
         </div>
@@ -184,7 +211,7 @@ function Home() {
           <p className="card-description">
             Learn to match port numbers to the correct protocols and services!
           </p>
-          <Link to="/port" onClick={handleGameSelect}>
+          <Link to="/dashboard/port" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
           </Link>
         </div>
@@ -198,7 +225,7 @@ function Home() {
           <p className="card-description">
             Practice calculating different addresses from a random IP!
           </p>
-          <Link to="/subnet" onClick={handleGameSelect}>
+          <Link to="/dashboard/subnet" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
           </Link>
         </div>
@@ -211,7 +238,7 @@ function Home() {
           <p className="card-description">
             Test your knowledge of common tech acronyms and terminology!
           </p>
-          <Link to="/acronym" onClick={handleGameSelect}>
+          <Link to="/dashboard/acronym" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
           </Link>
         </div>
