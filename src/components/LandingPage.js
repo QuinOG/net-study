@@ -25,12 +25,14 @@ const LandingPage = () => {
             Our interactive games and challenges make mastering technical concepts fun and effective.
           </p>
           
-          <Link to="/dashboard" className="login-button">
-            Login to Save Progress <FaArrowRight className="icon-right" />
-          </Link>
-          <Link to="/dashboard" className="login-button">
-            Look Around <FaArrowRight className="icon-right" />
-          </Link>
+          <div className="button-group">
+            <Link to="/dashboard" className="login-button primary">
+              Explore as Guest <FaArrowRight className="icon-right" />
+            </Link>
+            <Link to="/dashboard" className="login-button primary">
+              Login to Save Progress <FaArrowRight className="icon-right" />
+            </Link>
+          </div>
         </div>
       </div>
 

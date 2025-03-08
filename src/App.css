@@ -202,20 +202,129 @@ body {
 
 /* Right Panel */
 .right-panel {
-  width: 280px;
-  /* Vertical gradient for right panel */
+  width: 300px;
   background: linear-gradient(180deg, #1e2f57, #223463);
-  padding: 1rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  gap: 1.75rem;
+  overflow-y: auto;
 }
 
 .panel-title {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
   font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+}
+
+/* Section styling */
+.progress-section,
+.streak-section,
+.challenge-section,
+.goals-section,
+.achievements-section {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.progress-section:hover,
+.streak-section:hover,
+.challenge-section:hover,
+.goals-section:hover,
+.achievements-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.goals-section h4,
+.achievements-section h4 {
+  color: #e2e8f0;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.goals-section ul {
+  list-style: none;
+  margin-left: 0.5rem;
+}
+
+.goals-section li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #a0aec0;
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.goals-section li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #4299e1;
+  font-size: 1.2rem;
+}
+
+.recent-achievements-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.mini-achievement {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(45, 55, 72, 0.5);
+  border-radius: 6px;
+}
+
+.achievement-icon {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: rgba(66, 153, 225, 0.2);
+  border-radius: 50%;
+  color: #4299e1;
+}
+
+.achievement-name {
+  font-size: 0.9rem;
+  color: #cbd5e0;
+}
+
+.view-all-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #4299e1;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.view-all-link:hover {
+  color: #63b3ed;
+  text-decoration: underline;
+}
+
+/* Section title for game grid */
+.section-title {
+  margin: 1.5rem 0;
+  font-size: 1.5rem;
+  color: #e2e8f0;
+  position: relative;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Streak Section */

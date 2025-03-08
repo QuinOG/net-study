@@ -104,16 +104,18 @@ function Header() {
   return (
     <header className="top-bar">
       <div className="top-bar-left">
-        <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <img 
-            src={logo} 
-            alt="NetQuest Logo" 
-            width="24" 
-            height="24" 
-            style={{ flexShrink: 0 }}
-          />
-          <span>NetQuest</span>
-        </div>
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <img 
+              src={logo} 
+              alt="NetQuest Logo" 
+              width="24" 
+              height="24" 
+              style={{ flexShrink: 0 }}
+            />
+            <span>NetQuest</span>
+          </div>
+        </Link>
       </div>
       <div className="top-bar-right">
         <img
@@ -131,43 +133,51 @@ function RightPanel() {
   
   return (
     <aside className="right-panel">
-      <h3 className="panel-title">Study Info</h3>
+      <h3 className="panel-title">Study Progress</h3>
       
       {/* Level Progress */}
-      <LevelProgress userXP={userStats.totalXP} />
+      <div className="progress-section">
+        <LevelProgress userXP={userStats.totalXP} />
+      </div>
       
       {/* Streak Section with colored flames */}
-      <StreakCounter streakDays={userStats.currentStreak} />
-      
-      {/* Daily Challenge */}
-      <DailyChallenge userStats={userStats} />
-      
-      <div className="goals-section">
-        <h4>Daily Goals</h4>
-        <ul>
-          <li>Play 2 rounds of Protocol Game</li>
-          <li>Score at least 80% in Port Game</li>
-        </ul>
+      <div className="streak-section">
+        <StreakCounter streakDays={userStats.currentStreak} />
       </div>
       
-      {/* Recent Achievements Preview */}
-      <div className="achievements-section">
-        <h4>Recent Achievements</h4>
-        <div className="recent-achievements-preview">
-          {userStats.completedAchievements && userStats.completedAchievements.slice(-3).map(achievement => (
-            <div key={achievement.id} className="mini-achievement">
-              <span className="achievement-icon">{achievement.icon}</span>
-              <span className="achievement-name">{achievement.name}</span>
-            </div>
-          ))}
-          {(!userStats.completedAchievements || userStats.completedAchievements.length === 0) && (
-            <p>Complete challenges to earn achievements!</p>
-          )}
+      {/* Daily Challenge - only show if available */}
+      <div className="challenge-section">
+        <DailyChallenge userStats={userStats} />
+      </div>
+      
+      {/* Recent Achievements Preview - only show if there are achievements */}
+      {userStats.completedAchievements && userStats.completedAchievements.length > 0 && (
+        <div className="achievements-section">
+          <h4>Recent Achievements</h4>
+          <div className="recent-achievements-preview">
+            {userStats.completedAchievements.slice(-2).map(achievement => (
+              <div key={achievement.id} className="mini-achievement">
+                <span className="achievement-icon">{achievement.icon}</span>
+                <span className="achievement-name">{achievement.name}</span>
+              </div>
+            ))}
+          </div>
+          <Link to="/dashboard/achievements" className="view-all-link">
+            View All Achievements
+          </Link>
         </div>
-        <Link to="/dashboard/achievements" className="view-all-link">
-          View All Achievements
-        </Link>
-      </div>
+      )}
+      
+      {/* Only show goals section if there are goals or no achievements */}
+      {(!userStats.completedAchievements || userStats.completedAchievements.length === 0) && (
+        <div className="goals-section">
+          <h4>Daily Goals</h4>
+          <ul>
+            <li>Play 2 rounds of Protocol Game</li>
+            <li>Score at least 80% in Port Game</li>
+          </ul>
+        </div>
+      )}
     </aside>
   );
 }
@@ -182,16 +192,16 @@ function Home() {
   
   return (
     <main className="content">
-      <h3 className="section-title">Choose a Game</h3>
-      
       {/* Minimized Leaderboard */}
       <Leaderboard minimized={true} />
+      
+      <h3 className="section-title">Choose a Game</h3>
       
       <div className="game-grid">
         {/* Protocol Game Card */}
         <div className="game-card">
           <div className="card-icon">
-            <FiPlay size={32} />
+            <FiBookOpen size={32} />
           </div>
           <h4>Protocol Game</h4>
           <p className="card-description">
@@ -205,7 +215,7 @@ function Home() {
         {/* Port Game Card */}
         <div className="game-card">
           <div className="card-icon">
-            <FiPlay size={32} />
+            <FiBookOpen size={32} />
           </div>
           <h4>Port Game</h4>
           <p className="card-description">
@@ -219,7 +229,7 @@ function Home() {
         {/* Subnet Game Card */}
         <div className="game-card">
           <div className="card-icon">
-            <FiPlay size={32} />
+            <FiBookOpen size={32} />
           </div>
           <h4>Subnetting Game</h4>
           <p className="card-description">
@@ -232,7 +242,7 @@ function Home() {
 
         <div className="game-card">
           <div className="card-icon">
-            <FiPlay size={32} />
+            <FiBookOpen size={32} />
           </div>
           <h4>IT Acronym Game</h4>
           <p className="card-description">
