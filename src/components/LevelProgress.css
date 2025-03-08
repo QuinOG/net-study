@@ -1,0 +1,81 @@
+.level-container {
+  background-color: rgba(45, 55, 72, 0.8);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.level-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.level-badge {
+  background: linear-gradient(135deg, #4299e1, #9f7aea);
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.level-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e2e8f0;
+}
+
+.xp-progress {
+  margin-bottom: 15px;
+}
+
+.xp-bar-container {
+  height: 8px;
+  background-color: rgba(160, 174, 192, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.xp-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4299e1, #9f7aea);
+  border-radius: 4px;
+  transition: width 0.8s ease-in-out;
+}
+
+.xp-text {
+  font-size: 0.8rem;
+  color: #cbd5e0;
+  text-align: right;
+}
+
+.level-benefits {
+  background-color: rgba(26, 32, 44, 0.4);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.level-benefits h4 {
+  margin: 0 0 8px 0;
+  color: #4299e1;
+  font-size: 0.9rem;
+}
+
+.level-benefits ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.level-benefits li {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  color: #e2e8f0;
+} 

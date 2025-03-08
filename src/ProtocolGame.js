@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SoundManager from './utils/SoundManager';
 
 // Expanded dictionary for the Net+ exam
 const portProtocols = {
@@ -40,6 +41,10 @@ function ProtocolGame() {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState('');
   const [streak, setStreak] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem('protocolGameHighScore');
+    return saved ? parseInt(saved, 10) : 0;
+  });
 
   // Utility: Get a random port from the dictionary keys
   const getRandomPort = () => {
@@ -63,16 +68,46 @@ function ProtocolGame() {
       return;
     }
     const correctProtocol = portProtocols[currentPort];
-    if (answer.trim().toUpperCase() === correctProtocol.toUpperCase()) {
+    const isCorrect = answer.trim().toUpperCase() === correctProtocol.toUpperCase();
+    if (isCorrect) {
       setResult("Correct answer!");
-      setStreak((prev) => prev + 1);
+      setStreak((prev) => {
+        const newStreak = prev + 1;
+        // Update high score if streak is better
+        if (newStreak > highScore) {
+          setHighScore(newStreak);
+          localStorage.setItem('protocolGameHighScore', newStreak.toString());
+        }
+        return newStreak;
+      });
+      SoundManager.play('correct');
     } else {
       setResult(`Incorrect. The correct answer is "${correctProtocol}".`);
       setStreak(0);
+      SoundManager.play('incorrect');
     }
     setAnswer('');
     generateQuestion();
   };
+
+  const startGame = () => {
+    SoundManager.play('click');
+    generateQuestion();
+  };
+
+  const endGame = () => {
+    SoundManager.play('gameOver');
+    // If they achieved a high score
+    if (streak > highScore) {
+      SoundManager.play('achievement');
+    }
+  };
+
+  useEffect(() => {
+    if (streak === 0) {
+      endGame();
+    }
+  }, [streak]);
 
   return (
     <main className="content">

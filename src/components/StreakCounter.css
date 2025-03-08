@@ -1,0 +1,30 @@
+.flame-icon {
+  display: flex;
+  align-items: center;
+  animation: flicker 1.5s infinite alternate;
+}
+
+.blue-flame { color: #4299e1; }
+.green-flame { color: #48bb78; }
+.yellow-flame { color: #ecc94b; }
+.orange-flame { color: #ed8936; }
+.red-flame { color: #f56565; }
+.purple-flame { color: #9f7aea; }
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  25% { opacity: 0.9; }
+  50% { opacity: 0.95; }
+  75% { opacity: 0.85; }
+}
+
+.streak-count {
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.streak-message {
+  font-style: italic;
+  margin-top: 0.5rem;
+} 

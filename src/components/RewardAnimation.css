@@ -1,0 +1,80 @@
+.reward-animation-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeInOut 2.5s ease-in-out forwards;
+}
+
+.reward-center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.xp-text-large {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  animation: popIn 0.5s ease-out, glow 1.5s infinite alternate;
+  z-index: 10;
+}
+
+.particles-container {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+}
+
+.particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  animation: particleExplode 2s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+  to { text-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(79, 209, 197, 0.8); }
+}
+
+@keyframes particleExplode {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+  }
+} 
