@@ -8,8 +8,6 @@
 
 A modern, interactive platform for learning network protocols, IT acronyms, and essential networking concepts through engaging games and challenges.
 
-[View Demo](#) · [Report Bug](#) · [Request Feature](#)
-
 </div>
 
 ---
