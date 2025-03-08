@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
+import scrollToTop from '../../utils/ScrollHelper';
 
 // Expanded dictionary for the Net+ exam
 const portProtocols = {
@@ -105,6 +106,7 @@ function PortGame() {
 
   const startGame = () => {
     SoundManager.play('click');
+    scrollToTop();
     generateQuestion();
   };
 

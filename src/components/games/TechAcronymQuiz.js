@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
+import scrollToTop from '../../utils/ScrollHelper';
 
 // Dictionary of 55 tech acronyms with variants (for CompTIA A+)
 // For each acronym, we include a "correct" answer and several similar alternatives.
@@ -637,6 +638,7 @@ function TechAcronymQuiz() {
     generateQuestion();
     startTimer();
     SoundManager.play('click');
+    scrollToTop();
   };
 
   // Set game context for proper volume adjustment

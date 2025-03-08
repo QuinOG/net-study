@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SoundManager from '../../utils/SoundManager';
 import { UserContext } from '../../context/UserContext';
+import scrollToTop from '../../utils/ScrollHelper';
 import '../../styles/games/ProtocolGame.css';
 
 // Expanded dictionary for the Net+ exam
@@ -105,6 +106,9 @@ function ProtocolGame() {
 
   // Initialize game with selected mode and difficulty
   const initializeGame = (mode, diff) => {
+    // Scroll to top when game initializes
+    scrollToTop();
+    
     setGameMode(mode);
     setDifficulty(diff);
     setGameActive(true);
@@ -121,6 +125,13 @@ function ProtocolGame() {
     }
     
     generateQuestion();
+    
+    // Reset power-ups
+    setPowerUps({
+      timeFreeze: 2,
+      categoryReveal: 2,
+      skipQuestion: 1
+    });
     
     // Play start game sound
     SoundManager.play('gameStart');
@@ -281,122 +292,104 @@ function ProtocolGame() {
     SoundManager.play('gameOver');
   };
 
-  // Render difficulty selection if Time Attack was clicked
-  if (showDifficultySelect) {
-    return (
-      <div className="protocol-game">
-        <h2 className="game-title">Select Difficulty</h2>
-        <div className="difficulty-select">
-          <div className="difficulty-cards">
-            {Object.entries(DIFFICULTY_LEVELS).map(([key, value]) => (
-              <div
-                key={key}
-                className="difficulty-card"
-                data-difficulty={key}
-                onClick={() => {
-                  setDifficulty(key);
-                  setShowDifficultySelect(false);
-                  initializeGame(GAME_MODES.TIME_ATTACK, key);
-                }}
-              >
-                <h4>{value.name}</h4>
-                <ul>
-                  <li>Time limit: {value.timeLimit}s</li>
-                  <li>Score multiplier: {value.multiplier}x</li>
-                  {key === 'EASY' ? (
-                    <>
-                      <li>Time penalty: -{value.timePenalty}s</li>
-                      <hr className="separator" />
-                      <li>Hints enabled</li>
-                    </>
-                  ) : (
-                    <>
-                      <li>Time penalty: -{value.timePenalty}s</li>
-                      {value.showHints && <li>Hints enabled</li>}
-                    </>
-                  )}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <button 
-            className="back-button"
-            onClick={() => setShowDifficultySelect(false)}
-          >
-            Back to Game Modes
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Render game menu if no mode selected
+  // Game mode selection and rendering
   if (!gameMode) {
+    if (showDifficultySelect) {
+      return (
+        <div className="protocol-game">
+          <h2 className="game-title">Select Difficulty</h2>
+          <div className="difficulty-select">
+            <div className="difficulty-cards">
+              {Object.entries(DIFFICULTY_LEVELS).map(([key, value]) => (
+                <div
+                  key={key}
+                  className="difficulty-card"
+                  data-difficulty={key}
+                  onClick={() => {
+                    setDifficulty(key);
+                    setShowDifficultySelect(false);
+                    initializeGame(GAME_MODES.TIME_ATTACK, key);
+                    scrollToTop(); // Scroll to top when starting the game
+                  }}
+                >
+                  <h4>{value.name}</h4>
+                  <ul>
+                    <li>Time limit: {value.timeLimit}s</li>
+                    <li>Score multiplier: {value.multiplier}x</li>
+                    {key === 'EASY' ? (
+                      <>
+                        <li>Hints enabled</li>
+                        <hr className="separator" />
+                        <li>Time penalty: -{value.timePenalty}s</li>
+                      </>
+                    ) : (
+                      <>
+                        <li>Time penalty: -{value.timePenalty}s</li>
+                        {value.showHints && <li>Hints enabled</li>}
+                      </>
+                    )}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <button 
+              className="back-button"
+              onClick={() => {
+                setShowDifficultySelect(false);
+                scrollToTop(); // Scroll to top when going back
+              }}
+            >
+              Back to Game Modes
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="protocol-game">
         <h2 className="game-title">Protocol Master</h2>
-        <div className="game-description">
-          <p>Test your knowledge of network protocols and port numbers!</p>
-          <p>Choose your game mode to begin.</p>
-        </div>
+        <p className="game-description">
+          Test your knowledge of networking protocols and their functions
+        </p>
 
         <div className="game-setup">
-          <div className="mode-select">
-            <h3>Game Mode</h3>
-            <div className="game-modes">
-              <div 
-                className="game-mode-card"
-                onClick={() => setShowDifficultySelect(true)}
-              >
-                <h4>Time Attack</h4>
-                <p>Race against the clock! Answer quickly for bonus points.</p>
-                <ul>
-                  <li>Limited time per level</li>
-                  <li>Time bonus for quick answers</li>
-                  <li>Combo multiplier for streaks</li>
-                </ul>
-              </div>
-              <div 
-                className="game-mode-card"
-                onClick={() => initializeGame(GAME_MODES.PRACTICE, 'EASY')}
-              >
-                <h4>Practice Mode</h4>
-                <p>Learn at your own pace without time pressure.</p>
-                <ul>
-                  <li>No time limit</li>
-                  <li>Hints available</li>
-                  <li>Perfect for learning</li>
-                </ul>
-              </div>
+          <div className="game-modes">
+            <div 
+              className="game-mode-card"
+              onClick={() => {
+                setShowDifficultySelect(true);
+                scrollToTop(); // Scroll to top when showing difficulty select
+              }}
+            >
+              <h3>Time Attack</h3>
+              <p>Race against the clock to identify as many protocols as possible!</p>
+              <ul>
+                <li>Limited time based on difficulty</li>
+                <li>Correct answers add time</li>
+                <li>Incorrect answers subtract time</li>
+                <li>Score based on speed and accuracy</li>
+              </ul>
+            </div>
+
+            <div 
+              className="game-mode-card"
+              onClick={() => {
+                initializeGame(GAME_MODES.PRACTICE, 'EASY');
+                scrollToTop(); // Scroll to top when starting practice mode
+              }}
+            >
+              <h3>Practice Mode</h3>
+              <p>Learn at your own pace without time pressure</p>
+              <ul>
+                <li>No time limit</li>
+                <li>Hints available</li>
+                <li>Detailed explanations</li>
+                <li>Great for beginners</li>
+              </ul>
             </div>
           </div>
         </div>
-
-        {gameStats.gamesPlayed > 0 && (
-          <div className="stats-summary">
-            <h3>Your Stats</h3>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <span className="stat-label">Best Score</span>
-                <span className="stat-value">{gameStats.bestScore}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Best Streak</span>
-                <span className="stat-value">{gameStats.bestStreak}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Games Played</span>
-                <span className="stat-value">{gameStats.gamesPlayed}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Accuracy</span>
-                <span className="stat-value">
-                  {Math.round((gameStats.correctAnswers / Math.max(1, gameStats.totalAttempts)) * 100)}%
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
+import scrollToTop from '../../utils/ScrollHelper';
 
 // Expanded dictionary is not needed here since we're working with IP math.
 // Instead, we generate a random IP and prefix, then compute answers.
@@ -69,28 +70,34 @@ function SubnettingChallenge() {
 
   // Generate a random IP address and a random prefix (between /24 and /30)
   const generateChallenge = () => {
-    // Generate random IP and prefix
-    const octet1 = Math.floor(Math.random() * 223) + 1; // Avoid 0 and 224-255
-    const octet2 = Math.floor(Math.random() * 256);
-    const octet3 = Math.floor(Math.random() * 256);
-    const octet4 = Math.floor(Math.random() * 256);
-    
-    // Generate random prefix (common ones: 24, 16, 8, etc.)
-    // For beginners, we'll use /24 or /16 to keep it simple.
-    const prefixes = [24, 16, 8, 28, 22, 20];
-    const randomPrefix = prefixes[Math.floor(Math.random() * 3)]; // First 3 are easier
-    
-    const randomIp = `${octet1}.${octet2}.${octet3}.${octet4}`;
-    
-    setIp(randomIp);
-    setPrefix(randomPrefix);
+    // Clear previous answers
     setNetworkAnswer('');
     setBroadcastAnswer('');
     setFirstUsableAnswer('');
     setLastUsableAnswer('');
+    
+    // Clear UI state
     setResult('');
     
+    // Generate random IP and prefix
+    let randomOctet1 = Math.floor(Math.random() * 223) + 1; // Valid Class A, B, C
+    if (randomOctet1 === 127) randomOctet1 = 128; // Avoid loopback
+    
+    const randomOctet2 = Math.floor(Math.random() * 256);
+    const randomOctet3 = Math.floor(Math.random() * 256);
+    const randomOctet4 = Math.floor(Math.random() * 256);
+    
+    // More realistic CIDR prefix (avoid very small or very large networks)
+    const randomPrefix = Math.floor(Math.random() * 8) + 16; // From /16 to /23
+    
+    const randomIp = `${randomOctet1}.${randomOctet2}.${randomOctet3}.${randomOctet4}`;
+    
+    setIp(randomIp);
+    setPrefix(randomPrefix);
+    
+    // Play sound and scroll to top
     SoundManager.play('click');
+    scrollToTop();
   };
 
   useEffect(() => {

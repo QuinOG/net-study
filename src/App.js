@@ -9,6 +9,7 @@ import ProtocolGame from './components/games/ProtocolGame';
 import SubnettingChallenge from './components/games/SubnettingChallenge';
 import TechAcronymQuiz from './components/games/TechAcronymQuiz';
 import Sidebar from './components/layout/Sidebar';
+import ScrollToTop from './components/layout/ScrollToTop';
 import Settings from './components/ui/Settings';
 import LandingPage from './components/ui/LandingPage';
 
@@ -94,6 +95,7 @@ function App() {
   return (
     <Router>
       <UserProvider>
+        <ScrollToTop />
         <AppContent />
       </UserProvider>
     </Router>
