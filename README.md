@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Apache 2.0 License](https://img.shields.io/badge/License-Apache-blue.svg)]([https://choosealicense.com/licenses/apache/])
+[![BSD4 License](https://img.shields.io/badge/License-BSD4-blue.svg)](https://spdx.org/licenses/BSD-4-Clause)
 [![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-blue.svg?style=flat)](https://github.com/quinog/net-study/issues)
 
@@ -97,7 +97,7 @@ Contributions are always welcome! Here's how you can help:
 
 ## 📝 License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD 4 Clause - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
