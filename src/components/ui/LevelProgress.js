@@ -1,5 +1,5 @@
 import React from 'react';
-import './LevelProgress.css';
+import '../../styles/ui/LevelProgress.css';
 
 // Experience required for each level
 const levelThresholds = [

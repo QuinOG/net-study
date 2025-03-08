@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './RewardAnimation.css';
+import '../../styles/ui/RewardAnimation.css';
 
 const RewardAnimation = ({ xpGained, show, onComplete }) => {
   const [particles, setParticles] = useState([]);

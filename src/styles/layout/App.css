@@ -1,0 +1,705 @@
+/* App.css */
+
+/* Global resets & defaults */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #0d1b34;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Top Bar */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Replaces solid background with a subtle left-to-right gradient */
+  background: linear-gradient(90deg, #1b2b52, #243b6c);
+  padding: 2em;
+  height: 60px;
+  /* Adds a bit of shadow for depth */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.top-bar-left .logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.top-bar-right .user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Main Layout */
+.main-layout {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  /* Vertical gradient for sidebar */
+  background: linear-gradient(180deg, #1e2f57, #223463);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  /* Subtle box shadow if desired */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-title {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.add-resource-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2e4b84;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.nav-menu ul {
+  list-style: none;
+  margin-top: 1rem;
+}
+
+.nav-menu li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  color: #cfd8e3;
+  transition: color 0.3s;
+}
+
+.nav-menu li.active,
+.nav-menu li:hover {
+  color: #ffffff;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 1rem 2rem;
+}
+
+.section-title {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+/* Game Grid & Cards */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+/* Diagonal gradient & glow for game cards */
+.game-card {
+  position: relative;
+  background: linear-gradient(135deg, #2a3e68, #324978);
+  border-radius: 6px;
+  padding: 1rem;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.game-card::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, rgba(76,224,130,0.2) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;  /* Ensure clicks pass through the glow */
+}
+
+.game-card:hover {
+  transform: scale(1.01);
+}
+
+.game-card:hover::before {
+  opacity: 1;
+}
+
+.card-icon {
+  background-color: #3b5180;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1; /* above the glow */
+}
+
+.game-card h4 {
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  z-index: 1;
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: #b1bdd0;
+  z-index: 1;
+}
+
+/* Start button with neon glow effect on hover */
+.start-btn {
+  margin-top: auto;
+  background-color: #4ce082;
+  color: #0d1b34;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 1s ease, box-shadow 1.5s ease, padding-right 3s ease;
+}
+
+.start-btn:hover {
+  background-color: #4ce082aa;
+  box-shadow: 0 0 8px #4ce082, 0 0 16px #4ce082;
+  padding-right: 13.5em;
+}
+
+/* Right Panel */
+.right-panel {
+  width: 300px;
+  background: linear-gradient(180deg, #1e2f57, #223463);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  overflow-y: auto;
+}
+
+.panel-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+}
+
+/* Section styling */
+.progress-section,
+.streak-section,
+.challenge-section,
+.goals-section,
+.achievements-section {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.progress-section:hover,
+.streak-section:hover,
+.challenge-section:hover,
+.goals-section:hover,
+.achievements-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.goals-section h4,
+.achievements-section h4 {
+  color: #e2e8f0;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.goals-section ul {
+  list-style: none;
+  margin-left: 0.5rem;
+}
+
+.goals-section li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #a0aec0;
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.goals-section li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #4299e1;
+  font-size: 1.2rem;
+}
+
+.recent-achievements-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.mini-achievement {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(45, 55, 72, 0.5);
+  border-radius: 6px;
+}
+
+.achievement-icon {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: rgba(66, 153, 225, 0.2);
+  border-radius: 50%;
+  color: #4299e1;
+}
+
+.achievement-name {
+  font-size: 0.9rem;
+  color: #cbd5e0;
+}
+
+.view-all-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #4299e1;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.view-all-link:hover {
+  color: #63b3ed;
+  text-decoration: underline;
+}
+
+/* Section title for game grid */
+.section-title {
+  margin: 1.5rem 0;
+  font-size: 1.5rem;
+  color: #e2e8f0;
+  position: relative;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Streak Section */
+.streak-section {
+  /* Gradient + glow on hover */
+  background: linear-gradient(135deg, #2a3e68, #2f4472);
+  padding: 1rem;
+  border-radius: 6px;
+  transition: box-shadow 0.3s ease;
+}
+
+.streak-section:hover {
+  /* Soft greenish glow around the streak section */
+  box-shadow: 0 0 12px rgba(76,224,130, 0.4);
+}
+
+.streak-section p {
+  color: #b1bdd0;
+}
+
+.streak-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.streak-count {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Goals Section */
+.goals-section {
+  background-color: #2a3e68;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.goals-section ul {
+  list-style: none;
+  margin-top: 0.5rem;
+  color: #b1bdd0;
+}
+
+.goals-section li {
+  margin-bottom: 0.25rem;
+}
+
+/* Achievements Section */
+.achievements-section {
+  background-color: #2a3e68;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.achievements-section p {
+  color: #b1bdd0;
+}
+
+.game-interface {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 80vh; /* Adjust height as needed */
+  padding: 2rem;
+  position: relative;
+  text-align: center;
+}
+
+/* Remove absolute positioning from the button row */
+.button-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* The streak card remains at the top right */
+.streak-card {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #2a3e68;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* Example: Increase input width if needed */
+.game-interface input {
+  width: 55%;
+  padding: .5rem;
+  font-size: 1rem;
+}
+
+/* Options container: 2x2 grid for multiple-choice buttons */
+.options-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  justify-items: center;
+  margin: 1rem 0;
+}
+
+/* Style for multiple-choice buttons (option-btn) */
+.option-btn {
+  width: 80%;
+  background-color: #2e4b84; /* Blue shade matching your menu/add-resource button */
+  color: #fff;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.option-btn:hover {
+  background-color: #1e2b5b; /* Slightly darker on hover */
+}
+
+.collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2e4b84;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  transition: box-shadow .5s ease;
+}
+
+.collapse-btn:hover {
+  box-shadow: 0 0 12px rgba(76,224,130, 0.4);
+}
+
+/* Light Mode */
+/* Light Mode - Flipped Dark Mode to Grey */
+body.light-mode {
+  background-color: #f5f5f5; /* Light grey background */
+  color: #333333;
+}
+
+body.light-mode .top-bar {
+  background: linear-gradient(90deg, #e0e0e0, #d0d0d0); /* Light grey gradient */
+}
+
+body.light-mode .top-bar-left .logo {
+  color: #333333;
+}
+
+body.light-mode .sidebar,
+body.light-mode .right-panel {
+  background: linear-gradient(180deg, #e0e0e0, #d0d0d0); /* Consistent grey gradient */
+  color: #333333;
+}
+
+/* Buttons (e.g., collapse, add resource) */
+body.light-mode .add-resource-btn,
+body.light-mode .collapse-btn {
+  background-color: #c0c0c0;
+  color: #333333;
+}
+
+/* Navigation Menu */
+body.light-mode .nav-menu li {
+  color: #555555;
+}
+body.light-mode .nav-menu li.active,
+body.light-mode .nav-menu li:hover {
+  color: #000000;
+}
+
+/* Game Cards */
+body.light-mode .game-card {
+  position: relative;
+  background: linear-gradient(135deg, #d0d0d0, #c0c0c0); /* Grey gradient replacing blue */
+  border-radius: 6px;
+  padding: 1rem;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+body.light-mode .game-card::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, rgba(72, 169, 119, 0.3) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body.light-mode .game-card:hover {
+  transform: scale(1.01);
+}
+
+body.light-mode .game-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Icon */
+body.light-mode .card-icon {
+  background-color: #b0b0b0bc; /* Lighter grey icon background */
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+body.light-mode .game-card h4 {
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  z-index: 1;
+}
+
+body.light-mode .card-description {
+  font-size: 0.9rem;
+  color: #666666;
+  z-index: 1;
+}
+
+/* Streak Section */
+body.light-mode .streak-section {
+  background: linear-gradient(135deg, #d0d0d0, #c0c0c0);
+  padding: 1rem;
+  border-radius: 6px;
+  transition: box-shadow 0.3s ease;
+  color: #333333;
+}
+
+body.light-mode .streak-section:hover {
+  box-shadow: 0 0 12px rgba(160, 160, 160, 0.4);
+}
+
+body.light-mode .streak-section p {
+  color: #555555;
+}
+
+/* Goals Section */
+body.light-mode .goals-section {
+  background-color: #d0d0d0;
+  padding: 1rem;
+  border-radius: 6px;
+  color: #333333;
+}
+
+body.light-mode .goals-section ul {
+  list-style: none;
+  margin-top: 0.5rem;
+  color: #555555;
+}
+
+body.light-mode .goals-section li {
+  margin-bottom: 0.25rem;
+}
+
+/* Achievements Section */
+body.light-mode .achievements-section {
+  background-color: #d0d0d0;
+  padding: 1rem;
+  border-radius: 6px;
+  color: #333333;
+}
+
+body.light-mode .achievements-section p {
+  color: #555555;
+}
+
+/* Settings Page */
+body.light-mode .settings-page {
+  color: #333333;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  /* Stack main layout vertically */
+  .main-layout {
+    flex-direction: column;
+  }
+  
+  /* Sidebar and right panel take full width */
+  .sidebar,
+  .right-panel {
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+  }
+  
+  /* Content adjusts to full width */
+  .content {
+    width: 100%;
+    margin: 0;
+    padding: 1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  /* Top Bar adjustments */
+  .top-bar {
+    padding: 1rem 1rem 1rem 1rem;
+    height: 60px;
+    box-shadow: none;
+    background: #1b2b52; /* For smaller screens, keep simpler if you like */
+  }
+  
+  .top-bar-left .logo {
+    font-size: 1.2rem;
+  }
+  
+  .top-bar-right .user-avatar {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Game interface adjustments */
+  .game-interface {
+    padding: 1rem;
+    height: auto;
+  }
+  
+  /* Stack the buttons vertically */
+  .button-row {
+    flex-direction: column;
+    margin-top: 1em;
+    gap: 0.75rem;
+  }
+  
+  /* Adjust the streak card position */
+  .streak-card {
+    top: -2.5rem;
+    right: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Optionally adjust input width */
+  .game-interface input {
+    width: 80%;
+  }
+
+  /* Collapse Button for Sidebar */
+  .collapse-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #2e4b84;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .collapse-btn:hover {
+    transform: scale(1.1);
+  }
+}

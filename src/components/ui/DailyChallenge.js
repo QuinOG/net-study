@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import './DailyChallenge.css';
+import { UserContext } from '../../context/UserContext';
+import '../../styles/ui/DailyChallenge.css';
 
 const dailyChallenges = [
   {

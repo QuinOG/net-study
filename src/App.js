@@ -1,25 +1,25 @@
 import React, { useState, useContext, useEffect } from 'react';
-import './App.css';
-import logo from './netquest.png';
+import './styles/layout/App.css';
+import logo from './assets/images/netquest.png';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
-import PortGame from './PortGame.js';
-import ProtocolGame from './ProtocolGame.js';
-import SubnettingChallenge from './SubnettingChallenge';
-import TechAcronymQuiz from './TechAcronymQuiz';
-import Sidebar from './Sidebar';
-import Settings from './Settings';
-import LandingPage from './components/LandingPage';
+import PortGame from './components/games/PortGame';
+import ProtocolGame from './components/games/ProtocolGame';
+import SubnettingChallenge from './components/games/SubnettingChallenge';
+import TechAcronymQuiz from './components/games/TechAcronymQuiz';
+import Sidebar from './components/layout/Sidebar';
+import Settings from './components/ui/Settings';
+import LandingPage from './components/ui/LandingPage';
 
 // New Gamification components
 import { UserProvider, UserContext } from './context/UserContext';
-import StreakCounter from './components/StreakCounter';
-import AchievementSystem from './components/AchievementSystem';
-import LevelProgress from './components/LevelProgress';
-import RewardAnimation from './components/RewardAnimation';
-import DailyChallenge from './components/DailyChallenge';
-import Leaderboard from './components/Leaderboard';
+import StreakCounter from './components/ui/StreakCounter';
+import AchievementSystem from './components/ui/AchievementSystem';
+import LevelProgress from './components/ui/LevelProgress';
+import RewardAnimation from './components/ui/RewardAnimation';
+import DailyChallenge from './components/ui/DailyChallenge';
+import Leaderboard from './components/ui/Leaderboard';
 import SoundManager from './utils/SoundManager';
 
 function AppContent() {

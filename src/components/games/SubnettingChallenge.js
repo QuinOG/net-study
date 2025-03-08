@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SoundManager from './utils/SoundManager';
+import { UserContext } from '../../context/UserContext';
+import SoundManager from '../../utils/SoundManager';
 
 // Expanded dictionary is not needed here since we're working with IP math.
 // Instead, we generate a random IP and prefix, then compute answers.

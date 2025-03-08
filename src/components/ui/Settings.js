@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import SoundManager from './utils/SoundManager';
+import { FiVolume2, FiVolumeX } from 'react-icons/fi';
+import { BsSun, BsMoon } from 'react-icons/bs';
+import { BiReset } from 'react-icons/bi';
+import SoundManager from '../../utils/SoundManager';
 
 function Settings() {
   // Default to dark mode (set true to start with dark mode enabled)

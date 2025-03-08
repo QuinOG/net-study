@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaArrowRight } from 'react-icons/fa';
-import '../styles/LandingPage.css';
-import logo from '../netquest.png';
+import '../../styles/ui/LandingPage.css';
+import logo from '../../assets/images/netquest.png';
 
 const LandingPage = () => {
   return (

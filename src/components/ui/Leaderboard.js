@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../context/UserContext';
+import { UserContext } from '../../context/UserContext';
 import { Link } from 'react-router-dom';
-import './Leaderboard.css';
-
-// Medal images
-import medal1 from '../1.png';
-import medal2 from '../2.png';
-import medal3 from '../3.png';
+import '../../styles/ui/Leaderboard.css';
+import firstPlaceIcon from '../../assets/images/1.png';
+import secondPlaceIcon from '../../assets/images/2.png';
+import thirdPlaceIcon from '../../assets/images/3.png';
 
 // Simulated data - in a real app, this would come from a backend
 const dummyLeaderboardData = [
@@ -142,9 +140,9 @@ const Leaderboard = ({ minimized = false }) => {
               className={`leaderboard-row minimized ${user.isCurrentUser ? 'current-user' : ''}`}
             >
               <div className="rank-cell minimized">
-                {index === 0 && <img src={medal1} alt="1st Place" className="medal-icon" />}
-                {index === 1 && <img src={medal2} alt="2nd Place" className="medal-icon" />}
-                {index === 2 && <img src={medal3} alt="3rd Place" className="medal-icon" />}
+                {index === 0 && <img src={firstPlaceIcon} alt="1st Place" className="medal-icon" />}
+                {index === 1 && <img src={secondPlaceIcon} alt="2nd Place" className="medal-icon" />}
+                {index === 2 && <img src={thirdPlaceIcon} alt="3rd Place" className="medal-icon" />}
               </div>
               <div className="name-cell minimized">{user.name}</div>
               <div className="score-cell minimized">
@@ -224,9 +222,9 @@ const Leaderboard = ({ minimized = false }) => {
             className={`leaderboard-row ${user.isCurrentUser ? 'current-user' : ''} ${index < 3 ? 'top-three' : ''}`}
           >
             <div className="rank-cell">
-              {index === 0 && <img src={medal1} alt="1st Place" className="medal-icon" />}
-              {index === 1 && <img src={medal2} alt="2nd Place" className="medal-icon" />}
-              {index === 2 && <img src={medal3} alt="3rd Place" className="medal-icon" />}
+              {index === 0 && <img src={firstPlaceIcon} alt="1st Place" className="medal-icon" />}
+              {index === 1 && <img src={secondPlaceIcon} alt="2nd Place" className="medal-icon" />}
+              {index === 2 && <img src={thirdPlaceIcon} alt="3rd Place" className="medal-icon" />}
               {index > 2 && index + 1}
             </div>
             <div className="name-cell">{user.name}</div>

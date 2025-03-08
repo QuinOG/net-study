@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SoundManager from './utils/SoundManager';
-import { UserContext } from './context/UserContext';
-import './ProtocolGame.css';
+import SoundManager from '../../utils/SoundManager';
+import { UserContext } from '../../context/UserContext';
+import '../../styles/games/ProtocolGame.css';
 
 // Expanded dictionary for the Net+ exam
 const portProtocols = {

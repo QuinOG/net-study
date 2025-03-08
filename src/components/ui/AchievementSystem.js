@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import './Achievements.css';
+import React, { useState, useEffect, useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
+import '../../styles/ui/Achievements.css';
 
 const achievements = [
   // Network Fundamentals
