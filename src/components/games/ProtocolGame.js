@@ -5,260 +5,126 @@ import { UserContext } from '../../context/UserContext';
 import scrollToTop from '../../utils/ScrollHelper';
 import '../../styles/games/ProtocolGame.css';
 
-// Expanded dictionary for the Net+ exam
-const portProtocols = {
-  20: { protocol: "FTP", description: "File Transfer Protocol (Data)", category: "File Transfer" },
-  21: { protocol: "FTP", description: "File Transfer Protocol (Control)", category: "File Transfer" },
-  22: { protocol: "SSH", description: "Secure Shell", category: "Remote Access" },
-  23: { protocol: "Telnet", description: "Terminal Network", category: "Remote Access" },
-  25: { protocol: "SMTP", description: "Simple Mail Transfer Protocol", category: "Email" },
-  53: { protocol: "DNS", description: "Domain Name System", category: "Name Resolution" },
-  67: { protocol: "DHCP", description: "Dynamic Host Configuration Protocol (Server)", category: "Network Management" },
-  68: { protocol: "DHCP", description: "Dynamic Host Configuration Protocol (Client)", category: "Network Management" },
-  69: { protocol: "TFTP", description: "Trivial File Transfer Protocol", category: "File Transfer" },
-  80: { protocol: "HTTP", description: "Hypertext Transfer Protocol", category: "Web" },
-  110: { protocol: "POP3", description: "Post Office Protocol v3", category: "Email" },
-  119: { protocol: "NNTP", description: "Network News Transfer Protocol", category: "News" },
-  123: { protocol: "NTP", description: "Network Time Protocol", category: "Time Sync" },
-  137: { protocol: "NetBIOS", description: "Network Basic Input/Output System (Name)", category: "File Sharing" },
-  138: { protocol: "NetBIOS", description: "Network Basic Input/Output System (Datagram)", category: "File Sharing" },
-  139: { protocol: "NetBIOS", description: "Network Basic Input/Output System (Session)", category: "File Sharing" },
-  143: { protocol: "IMAP", description: "Internet Message Access Protocol", category: "Email" },
-  161: { protocol: "SNMP", description: "Simple Network Management Protocol", category: "Network Management" },
-  162: { protocol: "SNMP", description: "Simple Network Management Protocol (Traps)", category: "Network Management" },
-  389: { protocol: "LDAP", description: "Lightweight Directory Access Protocol", category: "Directory Services" },
-  443: { protocol: "HTTPS", description: "HTTP Secure", category: "Web" },
-  445: { protocol: "SMB", description: "Server Message Block", category: "File Sharing" },
-  465: { protocol: "SMTPS", description: "SMTP over SSL", category: "Email" },
-  587: { protocol: "SMTP", description: "SMTP Submission", category: "Email" },
-  993: { protocol: "IMAPS", description: "IMAP over SSL", category: "Email" },
-  995: { protocol: "POP3S", description: "POP3 over SSL", category: "Email" },
-  3306: { protocol: "MySQL", description: "MySQL Database", category: "Database" },
-  3389: { protocol: "RDP", description: "Remote Desktop Protocol", category: "Remote Access" },
-  8080: { protocol: "HTTP-Alt", description: "Alternative HTTP Port", category: "Web" }
+// Use the exact same port dictionary as in PortGame.js
+const PORT_DATA = {
+  20: { protocol: "FTP", category: "File Transfer" },
+  21: { protocol: "FTP", category: "File Transfer" },
+  22: { protocol: "SSH", category: "Remote Access" },
+  23: { protocol: "Telnet", category: "Remote Access" },
+  25: { protocol: "SMTP", category: "Email" },
+  53: { protocol: "DNS", category: "Name Resolution" },
+  67: { protocol: "DHCP", category: "Network Management" },
+  68: { protocol: "DHCP", category: "Network Management" },
+  69: { protocol: "TFTP", category: "File Transfer" },
+  80: { protocol: "HTTP", category: "Web" },
+  110: { protocol: "POP3", category: "Email" },
+  119: { protocol: "NNTP", category: "News" },
+  123: { protocol: "NTP", category: "Time Sync" },
+  137: { protocol: "NetBIOS", category: "File Sharing" },
+  138: { protocol: "NetBIOS", category: "File Sharing" },
+  139: { protocol: "NetBIOS", category: "File Sharing" },
+  143: { protocol: "IMAP", category: "Email" },
+  161: { protocol: "SNMP", category: "Network Management" },
+  162: { protocol: "SNMP", category: "Network Management" },
+  389: { protocol: "LDAP", category: "Directory Services" },
+  443: { protocol: "HTTPS", category: "Web" },
+  445: { protocol: "SMB", category: "File Sharing" },
+  465: { protocol: "SMTPS", category: "Email" },
+  587: { protocol: "SMTP", category: "Email" },
+  993: { protocol: "IMAPS", category: "Email" },
+  995: { protocol: "POP3S", category: "Email" },
+  3306: { protocol: "MySQL", category: "Database" },
+  3389: { protocol: "RDP", category: "Remote Access" },
+  8080: { protocol: "HTTP-Alt", category: "Web" }
 };
 
-const DIFFICULTY_LEVELS = {
-  EASY: { 
-    name: 'Easy', 
-    multiplier: 1, 
-    timeLimit: 60,
-    showHints: true,
-    timePenalty: 3
-  },
-  MEDIUM: { 
-    name: 'Medium', 
-    multiplier: 1.5, 
-    timeLimit: 45,
-    showHints: false,
-    timePenalty: 5
-  },
-  HARD: { 
-    name: 'Hard', 
-    multiplier: 2, 
-    timeLimit: 30,
-    showHints: false,
-    timePenalty: 7
-  }
-};
-
+// Game modes exactly like PortGame.js
 const GAME_MODES = {
-  TIME_ATTACK: 'time_attack',
-  PRACTICE: 'practice'
+  TIME_ATTACK: 'TIME_ATTACK',
+  PRACTICE: 'PRACTICE'
+};
+
+// Difficulty levels with identical settings
+const DIFFICULTY_LEVELS = {
+  EASY: {
+    name: 'Easy',
+    timeLimit: 60,
+    timePenalty: 3,
+    multiplier: 1,
+    showHints: true
+  },
+  MEDIUM: {
+    name: 'Medium',
+    timeLimit: 45,
+    timePenalty: 5,
+    multiplier: 1.5,
+    showHints: false
+  },
+  HARD: {
+    name: 'Hard',
+    timeLimit: 30,
+    timePenalty: 7,
+    multiplier: 2,
+    showHints: false
+  }
 };
 
 function ProtocolGame() {
   const navigate = useNavigate();
-  const userContext = useContext(UserContext);
-  
-  // Game state
-  const [gameMode, setGameMode] = useState(null);
-  const [difficulty, setDifficulty] = useState(null);
-  const [showDifficultySelect, setShowDifficultySelect] = useState(false);
-  const [currentPort, setCurrentPort] = useState(null);
-  const [currentCategory, setCurrentCategory] = useState(null);
-  const [answer, setAnswer] = useState('');
-  const [result, setResult] = useState('');
-  const [streak, setStreak] = useState(0);
-  const [score, setScore] = useState(0);
-  const [combo, setCombo] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(null);
-  const [gameActive, setGameActive] = useState(false);
-  const [showHint, setShowHint] = useState(false);
-  const [hintsRemaining, setHintsRemaining] = useState(3);
-  const [gameStats, setGameStats] = useState({
-    correctAnswers: 0,
-    totalAttempts: 0,
-    bestStreak: 0,
-    bestScore: 0,
-    categoryMastery: {},
-    gamesPlayed: 0,
-    totalScore: 0
-  });
-  const [showGameOver, setShowGameOver] = useState(false);
+  const { userStats, addXP, updateStats } = useContext(UserContext);
 
-  // Power-ups
+  // Game state (note: "gameStarted" is used to match the port game)
+  const [gameStarted, setGameStarted] = useState(false);
+  const [gameMode, setGameMode] = useState(null);
+  const [difficulty, setDifficulty] = useState('EASY');
+  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [userAnswer, setUserAnswer] = useState('');
+  const [score, setScore] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(60);
+  const [startTime, setStartTime] = useState(null);
+  const [showGameOver, setShowGameOver] = useState(false);
+  const [gameStats, setGameStats] = useState({
+    bestScore: 0,
+    bestStreak: 0,
+    gamesPlayed: 0,
+    totalAttempts: 0,
+    correctAnswers: 0
+  });
+  const [showDifficultySelect, setShowDifficultySelect] = useState(false);
   const [powerUps, setPowerUps] = useState({
     timeFreeze: 2,
     categoryReveal: 2,
     skipQuestion: 1
   });
+  const [feedback, setFeedback] = useState({
+    show: false,
+    message: '',
+    isCorrect: false
+  });
 
-  // Initialize game with selected mode and difficulty
-  const initializeGame = (mode, diff) => {
-    // Scroll to top when game initializes
-    scrollToTop();
-    
-    setGameMode(mode);
-    setDifficulty(diff);
-    setGameActive(true);
-    setScore(0);
-    setStreak(0);
-    setCombo(1);
-    setHintsRemaining(3);
-    setTimeLeft(DIFFICULTY_LEVELS[diff].timeLimit);
-    
-    // Set initial category for category challenge mode
-    if (mode === GAME_MODES.CATEGORY_CHALLENGE) {
-      const categories = [...new Set(Object.values(portProtocols).map(p => p.category))];
-      setCurrentCategory(categories[Math.floor(Math.random() * categories.length)]);
-    }
-    
-    generateQuestion();
-    
-    // Reset power-ups
-    setPowerUps({
-      timeFreeze: 2,
-      categoryReveal: 2,
-      skipQuestion: 1
-    });
-    
-    // Play start game sound
-    SoundManager.play('gameStart');
-  };
-
-  // Generate a new question based on game mode
-  const generateQuestion = () => {
-    if (gameMode === GAME_MODES.CATEGORY_CHALLENGE && currentCategory) {
-      // Filter ports by current category
-      const categoryPorts = Object.entries(portProtocols)
-        .filter(([_, data]) => data.category === currentCategory);
-      const randomPort = categoryPorts[Math.floor(Math.random() * categoryPorts.length)][0];
-      setCurrentPort(parseInt(randomPort, 10));
-    } else {
-      const ports = Object.keys(portProtocols);
-      setCurrentPort(parseInt(ports[Math.floor(Math.random() * ports.length)], 10));
-    }
-  };
-
-  // Handle answer submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!gameActive) return;
-    
-    const userAnswer = answer.trim().toUpperCase();
-    const correctProtocol = portProtocols[currentPort].protocol;
-    const isCorrect = userAnswer === correctProtocol.toUpperCase();
-    
-    // Update stats
-    setGameStats(prev => ({
-      ...prev,
-      totalAttempts: prev.totalAttempts + 1,
-      correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
-      bestStreak: Math.max(prev.bestStreak, streak + (isCorrect ? 1 : 0))
-    }));
-
-    if (isCorrect) {
-      handleCorrectAnswer();
-    } else {
-      handleIncorrectAnswer();
-    }
-
-    setAnswer('');
-    generateQuestion();
-  };
-
-  // Handle correct answer
-  const handleCorrectAnswer = () => {
-    // Calculate points based on difficulty, combo, and time bonus
-    const difficultyMultiplier = DIFFICULTY_LEVELS[difficulty].multiplier;
-    const timeBonus = Math.max(1, timeLeft / DIFFICULTY_LEVELS[difficulty].timeLimit);
-    const points = Math.round(100 * difficultyMultiplier * combo * timeBonus);
-    
-    setScore(prev => prev + points);
-    setStreak(prev => prev + 1);
-    setCombo(prev => Math.min(prev + 0.1, 3)); // Max combo multiplier of 3x
-    
-    // Visual and audio feedback
-    setResult({
-      message: `Correct! +${points} points`,
-      type: 'success',
-      points: points
-    });
-    SoundManager.play('correct');
-    
-    // Update category mastery
-    const category = portProtocols[currentPort].category;
-    setGameStats(prev => ({
-      ...prev,
-      categoryMastery: {
-        ...prev.categoryMastery,
-        [category]: (prev.categoryMastery[category] || 0) + 1
-      }
-    }));
-  };
-
-  // Handle incorrect answer
-  const handleIncorrectAnswer = () => {
-    const correctProtocol = portProtocols[currentPort].protocol;
-    setStreak(0);
-    setCombo(1);
-    
-    setResult({
-      message: `Incorrect. The correct answer is "${correctProtocol}"`,
-      type: 'error'
-    });
-    SoundManager.play('incorrect');
-    
-    // Reduce time in time attack mode
-    if (gameMode === GAME_MODES.TIME_ATTACK) {
-      setTimeLeft(prev => Math.max(0, prev - 5));
-    }
-  };
-
-  // Handle power-up usage
-  const handlePowerUp = (type) => {
-    if (powerUps[type] > 0) {
-      setPowerUps(prev => ({
-        ...prev,
-        [type]: prev[type] - 1
-      }));
-
-      switch (type) {
-        case 'timeFreeze':
-          setTimeLeft(prev => prev + 10);
-          break;
-        case 'categoryReveal':
-          setShowHint(true);
-          break;
-        case 'skipQuestion':
-          generateQuestion();
-          break;
-        default:
-          break;
-      }
-      
-      SoundManager.play('powerup');
-    }
-  };
-
-  // Timer effect
+  // Load saved game stats from localStorage
   useEffect(() => {
-    let timer;
-    if (gameActive && gameMode === GAME_MODES.TIME_ATTACK) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 0) {
+    const savedStats = localStorage.getItem('protocolGameStats');
+    if (savedStats) {
+      setGameStats(JSON.parse(savedStats));
+    }
+  }, []);
+
+  // Save game stats to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('protocolGameStats', JSON.stringify(gameStats));
+  }, [gameStats]);
+
+  // Timer effect for time attack mode (matching PortGame.js)
+  useEffect(() => {
+    let timerId;
+    if (gameStarted && gameMode === GAME_MODES.TIME_ATTACK && timeRemaining > 0) {
+      timerId = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            clearInterval(timerId);
             endGame();
             return 0;
           }
@@ -266,38 +132,209 @@ function ProtocolGame() {
         });
       }, 1000);
     }
-    return () => clearInterval(timer);
-  }, [gameActive, gameMode]);
+    return () => clearInterval(timerId);
+  }, [gameStarted, gameMode, timeRemaining]);
 
-  // End game
+  // Get a random port from our dictionary
+  const getRandomPort = () => {
+    const portList = Object.keys(PORT_DATA);
+    const randomIndex = Math.floor(Math.random() * portList.length);
+    return portList[randomIndex];
+  };
+
+  // Generate a new question
+  const generateQuestion = () => {
+    const port = getRandomPort();
+    const protocol = PORT_DATA[port].protocol;
+    const description = PORT_DATA[port].description;
+    const category = PORT_DATA[port].category;
+    return {
+      port,
+      protocol,
+      description,
+      category,
+      showCategory: false
+    };
+  };
+
+  // Initialize game with selected mode and difficulty
+  const initializeGame = (mode, diff) => {
+    scrollToTop();
+    setGameMode(mode);
+    setDifficulty(diff);
+    setGameStarted(true);
+    setCurrentQuestion(generateQuestion());
+    setShowGameOver(false);
+    setScore(0);
+    setCorrectAnswers(0);
+    setCurrentStreak(0);
+    setTimeRemaining(DIFFICULTY_LEVELS[diff].timeLimit);
+    setStartTime(Date.now());
+    setPowerUps({
+      timeFreeze: 2,
+      categoryReveal: 2,
+      skipQuestion: 1
+    });
+    SoundManager.play('gameStart');
+  };
+
+  // End the game and update stats
   const endGame = () => {
-    setGameActive(false);
-    
-    // Update local game stats
-    setGameStats(prev => ({
-      ...prev,
-      bestScore: Math.max(score, prev.bestScore),
-      gamesPlayed: prev.gamesPlayed + 1,
-      totalScore: prev.totalScore + score,
-      bestStreak: Math.max(streak, prev.bestStreak)
-    }));
-
-    // Show game over screen
-    setShowGameOver(true);
-    
-    // Play appropriate sound
-    if (score > gameStats.bestScore) {
-      SoundManager.play('achievement');
+    const newStats = {
+      ...gameStats,
+      bestScore: Math.max(gameStats.bestScore, score),
+      bestStreak: Math.max(gameStats.bestStreak, currentStreak),
+      gamesPlayed: gameStats.gamesPlayed + 1,
+      totalAttempts: gameStats.totalAttempts + correctAnswers + (score > 0 ? 1 : 0),
+      correctAnswers: gameStats.correctAnswers + correctAnswers
+    };
+    setGameStats(newStats);
+    const xpEarned = Math.round(score / 10);
+    if (xpEarned > 0) {
+      addXP(xpEarned);
+      if (updateStats) {
+        updateStats('protocolGame', {
+          gamesPlayed: newStats.gamesPlayed,
+          bestScore: newStats.bestScore,
+          totalCorrect: newStats.correctAnswers
+        });
+      }
     }
+    setShowGameOver(true);
+    setGameStarted(false);
     SoundManager.play('gameOver');
   };
 
-  // Game mode selection and rendering
-  if (!gameMode) {
+  // Handle correct answer
+  const handleCorrectAnswer = () => {
+    SoundManager.play('correct');
+    const newStreak = currentStreak + 1;
+    setCurrentStreak(newStreak);
+    const pointsEarned = 100 * DIFFICULTY_LEVELS[difficulty].multiplier;
+    setScore(score + pointsEarned);
+    setCorrectAnswers(prev => prev + 1);
+    if (gameMode === GAME_MODES.TIME_ATTACK) {
+      setTimeRemaining(prev => prev + 5);
+    }
+    setFeedback({
+      show: true,
+      message: `Correct! +${pointsEarned} points`,
+      isCorrect: true
+    });
+    setTimeout(() => {
+      setFeedback({ show: false, message: '', isCorrect: false });
+    }, 1500);
+  };
+
+  // Handle incorrect answer
+  const handleIncorrectAnswer = () => {
+    const correctProtocol = currentQuestion.protocol;
+    setCurrentStreak(0);
+    
+    // Apply time penalty in time attack mode
+    if (gameMode === GAME_MODES.TIME_ATTACK) {
+      // Calculate new time after penalty
+      const newTime = Math.max(0, timeRemaining - DIFFICULTY_LEVELS[difficulty].timePenalty);
+      setTimeRemaining(newTime);
+      
+      // If time is now zero, end the game immediately
+      if (newTime <= 0) {
+        // Show feedback briefly before ending game
+        setFeedback({
+          show: true,
+          isCorrect: false,
+          message: `Incorrect. The correct answer is "${correctProtocol}"`
+        });
+        SoundManager.play('wrong');
+        
+        // Short delay before ending game
+        setTimeout(() => {
+          endGame();
+        }, 1000);
+        return;
+      }
+    }
+    
+    setFeedback({
+      show: true,
+      isCorrect: false,
+      message: `Incorrect. The correct answer is "${correctProtocol}"`
+    });
+    SoundManager.play('wrong');
+    
+    // Hide feedback after 2 seconds
+    setTimeout(() => {
+      setFeedback({ show: false, isCorrect: false, message: '' });
+    }, 2000);
+  };
+
+  // Handle power-up usage
+  const handlePowerUp = (type) => {
+    if (gameMode === GAME_MODES.PRACTICE || powerUps[type] <= 0) return;
+    setPowerUps(prev => ({
+      ...prev,
+      [type]: prev[type] - 1
+    }));
+    SoundManager.play('powerup');
+    switch (type) {
+      case 'timeFreeze':
+        setFeedback({
+          show: true,
+          message: 'Time Freeze: +5 seconds',
+          isCorrect: true
+        });
+        setTimeRemaining(prev => prev + 5);
+        break;
+      case 'categoryReveal':
+        setCurrentQuestion(prev => ({
+          ...prev,
+          showCategory: true
+        }));
+        setFeedback({
+          show: true,
+          message: `Category: ${currentQuestion.category}`,
+          isCorrect: true
+        });
+        break;
+      case 'skipQuestion':
+        setCurrentQuestion(generateQuestion());
+        setFeedback({
+          show: true,
+          message: 'Question skipped!',
+          isCorrect: true
+        });
+        break;
+      default:
+        break;
+    }
+    setTimeout(() => {
+      setFeedback({ show: false, message: '', isCorrect: false });
+    }, 2000);
+  };
+
+  // Handle answer submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Compare the entered protocol acronym (case-insensitive) with the correct one
+    const answer = userAnswer.trim().toUpperCase();
+    const correctProtocol = currentQuestion.protocol.toUpperCase();
+    const isCorrect = answer === correctProtocol;
+    if (isCorrect) {
+      handleCorrectAnswer();
+    } else {
+      handleIncorrectAnswer();
+    }
+    setUserAnswer('');
+    setCurrentQuestion(generateQuestion());
+  };
+
+  // Rendering the menu if the game has not started
+  if (!gameStarted && !showGameOver) {
     if (showDifficultySelect) {
       return (
         <div className="protocol-game">
           <h2 className="game-title">Select Difficulty</h2>
+          
           <div className="difficulty-select">
             <div className="difficulty-cards">
               {Object.entries(DIFFICULTY_LEVELS).map(([key, value]) => (
@@ -306,28 +343,16 @@ function ProtocolGame() {
                   className="difficulty-card"
                   data-difficulty={key}
                   onClick={() => {
-                    setDifficulty(key);
-                    setShowDifficultySelect(false);
                     initializeGame(GAME_MODES.TIME_ATTACK, key);
-                    scrollToTop(); // Scroll to top when starting the game
+                    scrollToTop();
                   }}
                 >
                   <h4>{value.name}</h4>
                   <ul>
-                    <li>Time limit: {value.timeLimit}s</li>
-                    <li>Score multiplier: {value.multiplier}x</li>
-                    {key === 'EASY' ? (
-                      <>
-                        <li>Hints enabled</li>
-                        <hr className="separator" />
-                        <li>Time penalty: -{value.timePenalty}s</li>
-                      </>
-                    ) : (
-                      <>
-                        <li>Time penalty: -{value.timePenalty}s</li>
-                        {value.showHints && <li>Hints enabled</li>}
-                      </>
-                    )}
+                    <li>{value.timeLimit} second time limit</li>
+                    {value.showHints && <li>Hints available</li>}
+                    <li>{value.timePenalty} second penalty for wrong answers</li>
+                    <li>{value.multiplier}x score multiplier</li>
                   </ul>
                 </div>
               ))}
@@ -336,7 +361,7 @@ function ProtocolGame() {
               className="back-button"
               onClick={() => {
                 setShowDifficultySelect(false);
-                scrollToTop(); // Scroll to top when going back
+                scrollToTop();
               }}
             >
               Back to Game Modes
@@ -345,21 +370,47 @@ function ProtocolGame() {
         </div>
       );
     }
-
     return (
       <div className="protocol-game">
         <h2 className="game-title">Protocol Master</h2>
         <p className="game-description">
-          Test your knowledge of networking protocols and their functions
+          Test your knowledge of networking protocols and their functions.
         </p>
-
+        
+        <div className="stats-container">
+          <h3>Your Stats</h3>
+          <div className="stats-grid">
+            <div className="stat-item">
+              <span className="stat-value">{gameStats.bestScore}</span>
+              <span className="stat-label">Best Score</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-value">{gameStats.bestStreak}</span>
+              <span className="stat-label">Best Streak</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-value">{gameStats.gamesPlayed}</span>
+              <span className="stat-label">Games Played</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-value">
+                {gameStats.totalAttempts === 0 
+                  ? '0%' 
+                  : `${Math.floor((gameStats.correctAnswers / gameStats.totalAttempts) * 100)}%`}
+              </span>
+              <span className="stat-label">Accuracy</span>
+            </div>
+          </div>
+        </div>
+        
         <div className="game-setup">
+          <h3>Select Game Mode</h3>
           <div className="game-modes">
             <div 
               className="game-mode-card"
               onClick={() => {
                 setShowDifficultySelect(true);
-                scrollToTop(); // Scroll to top when showing difficulty select
+                scrollToTop();
               }}
             >
               <h3>Time Attack</h3>
@@ -371,12 +422,11 @@ function ProtocolGame() {
                 <li>Score based on speed and accuracy</li>
               </ul>
             </div>
-
             <div 
               className="game-mode-card"
               onClick={() => {
                 initializeGame(GAME_MODES.PRACTICE, 'EASY');
-                scrollToTop(); // Scroll to top when starting practice mode
+                scrollToTop();
               }}
             >
               <h3>Practice Mode</h3>
@@ -396,34 +446,47 @@ function ProtocolGame() {
 
   // Game over screen
   if (showGameOver) {
+    const isNewHighScore = score > gameStats.bestScore;
     return (
-      <div className="protocol-game-menu">
-        <h2>Game Over!</h2>
+      <div className="protocol-game">
         <div className="game-over-stats">
-          <h3>Game Summary</h3>
-          <p>Score: {score}</p>
-          <p>Best Streak: {streak}</p>
-          <p>Accuracy: {Math.round((gameStats.correctAnswers / Math.max(1, gameStats.totalAttempts)) * 100)}%</p>
-          {score > gameStats.bestScore && (
-            <p className="new-record">New High Score! 🏆</p>
-          )}
-        </div>
-        <div className="game-over-buttons">
-          <button onClick={() => {
-            setShowGameOver(false);
-            initializeGame(gameMode, difficulty);
-          }}>
-            Play Again
-          </button>
-          <button onClick={() => {
-            setShowGameOver(false);
-            setGameMode(null);
-          }}>
-            Change Mode
-          </button>
-          <button onClick={() => navigate(-1)}>
-            Exit Game
-          </button>
+          <h2>{isNewHighScore ? '🏆 New High Score! 🏆' : 'Game Over'}</h2>
+          <div className="final-stats">
+            <div className="stat-item">
+              <span className="stat-label">Score</span>
+              <span className={`stat-value ${isNewHighScore ? 'highlight' : ''}`}>{score}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Correct Answers</span>
+              <span className="stat-value">{correctAnswers}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Best Streak</span>
+              <span className="stat-value">{Math.max(currentStreak, gameStats.bestStreak)}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">XP Earned</span>
+              <span className="stat-value">{Math.round(score / 10)}</span>
+            </div>
+          </div>
+          <div className="game-over-buttons">
+            <button 
+              className="restart-btn"
+              onClick={() => initializeGame(gameMode, difficulty)}
+            >
+              Play Again
+            </button>
+            <button 
+              className="home-btn"
+              onClick={() => {
+                setShowGameOver(false);
+                setGameMode(null);
+                scrollToTop();
+              }}
+            >
+              Back to Menu
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -433,67 +496,78 @@ function ProtocolGame() {
   return (
     <div className="protocol-game">
       <div className="game-header">
-        <div className="score-display">Score: {score}</div>
-        <div className="streak-display">
-          <span className="streak">Streak: {streak}</span>
-          <span className="combo">Combo: x{combo.toFixed(1)}</span>
+        <div className="game-info">
+          <div className="mode-indicator">
+            {gameMode === GAME_MODES.TIME_ATTACK ? 'Time Attack' : 'Practice Mode'}
+            <span className="difficulty-badge">{DIFFICULTY_LEVELS[difficulty].name}</span>
+          </div>
+          <div className="score-display">
+            Score: <span>{score}</span>
+          </div>
+          {gameMode === GAME_MODES.TIME_ATTACK && (
+            <div className={`time-display ${timeRemaining < 10 ? 'urgent' : ''}`}>
+              Time: <span>{timeRemaining}s</span>
+            </div>
+          )}
+          <div className="streak-display">
+            Streak: <span>{currentStreak}</span>
+          </div>
         </div>
-        {gameMode === GAME_MODES.TIME_ATTACK && (
-          <div className="timer">Time: {timeLeft}s</div>
-        )}
+        <div className="power-ups">
+          <button 
+            className={`power-up-btn ${powerUps.timeFreeze > 0 ? '' : 'disabled'}`}
+            onClick={() => handlePowerUp('timeFreeze')}
+            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.timeFreeze <= 0}
+          >
+            ⏱️ Freeze ({powerUps.timeFreeze})
+          </button>
+          <button 
+            className={`power-up-btn ${powerUps.categoryReveal > 0 ? '' : 'disabled'}`}
+            onClick={() => handlePowerUp('categoryReveal')}
+            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.categoryReveal <= 0 || currentQuestion?.showCategory}
+          >
+            🔍 Category ({powerUps.categoryReveal})
+          </button>
+          <button 
+            className={`power-up-btn ${powerUps.skipQuestion > 0 ? '' : 'disabled'}`}
+            onClick={() => handlePowerUp('skipQuestion')}
+            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.skipQuestion <= 0}
+          >
+            ⏭️ Skip ({powerUps.skipQuestion})
+          </button>
+        </div>
       </div>
-
       <div className="game-content">
+        {feedback.show && (
+          <div className={`feedback-message ${feedback.isCorrect ? 'correct' : 'incorrect'}`}>
+            {feedback.message}
+          </div>
+        )}
         <div className="question-container">
-          <h3>What protocol uses port <strong>{currentPort}</strong>?</h3>
-          {showHint && (
+          <h3 className="question-text">What protocol is used for:</h3>
+          <div className="protocol-name">Port {currentQuestion?.port}</div>
+          <div className="protocol-description">{currentQuestion?.description}</div>
+          {(DIFFICULTY_LEVELS[difficulty].showHints || currentQuestion?.showCategory) && (
             <div className="hint">
-              Category: {portProtocols[currentPort].category}
+              <span className="hint-label">Category:</span> {currentQuestion?.category}
             </div>
           )}
         </div>
-
-        <form onSubmit={handleSubmit} className="answer-form">
-          <input
-            type="text"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            placeholder="Type protocol name..."
-            autoFocus
-          />
-          <button type="submit">Submit</button>
-        </form>
-
-        {result && (
-          <div className={`result-message ${result.type}`}>
-            {result.message}
-            {result.points && (
-              <span className="points-earned">+{result.points}</span>
-            )}
+        <form className="answer-form" onSubmit={handleSubmit}>
+          <div className="input-container">
+            <label htmlFor="answer-input">Enter Protocol Name:</label>
+            <input
+              id="answer-input"
+              type="text"
+              value={userAnswer}
+              onChange={(e) => setUserAnswer(e.target.value)}
+              placeholder="e.g. HTTP"
+              autoFocus
+              required
+            />
           </div>
-        )}
-
-        <div className="power-ups">
-          {Object.entries(powerUps).map(([type, count]) => (
-            <button
-              key={type}
-              onClick={() => handlePowerUp(type)}
-              disabled={count === 0}
-              className="power-up-btn"
-            >
-              {type} ({count})
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="game-footer">
-        <button onClick={endGame} className="end-game-btn">
-          End Game
-        </button>
-        <button onClick={() => navigate(-1)} className="menu-btn">
-          Game Menu
-        </button>
+          <button type="submit" className="submit-btn">Submit</button>
+        </form>
       </div>
     </div>
   );

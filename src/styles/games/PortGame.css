@@ -1,4 +1,5 @@
-.protocol-game {
+/* Port Game Styles */
+.port-game {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -21,6 +22,7 @@
   color: #cbd5e0;
 }
 
+/* Game Setup - Mode Selection */
 .game-setup {
   margin-bottom: 2rem;
 }
@@ -76,6 +78,7 @@
   color: #4299e1;
 }
 
+/* Difficulty Selection */
 .difficulty-select {
   display: flex;
   flex-direction: column;
@@ -151,6 +154,7 @@
   background-color: rgba(74, 85, 104, 0.7);
 }
 
+/* Main Game Interface */
 .game-header {
   display: flex;
   justify-content: space-between;
@@ -237,6 +241,7 @@
   cursor: not-allowed;
 }
 
+/* Game Content */
 .game-content {
   background-color: rgba(26, 32, 44, 0.7);
   border-radius: 12px;
@@ -358,6 +363,7 @@
   box-shadow: 0 2px 10px rgba(49, 130, 206, 0.4);
 }
 
+/* Game Over */
 .game-over-stats {
   background-color: rgba(26, 32, 44, 0.8);
   border-radius: 12px;
@@ -453,6 +459,7 @@
   color: #e2e8f0;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .game-header {
     flex-direction: column;
@@ -475,7 +482,7 @@
 }
 
 /* Stats Container */
-.protocol-game .stats-container {
+.port-game .stats-container {
   background-color: rgba(45, 55, 72, 0.7);
   border-radius: 12px;
   padding: 1.2rem;
@@ -486,20 +493,20 @@
   margin-right: auto;
 }
 
-.protocol-game .stats-container h3 {
+.port-game .stats-container h3 {
   text-align: center;
   margin-bottom: 1rem;
   color: #f7fafc;
   font-size: 1.3rem;
 }
 
-.protocol-game .stats-grid {
+.port-game .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.8rem;
 }
 
-.protocol-game .stat-item {
+.port-game .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -510,47 +517,32 @@
   text-align: center;
 }
 
-.protocol-game .stat-value {
+.port-game .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
   color: #4299e1;
   margin-bottom: 0.3rem;
 }
 
-.protocol-game .stat-label {
+.port-game .stat-label {
   font-size: 0.8rem;
   color: #a0aec0;
 }
 
 /* Game Setup */
-.protocol-game .game-setup {
+.port-game .game-setup {
   margin-bottom: 2rem;
 }
 
-.protocol-game .game-setup h3 {
+.port-game .game-setup h3 {
   text-align: center;
   margin-bottom: 1.5rem;
   color: #f7fafc;
   font-size: 1.8rem;
 }
 
-/* Game Modes */
-.protocol-game .game-modes {
-  display: flex;
-  flex-direction: row;
-  gap: 1.2rem;
-  margin: 0 auto;
-}
-
-.protocol-game .game-mode-card {
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 /* Updated Difficulty Card styles */
-.protocol-game .difficulty-card {
+.port-game .difficulty-card {
   background-color: rgba(45, 55, 72, 0.7);
   border-radius: 12px;
   padding: 1.5rem;
@@ -559,55 +551,70 @@
   position: relative;
 }
 
-.protocol-game .difficulty-card[data-difficulty="EASY"]:hover {
+.port-game .difficulty-card[data-difficulty="EASY"]:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
   background-color: rgba(72, 187, 120, 0.2);
 }
 
-.protocol-game .difficulty-card[data-difficulty="MEDIUM"]:hover {
+.port-game .difficulty-card[data-difficulty="MEDIUM"]:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
   background-color: rgba(237, 137, 54, 0.2);
 }
 
-.protocol-game .difficulty-card[data-difficulty="HARD"]:hover {
+.port-game .difficulty-card[data-difficulty="HARD"]:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(245, 101, 101, 0.4);
   background-color: rgba(245, 101, 101, 0.2);
 }
 
-.protocol-game .difficulty-card h4 {
+.port-game .difficulty-card h4 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #f7fafc;
 }
 
-.protocol-game .difficulty-card ul {
+.port-game .difficulty-card ul {
   list-style-type: none;
   padding-left: 1rem;
 }
 
-.protocol-game .difficulty-card li {
+.port-game .difficulty-card li {
   margin-bottom: 0.5rem;
   color: #a0aec0;
   position: relative;
 }
 
-.protocol-game .difficulty-card li::before {
+.port-game .difficulty-card li::before {
   content: "•";
   position: absolute;
   left: -1rem;
   color: #4299e1;
 }
 
-/* Responsive Adjustments */
+/* Game Modes */
+.port-game .game-modes {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2rem;
+  margin: 0 auto;
+}
+
+.port-game .game-mode-card {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Media Query for Mobile */
 @media (max-width: 768px) {
-  .protocol-game .game-modes {
+  .port-game .game-modes {
     flex-direction: column;
   }
   
-  .protocol-game .stats-grid {
+  .port-game .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 } 

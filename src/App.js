@@ -2,12 +2,13 @@ import React, { useState, useContext, useEffect } from 'react';
 import './styles/layout/App.css';
 import logo from './assets/images/netquest.png';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen } from 'react-icons/fi';
+import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 import PortGame from './components/games/PortGame';
 import ProtocolGame from './components/games/ProtocolGame';
 import SubnettingChallenge from './components/games/SubnettingChallenge';
 import TechAcronymQuiz from './components/games/TechAcronymQuiz';
+import CommandLineChallenge from './components/games/CommandLineChallenge';
 import Sidebar from './components/layout/Sidebar';
 import ScrollToTop from './components/layout/ScrollToTop';
 import Settings from './components/ui/Settings';
@@ -49,6 +50,7 @@ function AppContent() {
                 <Route path="/port" element={<PortGame />} />
                 <Route path="/subnet" element={<SubnettingChallenge />} />
                 <Route path="/acronym" element={<TechAcronymQuiz />} />
+                <Route path="/command" element={<CommandLineChallenge />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/achievements" element={
                   <div className="content">
@@ -84,6 +86,7 @@ function AppContent() {
       <Route path="/port" element={<Navigate to="/dashboard/port" replace />} />
       <Route path="/subnet" element={<Navigate to="/dashboard/subnet" replace />} />
       <Route path="/acronym" element={<Navigate to="/dashboard/acronym" replace />} />
+      <Route path="/command" element={<Navigate to="/dashboard/command" replace />} />
       <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
       <Route path="/achievements" element={<Navigate to="/dashboard/achievements" replace />} />
       <Route path="/stats" element={<Navigate to="/dashboard/stats" replace />} />
@@ -207,7 +210,7 @@ function Home() {
           </div>
           <h4>Protocol Game</h4>
           <p className="card-description">
-            Test your knowledge of common protocols and how they are used!
+            Test your knowledge of common protocols and how they are used! Master protocol functions, categories, and applications.
           </p>
           <Link to="/dashboard/protocol" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
@@ -221,7 +224,7 @@ function Home() {
           </div>
           <h4>Port Game</h4>
           <p className="card-description">
-            Learn to match port numbers to the correct protocols and services!
+            Learn to match port numbers to the correct protocols and services! Test your knowledge of well-known ports for exams like Network+.
           </p>
           <Link to="/dashboard/port" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
@@ -235,7 +238,7 @@ function Home() {
           </div>
           <h4>Subnetting Game</h4>
           <p className="card-description">
-            Practice calculating different addresses from a random IP!
+            Practice calculating network addresses, broadcast addresses and usable IP ranges from CIDR notation! Perfect for certification exam prep.
           </p>
           <Link to="/dashboard/subnet" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
@@ -248,9 +251,22 @@ function Home() {
           </div>
           <h4>IT Acronym Game</h4>
           <p className="card-description">
-            Test your knowledge of common tech acronyms and terminology!
+            Test your knowledge of common tech acronyms and terminology! From basic terms to advanced concepts used in the IT industry.
           </p>
           <Link to="/dashboard/acronym" onClick={handleGameSelect}>
+            <button className="start-btn">Start</button>
+          </Link>
+        </div>
+
+        <div className="game-card">
+          <div className="card-icon">
+            <FiTerminal size={32} />
+          </div>
+          <h4>Command Line Challenge</h4>
+          <p className="card-description">
+            Test your knowledge of common terminal commands across different operating systems (Linux, Windows, macOS). Perfect for IT professionals!
+          </p>
+          <Link to="/dashboard/command" onClick={handleGameSelect}>
             <button className="start-btn">Start</button>
           </Link>
         </div>
