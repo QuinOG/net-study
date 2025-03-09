@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import './styles/layout/App.css';
 import logo from './assets/images/netquest.png';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal } from 'react-icons/fi';
+import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 import PortGame from './components/games/PortGame';
 import ProtocolGame from './components/games/ProtocolGame';
@@ -205,10 +205,12 @@ function Home() {
       <div className="game-grid">
         {/* Protocol Game Card */}
         <div className="game-card">
-          <div className="card-icon">
-            <FiBookOpen size={32} />
+          <div className="card-header">
+            <div className="card-icon">
+              <FiServer size={32} />
+            </div>
+            <h4>Protocol Game</h4>
           </div>
-          <h4>Protocol Game</h4>
           <p className="card-description">
             Test your knowledge of common protocols and how they are used! Master protocol functions, categories, and applications.
           </p>
@@ -219,10 +221,12 @@ function Home() {
         
         {/* Port Game Card */}
         <div className="game-card">
-          <div className="card-icon">
-            <FiBookOpen size={32} />
+          <div className="card-header">
+            <div className="card-icon">
+              <FiWifi size={32} />
+            </div>
+            <h4>Port Game</h4>
           </div>
-          <h4>Port Game</h4>
           <p className="card-description">
             Learn to match port numbers to the correct protocols and services! Test your knowledge of well-known ports for exams like Network+.
           </p>
@@ -233,10 +237,12 @@ function Home() {
         
         {/* Subnet Game Card */}
         <div className="game-card">
-          <div className="card-icon">
-            <FiBookOpen size={32} />
+          <div className="card-header">
+            <div className="card-icon">
+              <FiCode size={32} />
+            </div>
+            <h4>Subnetting Game</h4>
           </div>
-          <h4>Subnetting Game</h4>
           <p className="card-description">
             Practice calculating network addresses, broadcast addresses and usable IP ranges from CIDR notation! Perfect for certification exam prep.
           </p>
@@ -246,10 +252,12 @@ function Home() {
         </div>
 
         <div className="game-card">
-          <div className="card-icon">
-            <FiBookOpen size={32} />
+          <div className="card-header">
+            <div className="card-icon">
+              <FiBookOpen size={32} />
+            </div>
+            <h4>IT Acronym Game</h4>
           </div>
-          <h4>IT Acronym Game</h4>
           <p className="card-description">
             Test your knowledge of common tech acronyms and terminology! From basic terms to advanced concepts used in the IT industry.
           </p>
@@ -259,10 +267,12 @@ function Home() {
         </div>
 
         <div className="game-card">
-          <div className="card-icon">
-            <FiTerminal size={32} />
+          <div className="card-header">
+            <div className="card-icon">
+              <FiTerminal size={32} />
+            </div>
+            <h4>Command Line Challenge</h4>
           </div>
-          <h4>Command Line Challenge</h4>
           <p className="card-description">
             Test your knowledge of common terminal commands across different operating systems (Linux, Windows, macOS). Perfect for IT professionals!
           </p>

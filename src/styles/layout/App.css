@@ -118,8 +118,9 @@ body {
 /* Game Grid & Cards */
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
 }
 
 /* Diagonal gradient & glow for game cards */
@@ -133,7 +134,8 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 320px; /* Set a minimum height to ensure consistent sizing */
+  min-height: 320px;
+  cursor: pointer;
 }
 
 .game-card::before {
@@ -147,39 +149,61 @@ body {
   opacity: 0;
   transition: opacity 0.4s ease;
   z-index: 0;
-  pointer-events: none;  /* Ensure clicks pass through the glow */
+  pointer-events: none;
 }
 
 .game-card:hover {
-  transform: scale(1.01);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
 }
 
 .game-card:hover::before {
   opacity: 1;
 }
 
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  z-index: 1;
+}
+
 .card-icon {
   background-color: #3b5180;
-  padding: 0.5rem;
-  border-radius: 50%;
+  padding: 1rem;
+  border-radius: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  z-index: 1; /* above the glow */
+  z-index: 1;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.game-card:hover .card-icon {
+  background-color: #4299e1;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(66, 153, 225, 0.4);
 }
 
 .game-card h4 {
-  margin-top: 0.5rem;
-  font-size: 1.1rem;
+  margin: 0;
+  font-size: 1.3rem;
+  color: #f7fafc;
   z-index: 1;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .card-description {
   color: #cbd5e0;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.6;
   margin-bottom: 1.5rem;
-  flex-grow: 1; /* Allow description to take up available space */
+  flex-grow: 1;
+  z-index: 1;
 }
 
 /* Start button with neon glow effect on hover */
@@ -187,21 +211,24 @@ body {
   position: absolute;
   bottom: 20px;
   left: 20px;
+  right: 20px;
   background-color: #3182ce;
   color: white;
   border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(49, 130, 206, 0.3);
+  text-align: center;
+  z-index: 1;
 }
 
 .start-btn:hover {
-  background-color: #4ce082aa;
-  box-shadow: 0 0 8px #4ce082, 0 0 16px #4ce082;
-  padding-right: 11.5em;
+  background-color: #4299e1;
+  box-shadow: 0 0 20px rgba(76, 224, 130, 0.4);
+  transform: translateY(-2px);
 }
 
 /* Right Panel */
@@ -512,7 +539,8 @@ body.light-mode .nav-menu li:hover {
 /* Game Cards */
 body.light-mode .game-card {
   position: relative;
-  background: linear-gradient(135deg, #d0d0d0, #c0c0c0); /* Grey gradient replacing blue */
+  background-color: rgba(240, 240, 240, 0.9);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   border-radius: 6px;
   padding: 1rem;
   min-height: 150px;
@@ -531,7 +559,7 @@ body.light-mode .game-card::before {
   left: -20%;
   width: 140%;
   height: 140%;
-  background: radial-gradient(circle, rgba(72, 169, 119, 0.3) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(72, 169, 119, 0.15) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.4s ease;
   z-index: 0;
@@ -548,24 +576,20 @@ body.light-mode .game-card:hover::before {
 
 /* Card Icon */
 body.light-mode .card-icon {
-  background-color: #b0b0b0bc; /* Lighter grey icon background */
-  padding: 0.5rem;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
+  background-color: #4299e1;
+  color: white;
 }
 
 body.light-mode .game-card h4 {
   margin-top: 0.5rem;
   font-size: 1.1rem;
   z-index: 1;
+  color: #2d3748;
 }
 
 body.light-mode .card-description {
   font-size: 0.9rem;
-  color: #666666;
+  color: #4a5568;
   z-index: 1;
 }
 
