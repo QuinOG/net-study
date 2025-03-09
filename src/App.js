@@ -2,13 +2,16 @@ import React, { useState, useContext, useEffect } from 'react';
 import './styles/layout/App.css';
 import logo from './assets/images/netquest.png';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode, FiChevronRight, FiTrendingUp, FiTarget, FiAward, FiFlag, FiArrowRight } from 'react-icons/fi';
+import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode, FiChevronRight, FiTrendingUp, FiTarget, FiAward, FiFlag, FiArrowRight, FiMenu, FiShare2, FiShield, FiLock } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 import PortGame from './components/games/PortGame';
 import ProtocolGame from './components/games/ProtocolGame';
 import SubnettingChallenge from './components/games/SubnettingChallenge';
 import TechAcronymQuiz from './components/games/TechAcronymQuiz';
 import CommandLineChallenge from './components/games/CommandLineChallenge';
+import NetworkTopologyGame from './components/games/NetworkTopologyGame';
+import FirewallRulesGame from './components/games/FirewallRulesGame';
+import EncryptionChallengeGame from './components/games/EncryptionChallengeGame';
 import Sidebar from './components/layout/Sidebar';
 import ScrollToTop from './components/layout/ScrollToTop';
 import Settings from './components/ui/Settings';
@@ -51,6 +54,9 @@ function AppContent() {
                 <Route path="/subnet" element={<SubnettingChallenge />} />
                 <Route path="/acronym" element={<TechAcronymQuiz />} />
                 <Route path="/command" element={<CommandLineChallenge />} />
+                <Route path="/network-topology" element={<NetworkTopologyGame />} />
+                <Route path="/firewall-rules" element={<FirewallRulesGame />} />
+                <Route path="/encryption-challenge" element={<EncryptionChallengeGame />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/achievements" element={
                   <div className="content">
@@ -65,7 +71,6 @@ function AppContent() {
                   </div>
                 } />
               </Routes>
-              <RightPanel />
             </div>
             
             {showReward && (
@@ -87,6 +92,9 @@ function AppContent() {
       <Route path="/subnet" element={<Navigate to="/dashboard/subnet" replace />} />
       <Route path="/acronym" element={<Navigate to="/dashboard/acronym" replace />} />
       <Route path="/command" element={<Navigate to="/dashboard/command" replace />} />
+      <Route path="/network-topology" element={<Navigate to="/dashboard/network-topology" replace />} />
+      <Route path="/firewall-rules" element={<Navigate to="/dashboard/firewall-rules" replace />} />
+      <Route path="/encryption-challenge" element={<Navigate to="/dashboard/encryption-challenge" replace />} />
       <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
       <Route path="/achievements" element={<Navigate to="/dashboard/achievements" replace />} />
       <Route path="/stats" element={<Navigate to="/dashboard/stats" replace />} />
@@ -106,16 +114,33 @@ function App() {
 }
 
 function Header() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const toggleMobileMenu = () => {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('mobile-open');
+      setIsMobileMenuOpen(!isMobileMenuOpen);
+    }
+  };
+
   return (
     <header className="top-bar">
       <div className="top-bar-left">
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        {/* Mobile menu toggle */}
+        <button 
+          className="mobile-menu-toggle" 
+          onClick={toggleMobileMenu}
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+        >
+          <FiMenu size={24} />
+        </button>
+        
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <div className="logo">
             <img 
               src={logo} 
               alt="NetQuest Logo" 
-              width="24" 
-              height="24" 
               style={{ flexShrink: 0 }}
             />
             <span>NetQuest</span>
@@ -133,111 +158,6 @@ function Header() {
   );
 }
 
-function RightPanel() {
-  const { userStats } = useContext(UserContext);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  
-  return (
-    <aside className={`right-panel ${isCollapsed ? 'collapsed' : ''}`}>
-      <div className="right-panel-header">
-        <h3 className="panel-title">Study Progress</h3>
-        <button 
-          className="collapse-btn"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          title={isCollapsed ? "Expand panel" : "Collapse panel"}
-        >
-          <FiChevronRight size={20} />
-        </button>
-      </div>
-      
-      <div className="panel-content">
-        {/* Level Progress */}
-        <div className="progress-section">
-          <div className="section-header">
-            <div className="icon">
-              <FiBarChart2 size={18} />
-            </div>
-            <h4>Level Progress</h4>
-          </div>
-          <LevelProgress userXP={userStats.totalXP} />
-        </div>
-        
-        {/* Streak Section with colored flames */}
-        <div className="streak-section">
-          <div className="section-header">
-            <div className="icon">
-              <FiTrendingUp size={18} />
-            </div>
-            <h4>Daily Streak</h4>
-          </div>
-          <StreakCounter streakDays={userStats.currentStreak} />
-        </div>
-        
-        {/* Daily Challenge - only show if available */}
-        <div className="challenge-section">
-          <div className="section-header">
-            <div className="icon">
-              <FiTarget size={18} />
-            </div>
-            <h4>Daily Challenge</h4>
-          </div>
-          <DailyChallenge userStats={userStats} />
-        </div>
-        
-        {/* Recent Achievements Preview - only show if there are achievements */}
-        {userStats.completedAchievements && userStats.completedAchievements.length > 0 && (
-          <div className="achievements-section">
-            <div className="section-header">
-              <div className="icon">
-                <FiAward size={18} />
-              </div>
-              <h4>Recent Achievements</h4>
-            </div>
-            <div className="recent-achievements-preview">
-              {userStats.completedAchievements.slice(-2).map(achievement => (
-                <div key={achievement.id} className="mini-achievement">
-                  <span className="achievement-icon">{achievement.icon}</span>
-                  <span className="achievement-name">{achievement.name}</span>
-                </div>
-              ))}
-            </div>
-            <Link to="/dashboard/achievements" className="view-all-link">
-              <span>View All Achievements</span>
-              <FiArrowRight size={16} />
-            </Link>
-          </div>
-        )}
-        
-        {/* Only show goals section if there are goals or no achievements */}
-        {(!userStats.completedAchievements || userStats.completedAchievements.length === 0) && (
-          <div className="goals-section">
-            <div className="section-header">
-              <div className="icon">
-                <FiFlag size={18} />
-              </div>
-              <h4>Daily Goals</h4>
-            </div>
-            <ul>
-              <li>
-                <span className="goal-icon">
-                  <FiPlay size={16} />
-                </span>
-                <span className="goal-text">Play 2 rounds of Protocol Game</span>
-              </li>
-              <li>
-                <span className="goal-icon">
-                  <FiTarget size={16} />
-                </span>
-                <span className="goal-text">Score at least 80% in Port Game</span>
-              </li>
-            </ul>
-          </div>
-        )}
-      </div>
-    </aside>
-  );
-}
-
 function Home() {
   const { userStats } = useContext(UserContext);
   
@@ -252,83 +172,111 @@ function Home() {
       <Leaderboard minimized={true} />
       
       <h3 className="section-title">Choose a Game</h3>
-      
       <div className="game-grid">
-        {/* Protocol Game Card */}
         <div className="game-card">
           <div className="card-header">
             <div className="card-icon">
               <FiServer size={32} />
             </div>
-            <h4>Protocol Game</h4>
+            <h4>Port Number Game</h4>
           </div>
-          <p className="card-description">
-            Test your knowledge of common protocols and how they are used! Master protocol functions, categories, and applications.
-          </p>
-          <Link to="/dashboard/protocol" onClick={handleGameSelect}>
-            <button className="start-btn">Start</button>
+          <p className="card-description">Match common networking ports with their services. Test your knowledge of TCP/UDP ports.</p>
+          <Link to="/dashboard/port" onClick={handleGameSelect}>
+            <button className="start-btn">Start Game</button>
           </Link>
         </div>
         
-        {/* Port Game Card */}
         <div className="game-card">
           <div className="card-header">
             <div className="card-icon">
               <FiWifi size={32} />
             </div>
-            <h4>Port Game</h4>
+            <h4>Protocol Matcher</h4>
           </div>
-          <p className="card-description">
-            Learn to match port numbers to the correct protocols and services! Test your knowledge of well-known ports for exams like Network+.
-          </p>
-          <Link to="/dashboard/port" onClick={handleGameSelect}>
-            <button className="start-btn">Start</button>
+          <p className="card-description">Match networking protocols with their functions. Learn protocol fundamentals and their uses.</p>
+          <Link to="/dashboard/protocol" onClick={handleGameSelect}>
+            <button className="start-btn">Start Game</button>
           </Link>
         </div>
         
-        {/* Subnet Game Card */}
         <div className="game-card">
           <div className="card-header">
             <div className="card-icon">
               <FiCode size={32} />
             </div>
-            <h4>Subnetting Game</h4>
+            <h4>Subnetting Challenge</h4>
           </div>
-          <p className="card-description">
-            Practice calculating network addresses, broadcast addresses and usable IP ranges from CIDR notation! Perfect for certification exam prep.
-          </p>
+          <p className="card-description">Practice IP addressing and subnetting. Calculate network and broadcast addresses for IP ranges.</p>
           <Link to="/dashboard/subnet" onClick={handleGameSelect}>
-            <button className="start-btn">Start</button>
+            <button className="start-btn">Start Game</button>
           </Link>
         </div>
-
+        
         <div className="game-card">
           <div className="card-header">
             <div className="card-icon">
               <FiBookOpen size={32} />
             </div>
-            <h4>IT Acronym Game</h4>
+            <h4>Tech Acronym Quiz</h4>
           </div>
-          <p className="card-description">
-            Test your knowledge of common tech acronyms and terminology! From basic terms to advanced concepts used in the IT industry.
-          </p>
+          <p className="card-description">Test your knowledge of networking acronyms and terminology from basic to advanced levels.</p>
           <Link to="/dashboard/acronym" onClick={handleGameSelect}>
-            <button className="start-btn">Start</button>
+            <button className="start-btn">Start Game</button>
           </Link>
         </div>
-
+        
         <div className="game-card">
           <div className="card-header">
             <div className="card-icon">
               <FiTerminal size={32} />
             </div>
-            <h4>Command Line Challenge</h4>
+            <h4>Command Line</h4>
           </div>
-          <p className="card-description">
-            Test your knowledge of common terminal commands across different operating systems (Linux, Windows, macOS). Perfect for IT professionals!
-          </p>
+          <p className="card-description">Practice essential networking commands for different operating systems and network devices.</p>
           <Link to="/dashboard/command" onClick={handleGameSelect}>
-            <button className="start-btn">Start</button>
+            <button className="start-btn">Start Game</button>
+          </Link>
+        </div>
+
+        {/* New Game: Network Topology */}
+        <div className="game-card">
+          <div className="card-header">
+            <div className="card-icon">
+              <FiShare2 size={32} />
+            </div>
+            <h4>Network Topology</h4>
+          </div>
+          <p className="card-description">Build and analyze different network topologies. Learn about network design and optimization.</p>
+          <Link to="/dashboard/network-topology" onClick={handleGameSelect}>
+            <button className="start-btn">Start Game</button>
+          </Link>
+        </div>
+
+        {/* New Game: Firewall Rules */}
+        <div className="game-card">
+          <div className="card-header">
+            <div className="card-icon">
+              <FiShield size={32} />
+            </div>
+            <h4>Firewall Rules</h4>
+          </div>
+          <p className="card-description">Create and test firewall rule configurations. Learn about network security and access control.</p>
+          <Link to="/dashboard/firewall-rules" onClick={handleGameSelect}>
+            <button className="start-btn">Start Game</button>
+          </Link>
+        </div>
+
+        {/* New Game: Encryption Challenge */}
+        <div className="game-card">
+          <div className="card-header">
+            <div className="card-icon">
+              <FiLock size={32} />
+            </div>
+            <h4>Encryption Challenge</h4>
+          </div>
+          <p className="card-description">Learn about encryption techniques and protocols used in networking and cybersecurity.</p>
+          <Link to="/dashboard/encryption-challenge" onClick={handleGameSelect}>
+            <button className="start-btn">Start Game</button>
           </Link>
         </div>
       </div>

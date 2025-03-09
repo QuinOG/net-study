@@ -1,0 +1,423 @@
+/* Firewall Rules Game Styles */
+@import './GameModeCards.css';
+
+.firewall-rules-game {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Game Header */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progress, .timer, .score {
+  background-color: rgba(45, 55, 72, 0.5);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.timer {
+  color: #4299e1;
+}
+
+.score {
+  color: #48bb78;
+}
+
+/* Scenario Container */
+.scenario-container {
+  background-color: rgba(45, 55, 72, 0.3);
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.scenario-container h3 {
+  font-size: 1.3rem;
+  color: #e2e8f0;
+  margin-bottom: 0.75rem;
+}
+
+.scenario-container p {
+  color: #a0aec0;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.network-diagram {
+  max-width: 100%;
+  margin: 1.5rem 0;
+  background-color: rgba(45, 55, 72, 0.5);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.network-diagram img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+/* Requirements */
+.requirements {
+  background-color: rgba(45, 55, 72, 0.5);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.requirements h4 {
+  color: #e2e8f0;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.requirements ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.requirements li {
+  color: #a0aec0;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-left: 1.5rem;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.requirements li:last-child {
+  border-bottom: none;
+}
+
+.requirements li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #4299e1;
+}
+
+/* Firewall Rules */
+.firewall-rules {
+  margin-top: 2rem;
+}
+
+.firewall-rules h4 {
+  color: #e2e8f0;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.no-rules {
+  color: #a0aec0;
+  font-style: italic;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0 1.5rem;
+}
+
+.rules-table th {
+  text-align: left;
+  color: #e2e8f0;
+  padding: 0.75rem;
+  background-color: rgba(45, 55, 72, 0.7);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rules-table td {
+  padding: 0.75rem;
+  color: #a0aec0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.9rem;
+}
+
+.rules-table tr:hover td {
+  background-color: rgba(45, 55, 72, 0.4);
+}
+
+.remove-rule-btn {
+  background: none;
+  border: none;
+  color: #f56565;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.remove-rule-btn:hover {
+  background-color: rgba(245, 101, 101, 0.1);
+  transform: scale(1.1);
+}
+
+/* Add Rule Form */
+.add-rule-form {
+  background-color: rgba(45, 55, 72, 0.5);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.add-rule-form h4 {
+  color: #e2e8f0;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.rule-form-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.rule-form-controls select,
+.rule-form-controls input {
+  background-color: rgba(45, 55, 72, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.rule-form-controls select {
+  cursor: pointer;
+}
+
+.rule-form-controls input::placeholder {
+  color: rgba(160, 174, 192, 0.5);
+}
+
+.add-rule-btn {
+  background-color: #2b6cb0;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-rule-btn:hover {
+  background-color: #2c5282;
+}
+
+.submit-btn {
+  background-color: #2b6cb0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+  display: block;
+  margin-left: auto;
+}
+
+.submit-btn:hover {
+  background-color: #2c5282;
+}
+
+.submit-btn:disabled {
+  background-color: rgba(45, 55, 72, 0.5);
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Rule Comparison */
+.rule-comparison {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.user-rules,
+.expected-rules {
+  flex: 1;
+}
+
+.user-rules h5,
+.expected-rules h5 {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.user-rules ul,
+.expected-rules ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.user-rules li,
+.expected-rules li {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Light Mode */
+body.light-mode .game-header {
+  border-bottom-color: #e2e8f0;
+}
+
+body.light-mode .progress, 
+body.light-mode .timer, 
+body.light-mode .score {
+  background-color: #edf2f7;
+  color: #2d3748;
+}
+
+body.light-mode .timer {
+  color: #2b6cb0;
+}
+
+body.light-mode .score {
+  color: #2c7a7b;
+}
+
+body.light-mode .scenario-container {
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .scenario-container h3 {
+  color: #2d3748;
+}
+
+body.light-mode .scenario-container p {
+  color: #4a5568;
+}
+
+body.light-mode .network-diagram,
+body.light-mode .requirements,
+body.light-mode .add-rule-form {
+  background-color: #f7fafc;
+}
+
+body.light-mode .requirements h4,
+body.light-mode .firewall-rules h4,
+body.light-mode .add-rule-form h4 {
+  color: #2d3748;
+}
+
+body.light-mode .requirements li,
+body.light-mode .no-rules {
+  color: #4a5568;
+}
+
+body.light-mode .requirements li {
+  border-bottom-color: #e2e8f0;
+}
+
+body.light-mode .rules-table th {
+  background-color: #edf2f7;
+  color: #2d3748;
+}
+
+body.light-mode .rules-table td {
+  color: #4a5568;
+  border-bottom-color: #e2e8f0;
+}
+
+body.light-mode .rules-table tr:hover td {
+  background-color: #f7fafc;
+}
+
+body.light-mode .rule-form-controls select,
+body.light-mode .rule-form-controls input {
+  background-color: #fff;
+  border-color: #e2e8f0;
+  color: #2d3748;
+}
+
+body.light-mode .add-rule-btn,
+body.light-mode .submit-btn {
+  background-color: #3182ce;
+}
+
+body.light-mode .add-rule-btn:hover,
+body.light-mode .submit-btn:hover {
+  background-color: #2b6cb0;
+}
+
+body.light-mode .submit-btn:disabled {
+  background-color: #edf2f7;
+  color: #a0aec0;
+}
+
+body.light-mode .user-rules h5,
+body.light-mode .expected-rules h5 {
+  color: #2d3748;
+}
+
+body.light-mode .user-rules li,
+body.light-mode .expected-rules li {
+  color: #4a5568;
+  border-bottom-color: #e2e8f0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .firewall-rules-game {
+    padding: 1rem;
+  }
+  
+  .game-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .progress, .timer, .score {
+    width: 100%;
+  }
+  
+  .rule-form-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .rule-form-controls select,
+  .rule-form-controls input,
+  .add-rule-btn {
+    width: 100%;
+  }
+  
+  .rule-comparison {
+    flex-direction: column;
+  }
+  
+  .rules-table {
+    display: block;
+    overflow-x: auto;
+  }
+} 
