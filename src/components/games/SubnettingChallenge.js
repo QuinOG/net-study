@@ -4,6 +4,7 @@ import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import '../../styles/games/SubnettingChallenge.css';
+import '../../styles/games/GameModeCards.css';
 
 // Game modes
 const GAME_MODES = {
@@ -476,15 +477,18 @@ function SubnettingChallenge() {
                 </div>
               ))}
             </div>
-            <button 
-              className="back-button"
-              onClick={() => {
-                setShowDifficultySelect(false);
-                scrollToTop();
-              }}
-            >
-              Back to Game Modes
-            </button>
+            
+            <div className="nav-buttons">
+              <button 
+                className="back-button"
+                onClick={() => {
+                  setShowDifficultySelect(false);
+                  scrollToTop();
+                }}
+              >
+                ← Back to Mode Selection
+              </button>
+            </div>
           </div>
         </div>
       );
@@ -559,6 +563,15 @@ function SubnettingChallenge() {
               </ul>
             </div>
           </div>
+        </div>
+        
+        <div className="nav-buttons">
+          <button 
+            className="back-button"
+            onClick={() => navigate('/dashboard')}
+          >
+            ← Back to Dashboard
+          </button>
         </div>
       </div>
     );

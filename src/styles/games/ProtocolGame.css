@@ -25,55 +25,11 @@
   margin-bottom: 2rem;
 }
 
-.game-modes {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.game-mode-card {
-  background-color: rgba(45, 55, 72, 0.7);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-
-.game-mode-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
-}
-
-.game-mode-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+.game-setup h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
   color: #f7fafc;
-}
-
-.game-mode-card p {
-  margin-bottom: 1rem;
-  color: #cbd5e0;
-}
-
-.game-mode-card ul {
-  list-style-type: none;
-  padding-left: 1rem;
-}
-
-.game-mode-card li {
-  margin-bottom: 0.5rem;
-  color: #a0aec0;
-  position: relative;
-}
-
-.game-mode-card li::before {
-  content: "•";
-  position: absolute;
-  left: -1rem;
-  color: #4299e1;
+  font-size: 1.8rem;
 }
 
 .difficulty-select {
@@ -522,92 +478,14 @@
   color: #a0aec0;
 }
 
-/* Game Setup */
-.protocol-game .game-setup {
-  margin-bottom: 2rem;
-}
-
-.protocol-game .game-setup h3 {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #f7fafc;
-  font-size: 1.8rem;
-}
-
-/* Game Modes */
-.protocol-game .game-modes {
+/* Back Buttons */
+.protocol-game .nav-buttons {
   display: flex;
-  flex-direction: row;
-  gap: 1.2rem;
-  margin: 0 auto;
+  justify-content: center;
+  margin-top: 2.5rem;
+  width: 100%;
 }
 
-.protocol-game .game-mode-card {
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Updated Difficulty Card styles */
-.protocol-game .difficulty-card {
-  background-color: rgba(45, 55, 72, 0.7);
-  border-radius: 12px;
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-}
-
-.protocol-game .difficulty-card[data-difficulty="EASY"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
-  background-color: rgba(72, 187, 120, 0.2);
-}
-
-.protocol-game .difficulty-card[data-difficulty="MEDIUM"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
-  background-color: rgba(237, 137, 54, 0.2);
-}
-
-.protocol-game .difficulty-card[data-difficulty="HARD"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(245, 101, 101, 0.4);
-  background-color: rgba(245, 101, 101, 0.2);
-}
-
-.protocol-game .difficulty-card h4 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #f7fafc;
-}
-
-.protocol-game .difficulty-card ul {
-  list-style-type: none;
-  padding-left: 1rem;
-}
-
-.protocol-game .difficulty-card li {
-  margin-bottom: 0.5rem;
-  color: #a0aec0;
-  position: relative;
-}
-
-.protocol-game .difficulty-card li::before {
-  content: "•";
-  position: absolute;
-  left: -1rem;
-  color: #4299e1;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .protocol-game .game-modes {
-    flex-direction: column;
-  }
-  
-  .protocol-game .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.protocol-game .nav-buttons .back-button {
+  margin: 0;
 } 

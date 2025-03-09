@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
+import RewardAnimation from '../ui/RewardAnimation';
 import '../../styles/games/CommandLineChallenge.css';
+import '../../styles/games/GameModeCards.css';
 
 // Command line commands and their descriptions for different operating systems
 const COMMAND_DATA = {
@@ -284,7 +286,7 @@ const DIFFICULTY_LEVELS = {
 
 function CommandLineChallenge() {
   const navigate = useNavigate();
-  const { userStats, addXP, updateStats } = useContext(UserContext);
+  const { userStats, addXP, updateGameStats } = useContext(UserContext);
   const timerRef = useRef(null);
   
   // Game state
@@ -295,6 +297,7 @@ function CommandLineChallenge() {
   const [userAnswer, setUserAnswer] = useState('');
   const [score, setScore] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [totalAttempts, setTotalAttempts] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [startTime, setStartTime] = useState(null);
@@ -317,6 +320,8 @@ function CommandLineChallenge() {
   const [isCorrect, setIsCorrect] = useState(null);
   const [osFilter, setOsFilter] = useState(null);
   const [showExamples, setShowExamples] = useState(false);
+  const [showReward, setShowReward] = useState(false);
+  const [rewardText, setRewardText] = useState('');
 
   // Load game stats from context
   useEffect(() => {
@@ -443,6 +448,7 @@ function CommandLineChallenge() {
     if (isCorrect !== null) return; // Prevent multiple submissions
     
     setUserAnswer(selectedAnswer);
+    setTotalAttempts(prev => prev + 1);
     
     if (selectedAnswer === currentQuestion.answer) {
       handleCorrectAnswer();
@@ -560,18 +566,23 @@ function CommandLineChallenge() {
 
   // Initialize game with selected mode and difficulty
   const initializeGame = (mode, diff) => {
-    // Set basic game state
+    // Reset game state
+    setGameStarted(true);
     setGameMode(mode);
     setDifficulty(diff);
-    setShowDifficultySelect(false);
     setScore(0);
     setCorrectAnswers(0);
+    setTotalAttempts(0);
     setCurrentStreak(0);
     setTimeRemaining(DIFFICULTY_LEVELS[diff].timeLimit);
     setStartTime(Date.now());
     setShowGameOver(false);
+    setUserAnswer('');
     setIsCorrect(null);
-    setFeedback({ show: false, message: '', isCorrect: null });
+    setShowExamples(false);
+    
+    // Set basic game state
+    setShowDifficultySelect(false);
     setPowerUps({
       timeFreeze: 2,
       osReveal: 2,
@@ -586,8 +597,6 @@ function CommandLineChallenge() {
     // Generate the first question
     try {
       generateQuestion();
-      // Only set gameStarted to true after successfully generating a question
-      setGameStarted(true);
       SoundManager.play('gameStart');
       scrollToTop();
     } catch (error) {
@@ -597,32 +606,46 @@ function CommandLineChallenge() {
     }
   };
 
-  // End the game
+  // End the game and update stats
   const endGame = () => {
-    setGameStarted(false);
-    setShowGameOver(true);
-    
-    // Calculate XP earned
-    const xpMultiplier = difficulty === 'EASY' ? 1 : difficulty === 'MEDIUM' ? 1.5 : 2;
-    const xpEarned = Math.floor(score * xpMultiplier);
+    // Clear interval
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     
     // Update game stats
-    const updatedStats = {
+    const newStats = {
       ...gameStats,
       bestScore: Math.max(gameStats.bestScore, score),
       bestStreak: Math.max(gameStats.bestStreak, currentStreak),
       gamesPlayed: gameStats.gamesPlayed + 1,
-      totalAttempts: gameStats.totalAttempts + correctAnswers + (currentQuestion ? 1 : 0),
+      totalAttempts: gameStats.totalAttempts + totalAttempts,
       correctAnswers: gameStats.correctAnswers + correctAnswers
     };
     
-    setGameStats(updatedStats);
+    setGameStats(newStats);
     
-    // Update user context with new stats and XP
-    updateStats('commandLine', updatedStats);
-    addXP(xpEarned);
+    // Save stats to context
+    updateGameStats('commandLine', {
+      bestScore: newStats.bestScore,
+      bestStreak: newStats.bestStreak,
+      gamesPlayed: newStats.gamesPlayed,
+      correctAnswers: newStats.correctAnswers,
+      totalAttempts: newStats.totalAttempts
+    });
     
-    SoundManager.play('gameOver');
+    // Award XP
+    const xpEarned = Math.round(score * 0.15);
+    if (xpEarned > 0) {
+      addXP(xpEarned);
+      setRewardText(`+${xpEarned} XP`);
+      setShowReward(true);
+      SoundManager.play('reward');
+    }
+    
+    // Show game over screen
+    setShowGameOver(true);
   };
 
   // Return to home
@@ -704,6 +727,7 @@ function CommandLineChallenge() {
                 <li>Limited time</li>
                 <li>Penalties for wrong answers</li>
                 <li>Score multipliers for streaks</li>
+                <li>Challenge yourself</li>
               </ul>
             </div>
             
@@ -717,17 +741,20 @@ function CommandLineChallenge() {
                 <li>Unlimited time</li>
                 <li>Detailed explanations</li>
                 <li>Focus on learning</li>
+                <li>Great for beginners</li>
               </ul>
             </div>
           </div>
         </div>
         
-        <button 
-          className="back-button"
-          onClick={handleBack}
-        >
-          ← Back to Dashboard
-        </button>
+        <div className="nav-buttons">
+          <button 
+            className="back-button"
+            onClick={handleBack}
+          >
+            ← Back to Dashboard
+          </button>
+        </div>
       </div>
     );
   }
@@ -750,6 +777,7 @@ function CommandLineChallenge() {
                 <li>60 second time limit</li>
                 <li>Category hints available</li>
                 <li>Small time penalty</li>
+                <li>1x score multiplier</li>
               </ul>
             </div>
             
@@ -763,6 +791,7 @@ function CommandLineChallenge() {
                 <li>45 second time limit</li>
                 <li>No hints</li>
                 <li>Moderate time penalty</li>
+                <li>1.5x score multiplier</li>
               </ul>
             </div>
             
@@ -776,6 +805,7 @@ function CommandLineChallenge() {
                 <li>30 second time limit</li>
                 <li>No hints</li>
                 <li>Severe time penalty</li>
+                <li>2x score multiplier</li>
               </ul>
             </div>
           </div>
@@ -810,12 +840,14 @@ function CommandLineChallenge() {
             </div>
           </div>
           
-          <button 
-            className="back-button"
-            onClick={() => setShowDifficultySelect(false)}
-          >
-            Back to Mode Selection
-          </button>
+          <div className="nav-buttons">
+            <button 
+              className="back-button"
+              onClick={() => setShowDifficultySelect(false)}
+            >
+              ← Back to Mode Selection
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -827,6 +859,7 @@ function CommandLineChallenge() {
     
     return (
       <div className="command-line-game">
+        {showReward && <RewardAnimation text={rewardText} onComplete={() => setShowReward(false)} />}
         <div className="game-over-stats">
           <h2>{isNewHighScore ? '🏆 New High Score! 🏆' : 'Game Over'}</h2>
           
@@ -841,11 +874,11 @@ function CommandLineChallenge() {
             </div>
             <div className="stat-item">
               <span className="stat-label">Best Streak</span>
-              <span className="stat-value">{currentStreak}</span>
+              <span className="stat-value">{Math.max(currentStreak, gameStats.bestStreak)}</span>
             </div>
             <div className="stat-item">
               <span className="stat-label">XP Earned</span>
-              <span className="stat-value">{Math.round(score * (difficulty === 'EASY' ? 0.1 : difficulty === 'MEDIUM' ? 0.15 : 0.2))}</span>
+              <span className="stat-value">{Math.round(score * 0.15)}</span>
             </div>
           </div>
           
@@ -859,9 +892,8 @@ function CommandLineChallenge() {
             <button 
               className="home-btn"
               onClick={() => {
-                setGameStarted(false);
-                setGameMode(null);
                 setShowGameOver(false);
+                setGameStarted(false);
                 scrollToTop();
               }}
             >
@@ -876,6 +908,7 @@ function CommandLineChallenge() {
   // Rendering main game interface
   return (
     <div className="command-line-game">
+      {showReward && <RewardAnimation text={rewardText} onComplete={() => setShowReward(false)} />}
       <div className="game-header">
         <div className="game-info">
           <div className="mode-indicator">
@@ -941,13 +974,22 @@ function CommandLineChallenge() {
               <span className="hint-text">Category: {currentQuestion.category}</span>
             </div>
           )}
+          
+          {gameMode === GAME_MODES.TIME_ATTACK && (
+            <div className="timer-bar-container">
+              <div 
+                className={`timer-bar ${timeRemaining < 10 ? 'urgent' : ''}`} 
+                style={{width: `${(timeRemaining / DIFFICULTY_LEVELS[difficulty].timeLimit) * 100}%`}}
+              ></div>
+            </div>
+          )}
         </div>
         
-        <div className="options-container">
+        <div className="answer-options">
           {options.map((option, index) => (
             <button
               key={index}
-              className={`option-button ${userAnswer === option ? (isCorrect === true ? 'correct' : isCorrect === false ? 'incorrect' : '') : ''} ${isCorrect !== null && option === currentQuestion.answer ? 'correct' : ''}`}
+              className={`answer-option ${userAnswer === option ? (isCorrect === true ? 'correct' : isCorrect === false ? 'incorrect' : '') : ''} ${isCorrect !== null && option === currentQuestion.answer ? 'correct' : ''}`}
               onClick={() => handleAnswer(option)}
               disabled={isCorrect !== null}
             >
@@ -968,21 +1010,40 @@ function CommandLineChallenge() {
             </ul>
           </div>
         )}
+        
+        {currentStreak >= 3 && (
+          <div className="combo-display">
+            <span>Combo: <span className="combo-count">{currentStreak}</span></span>
+            <span>Multiplier: <span className="multiplier">x{(1 + (currentStreak * 0.1)).toFixed(1)}</span></span>
+          </div>
+        )}
       </div>
       
-      <button 
-        className="back-button quit-button"
-        onClick={() => {
-          SoundManager.play('click');
-          if (window.confirm('Are you sure you want to quit? Your progress will be lost.')) {
-            setGameStarted(false);
-            setGameMode(null);
-            navigate('/dashboard');
-          }
-        }}
-      >
-        Quit Game
-      </button>
+      {/* Back to menu and End Game buttons */}
+      <div style={{ marginTop: '2rem', textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+        {gameMode === GAME_MODES.PRACTICE ? (
+          <button 
+            className="restart-btn"
+            onClick={() => endGame()}
+          >
+            End Game & Collect XP
+          </button>
+        ) : (
+          <button 
+            className="back-button"
+            onClick={() => {
+              if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+              }
+              setGameStarted(false);
+              scrollToTop();
+            }}
+          >
+            Back to Menu
+          </button>
+        )}
+      </div>
     </div>
   );
 }

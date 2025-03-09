@@ -34,60 +34,6 @@
   font-size: 1.8rem;
 }
 
-.command-line-game .game-modes {
-  display: flex;
-  flex-direction: row;
-  gap: 1.2rem;
-  margin: 0 auto;
-}
-
-.command-line-game .game-mode-card {
-  flex: 1;
-  background-color: rgba(45, 55, 72, 0.7);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.command-line-game .game-mode-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
-}
-
-.command-line-game .game-mode-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #f7fafc;
-}
-
-.command-line-game .game-mode-card p {
-  margin-bottom: 1rem;
-  color: #cbd5e0;
-}
-
-.command-line-game .game-mode-card ul {
-  list-style-type: none;
-  padding-left: 1rem;
-}
-
-.command-line-game .game-mode-card li {
-  margin-bottom: 0.5rem;
-  color: #a0aec0;
-  position: relative;
-}
-
-.command-line-game .game-mode-card li::before {
-  content: "•";
-  position: absolute;
-  left: -1rem;
-  color: #4299e1;
-}
-
 /* Stats Container */
 .command-line-game .stats-container {
   background-color: rgba(45, 55, 72, 0.7);
@@ -456,36 +402,6 @@
   color: #feb2b2;
 }
 
-.command-line-game .examples-container {
-  background-color: rgba(26, 32, 44, 0.5);
-  border-radius: 8px;
-  padding: 1.5rem;
-  border-left: 4px solid #4299e1;
-}
-
-.command-line-game .examples-container h4 {
-  color: #e2e8f0;
-  margin-bottom: 1rem;
-}
-
-.command-line-game .examples-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.command-line-game .example-item {
-  margin-bottom: 0.8rem;
-}
-
-.command-line-game .example-item code {
-  background-color: #1a202c;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
-  font-family: 'Courier New', monospace;
-  color: #a0aec0;
-  font-size: 0.95rem;
-}
-
 /* Game Over Screen */
 .command-line-game .game-over-stats {
   background-color: rgba(45, 55, 72, 0.7);
@@ -526,35 +442,35 @@
   gap: 1.5rem;
 }
 
-.command-line-game .restart-btn,
-.command-line-game .home-btn {
-  padding: 0.8rem 2rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
+.restart-btn, .home-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.command-line-game .restart-btn {
-  background-color: #4299e1;
-  color: #fff;
-}
-
-.command-line-game .restart-btn:hover {
+.restart-btn {
   background-color: #3182ce;
-  transform: translateY(-2px);
+  color: white;
+  border: none;
 }
 
-.command-line-game .home-btn {
-  background-color: #4a5568;
+.restart-btn:hover {
+  background-color: #2c5282;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(49, 130, 206, 0.4);
+}
+
+.home-btn {
+  background-color: transparent;
+  color: #a0aec0;
+  border: 1px solid #4a5568;
+}
+
+.home-btn:hover {
+  background-color: rgba(74, 85, 104, 0.3);
   color: #e2e8f0;
-}
-
-.command-line-game .home-btn:hover {
-  background-color: #2d3748;
-  transform: translateY(-2px);
 }
 
 /* Responsive Adjustments */
@@ -587,11 +503,164 @@
     gap: 1rem;
   }
   
-  .command-line-game .game-modes {
-    flex-direction: column;
-  }
-  
   .command-line-game .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* Back Buttons */
+.command-line-game .nav-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  width: 100%;
+}
+
+.command-line-game .nav-buttons .back-button {
+  margin: 0;
+}
+
+/* Timer Bar */
+.command-line-game .timer-bar-container {
+  width: 100%;
+  height: 0.5rem;
+  background-color: rgba(45, 55, 72, 0.5);
+  border-radius: 999px;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+
+.command-line-game .timer-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3182ce 0%, #4299e1 100%);
+  border-radius: 999px;
+  transition: width 0.1s linear;
+}
+
+.command-line-game .timer-bar.urgent {
+  background: linear-gradient(90deg, #ed8936 0%, #f56565 100%);
+}
+
+/* Answer Options */
+.command-line-game .answer-options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.command-line-game .answer-option {
+  background-color: rgba(45, 55, 72, 0.7);
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  color: #f7fafc;
+  font-size: 1.1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.command-line-game .answer-option:hover:not(:disabled) {
+  background-color: rgba(66, 153, 225, 0.2);
+  border-color: #4299e1;
+  transform: translateY(-2px);
+}
+
+.command-line-game .answer-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.command-line-game .answer-option.correct {
+  background-color: rgba(72, 187, 120, 0.2);
+  border-color: #48bb78;
+}
+
+.command-line-game .answer-option.incorrect {
+  background-color: rgba(245, 101, 101, 0.2);
+  border-color: #f56565;
+}
+
+/* Combo Display */
+.command-line-game .combo-display {
+  background-color: rgba(26, 32, 44, 0.7);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.command-line-game .combo-count {
+  color: #f6e05e;
+}
+
+.command-line-game .multiplier {
+  color: #48bb78;
+}
+
+/* OS Filters */
+.command-line-game .os-filters {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.command-line-game .os-button {
+  background-color: rgba(45, 55, 72, 0.7);
+  border: 1px solid #4a5568;
+  color: #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.command-line-game .os-button:hover {
+  background-color: rgba(66, 153, 225, 0.2);
+  border-color: #4299e1;
+}
+
+.command-line-game .os-button.active {
+  background-color: rgba(66, 153, 225, 0.3);
+  border-color: #4299e1;
+  color: #63b3ed;
+}
+
+/* Examples display */
+.command-line-game .examples-container {
+  margin-top: 2rem;
+  background-color: rgba(26, 32, 44, 0.8);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border-left: 4px solid #4299e1;
+}
+
+.command-line-game .examples-container h4 {
+  margin-bottom: 1rem;
+  color: #f7fafc;
+}
+
+.command-line-game .examples-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.command-line-game .example-item {
+  margin-bottom: 0.8rem;
+  font-family: 'Courier New', monospace;
+  background-color: rgba(45, 55, 72, 0.5);
+  padding: 0.6rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.command-line-game .example-item code {
+  color: #63b3ed;
 } 

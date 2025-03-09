@@ -82,73 +82,6 @@
   font-size: 1.8rem;
 }
 
-/* Game Modes */
-.subnetting-game .game-modes {
-  display: flex;
-  flex-direction: row;
-  gap: 1.2rem;
-  margin: 0 auto;
-}
-
-.subnetting-game .game-mode-card {
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Updated Difficulty Card styles */
-.subnetting-game .difficulty-card {
-  background-color: rgba(45, 55, 72, 0.7);
-  border-radius: 12px;
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-}
-
-.subnetting-game .difficulty-card[data-difficulty="EASY"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
-  background-color: rgba(72, 187, 120, 0.2);
-}
-
-.subnetting-game .difficulty-card[data-difficulty="MEDIUM"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
-  background-color: rgba(237, 137, 54, 0.2);
-}
-
-.subnetting-game .difficulty-card[data-difficulty="HARD"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(245, 101, 101, 0.4);
-  background-color: rgba(245, 101, 101, 0.2);
-}
-
-.subnetting-game .difficulty-card h4 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #f7fafc;
-}
-
-.subnetting-game .difficulty-card ul {
-  list-style-type: none;
-  padding-left: 1rem;
-}
-
-.subnetting-game .difficulty-card li {
-  margin-bottom: 0.5rem;
-  color: #a0aec0;
-  position: relative;
-}
-
-.subnetting-game .difficulty-card li::before {
-  content: "•";
-  position: absolute;
-  left: -1rem;
-  color: #4299e1;
-}
-
 /* Difficulty Selection */
 .difficulty-select {
   display: flex;
@@ -367,6 +300,20 @@
   .subnet-forms {
     grid-template-columns: 1fr;
   }
+  .game-modes {
+    flex-direction: column;
+    max-width: 600px;
+    padding: 0 1rem;
+  }
+  
+  .game-mode-card {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .subnetting-game .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .subnet-input-group {
@@ -544,10 +491,28 @@
   }
   
   .subnetting-game .game-modes {
-    flex-direction: column;
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  
+  .subnetting-game .game-mode-card {
+    min-width: unset;
+    padding: 1.5rem;
   }
   
   .subnetting-game .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* Back Buttons */
+.subnetting-game .nav-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  width: 100%;
+}
+
+.subnetting-game .nav-buttons .back-button {
+  margin: 0;
 } 

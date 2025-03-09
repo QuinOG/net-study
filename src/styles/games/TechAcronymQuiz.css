@@ -82,21 +82,6 @@
   font-size: 1.8rem;
 }
 
-/* Game Modes */
-.acronym-game .game-modes {
-  display: flex;
-  flex-direction: row;
-  gap: 1.2rem;
-  margin: 0 auto;
-}
-
-.acronym-game .game-mode-card {
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 /* Updated Difficulty Card styles */
 .acronym-game .difficulty-card {
   background-color: rgba(45, 55, 72, 0.7);
@@ -151,10 +136,6 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .acronym-game .game-modes {
-    flex-direction: column;
-  }
-  
   .acronym-game .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -558,4 +539,16 @@
     flex: 1;
     justify-content: center;
   }
+}
+
+/* Back Buttons */
+.acronym-game .nav-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  width: 100%;
+}
+
+.acronym-game .nav-buttons .back-button {
+  margin: 0;
 } 

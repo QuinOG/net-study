@@ -1,0 +1,96 @@
+/* Common Game Mode Card Styles */
+.game-modes {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 0 1rem;
+}
+
+.game-mode-card {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(45, 55, 72, 0.7);
+  border-radius: 12px;
+  padding: 1.8rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.game-mode-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
+}
+
+.game-mode-card h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #f7fafc;
+  text-align: center;
+}
+
+.game-mode-card p {
+  margin-bottom: 1.5rem;
+  color: #cbd5e0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.game-mode-card ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 1rem;
+}
+
+.game-mode-card li {
+  margin-bottom: 0.3rem;
+  padding-left: 1.5rem;
+  position: relative;
+  color: #a0aec0;
+  line-height: 1.3;
+}
+
+.game-mode-card li::before {
+  content: "•";
+  position: absolute;
+  left: 0.5rem;
+  color: #4299e1;
+}
+
+/* Game-specific overrides - ensure consistent layout */
+.command-line-game .game-modes,
+.port-game .game-modes,
+.protocol-game .game-modes,
+.subnetting-game .game-modes,
+.acronym-game .game-modes {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 0 1rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .game-modes,
+  .command-line-game .game-modes,
+  .port-game .game-modes,
+  .protocol-game .game-modes,
+  .subnetting-game .game-modes,
+  .acronym-game .game-modes {
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 600px;
+    padding: 0 1rem;
+  }
+  
+  .game-mode-card {
+    width: 100%;
+    min-width: unset;
+  }
+} 

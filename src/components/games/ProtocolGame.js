@@ -4,6 +4,7 @@ import SoundManager from '../../utils/SoundManager';
 import { UserContext } from '../../context/UserContext';
 import scrollToTop from '../../utils/ScrollHelper';
 import '../../styles/games/ProtocolGame.css';
+import '../../styles/games/GameModeCards.css';
 
 // Use the exact same port dictionary as in PortGame.js
 const PORT_DATA = {
@@ -357,15 +358,18 @@ function ProtocolGame() {
                 </div>
               ))}
             </div>
-            <button 
-              className="back-button"
-              onClick={() => {
-                setShowDifficultySelect(false);
-                scrollToTop();
-              }}
-            >
-              Back to Game Modes
-            </button>
+            
+            <div className="nav-buttons">
+              <button 
+                className="back-button"
+                onClick={() => {
+                  setShowDifficultySelect(false);
+                  scrollToTop();
+                }}
+              >
+                ← Back to Mode Selection
+              </button>
+            </div>
           </div>
         </div>
       );
@@ -439,6 +443,15 @@ function ProtocolGame() {
               </ul>
             </div>
           </div>
+        </div>
+        
+        <div className="nav-buttons">
+          <button 
+            className="back-button"
+            onClick={() => navigate('/dashboard')}
+          >
+            ← Back to Dashboard
+          </button>
         </div>
       </div>
     );

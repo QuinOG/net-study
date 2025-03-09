@@ -4,6 +4,7 @@ import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import '../../styles/games/PortGame.css';
+import '../../styles/games/GameModeCards.css';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {
@@ -415,7 +416,7 @@ function PortGame() {
                   data-difficulty={key}
                   onClick={() => {
                     initializeGame(GAME_MODES.TIME_ATTACK, key);
-                    scrollToTop(); // Scroll to top when starting the game
+                    scrollToTop();
                   }}
                 >
                   <h4>{value.name}</h4>
@@ -428,15 +429,18 @@ function PortGame() {
                 </div>
               ))}
             </div>
-            <button 
-              className="back-button"
-              onClick={() => {
-                setShowDifficultySelect(false);
-                scrollToTop(); // Scroll to top when going back
-              }}
-            >
-              Back to Game Modes
-            </button>
+            
+            <div className="nav-buttons">
+              <button 
+                className="back-button"
+                onClick={() => {
+                  setShowDifficultySelect(false);
+                  scrollToTop();
+                }}
+              >
+                ← Back to Mode Selection
+              </button>
+            </div>
           </div>
         </div>
       );
@@ -448,7 +452,7 @@ function PortGame() {
         <p className="game-description">
           Test your knowledge of network port numbers and which protocols use them.
         </p>
-
+        
         <div className="stats-container">
           <h3>Your Stats</h3>
           <div className="stats-grid">
@@ -474,7 +478,7 @@ function PortGame() {
             </div>
           </div>
         </div>
-
+        
         <div className="game-setup">
           <h3>Select Game Mode</h3>
           <div className="game-modes">
@@ -482,7 +486,7 @@ function PortGame() {
               className="game-mode-card"
               onClick={() => {
                 setShowDifficultySelect(true);
-                scrollToTop(); // Scroll to top when showing difficulty select
+                scrollToTop();
               }}
             >
               <h3>Time Attack</h3>
@@ -494,12 +498,12 @@ function PortGame() {
                 <li>Score based on speed and accuracy</li>
               </ul>
             </div>
-
+            
             <div 
               className="game-mode-card"
               onClick={() => {
                 initializeGame(GAME_MODES.PRACTICE, 'EASY');
-                scrollToTop(); // Scroll to top when starting practice mode
+                scrollToTop();
               }}
             >
               <h3>Practice Mode</h3>
@@ -512,6 +516,15 @@ function PortGame() {
               </ul>
             </div>
           </div>
+        </div>
+        
+        <div className="nav-buttons">
+          <button 
+            className="back-button"
+            onClick={() => navigate('/dashboard')}
+          >
+            ← Back to Dashboard
+          </button>
         </div>
       </div>
     );

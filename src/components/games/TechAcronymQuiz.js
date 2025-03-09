@@ -4,6 +4,7 @@ import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import '../../styles/games/TechAcronymQuiz.css';
+import '../../styles/games/GameModeCards.css';
 
 // Organize acronyms by category
 const ACRONYM_CATEGORIES = {
@@ -1569,15 +1570,18 @@ function TechAcronymQuiz() {
                 <p>Mix of acronyms from all categories</p>
               </div>
             </div>
-            <button 
-              className="back-button"
-              onClick={() => {
-                setShowCategorySelect(false);
-                scrollToTop();
-              }}
-            >
-              Back to Game Modes
-            </button>
+            
+            <div className="nav-buttons">
+              <button 
+                className="back-button"
+                onClick={() => {
+                  setShowCategorySelect(false);
+                  scrollToTop();
+                }}
+              >
+                ← Back to Mode Selection
+              </button>
+            </div>
           </div>
         </div>
       );
@@ -1609,16 +1613,19 @@ function TechAcronymQuiz() {
                 </div>
               ))}
             </div>
-            <button 
-              className="back-button"
-              onClick={() => {
-                setShowDifficultySelect(false);
-                setShowCategorySelect(true);
-                scrollToTop();
-              }}
-            >
-              Back to Categories
-            </button>
+            
+            <div className="nav-buttons">
+              <button 
+                className="back-button"
+                onClick={() => {
+                  setShowDifficultySelect(false);
+                  setShowCategorySelect(true);
+                  scrollToTop();
+                }}
+              >
+                ← Back to Categories
+              </button>
+            </div>
           </div>
         </div>
       );
@@ -1695,6 +1702,15 @@ function TechAcronymQuiz() {
               </ul>
             </div>
           </div>
+        </div>
+        
+        <div className="nav-buttons">
+          <button 
+            className="back-button"
+            onClick={() => navigate('/dashboard')}
+          >
+            ← Back to Dashboard
+          </button>
         </div>
       </div>
     );
