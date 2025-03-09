@@ -4,9 +4,11 @@ import '../../styles/games/FirewallRulesGame.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeCard from '../ui/GameModeCard';
 import SoundManager from '../../utils/SoundManager';
+import { useNavigate } from 'react-router-dom';
 
 function FirewallRulesGame() {
   const { addXP } = useContext(UserContext);
+  const navigate = useNavigate();
   const [gameState, setGameState] = useState('setup'); // 'setup', 'playing', 'results'
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
   const [selectedMode, setSelectedMode] = useState(null);
@@ -192,42 +194,84 @@ function FirewallRulesGame() {
   return (
     <div className="game-interface firewall-rules-game">
       {gameState === 'setup' && !selectedMode && (
-        <div className="game-setup">
-          <h3>Firewall Rules Challenge</h3>
-          <div className="game-modes">
-            {gameModes.map(mode => (
-              <GameModeCard 
-                key={mode.id}
-                title={mode.title}
-                description={mode.description}
-                icon={mode.icon}
-                onClick={() => handleModeSelect(mode.id)}
-              />
-            ))}
+        <>
+          <h3 className="game-title">Firewall Rules Challenge</h3>
+          <p className="game-description">Test your knowledge of firewall rules and network security.</p>
+          
+          <div className="stats-container">
+            <h3>Your Stats</h3>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Best Score</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Scenarios Completed</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Games Played</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0%</span>
+                <span className="stat-label">Success Rate</span>
+              </div>
+            </div>
           </div>
-        </div>
+        
+          <div className="game-setup">
+            <h3>Select Game Mode</h3>
+            <div className="game-modes">
+              {gameModes.map(mode => (
+                <GameModeCard 
+                  key={mode.id}
+                  title={mode.title}
+                  description={mode.description}
+                  icon={mode.icon}
+                  onClick={() => handleModeSelect(mode.id)}
+                />
+              ))}
+            </div>
+          </div>
+          
+          <div className="nav-buttons">
+            <button 
+              className="back-btn"
+              onClick={() => navigate('/dashboard')}
+            >
+              ← Back to Dashboard
+            </button>
+          </div>
+        </>
       )}
       
       {gameState === 'setup' && selectedMode && (
         <div className="game-setup">
           <h3>Select Difficulty</h3>
           <div className="difficulty-select">
-            {difficulties.map(difficulty => (
-              <button 
-                key={difficulty.id} 
-                className="difficulty-btn"
-                onClick={() => handleDifficultySelect(difficulty.id)}
-              >
-                {difficulty.label}
-                <small>
-                  {difficulty.scenarios} scenarios, {Math.floor(difficulty.timeLimit / 60)}:{(difficulty.timeLimit % 60).toString().padStart(2, '0')} minutes
-                </small>
-              </button>
-            ))}
+            <div className="difficulty-cards">
+              {difficulties.map(difficulty => (
+                <button 
+                  key={difficulty.id} 
+                  className="difficulty-card"
+                  onClick={() => handleDifficultySelect(difficulty.id)}
+                >
+                  <h4>{difficulty.label}</h4>
+                  <ul>
+                    <li>{difficulty.scenarios} scenarios</li>
+                    <li>{Math.floor(difficulty.timeLimit / 60)}:{(difficulty.timeLimit % 60).toString().padStart(2, '0')} minutes time limit</li>
+                    {difficulty.id === 'easy' && <li>Basic firewall configurations</li>}
+                    {difficulty.id === 'medium' && <li>Intermediate security concepts</li>}
+                    {difficulty.id === 'hard' && <li>Advanced firewall policies</li>}
+                  </ul>
+                </button>
+              ))}
+            </div>
+            <button className="back-btn" onClick={() => setSelectedMode(null)}>
+              ← Back to Modes
+            </button>
           </div>
-          <button className="back-btn" onClick={() => setSelectedMode(null)}>
-            Back to Modes
-          </button>
         </div>
       )}
       

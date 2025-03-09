@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './styles/layout/App.css';
 import logo from './assets/images/netquest.png';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode, FiChevronRight, FiTrendingUp, FiTarget, FiAward, FiFlag, FiArrowRight, FiMenu, FiShare2, FiShield, FiLock } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 import PortGame from './components/games/PortGame';
@@ -26,21 +26,24 @@ import RewardAnimation from './components/ui/RewardAnimation';
 import DailyChallenge from './components/ui/DailyChallenge';
 import Leaderboard from './components/ui/Leaderboard';
 import SoundManager from './utils/SoundManager';
+import { defaultUserStats } from './utils/GuestUser';
 
 function AppContent() {
-  const { userStats, showReward, rewardXP, handleRewardComplete } = useContext(UserContext);
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // For demo purposes
+  const { user, userStats, loading, showReward, rewardXP, handleRewardComplete } = useContext(UserContext);
   
-  // If you want to implement real authentication:
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // const login = () => setIsAuthenticated(true);
-  // const logout = () => setIsAuthenticated(false);
+  // Determine if user is authenticated or a guest
+  const isAuthenticated = !!user;
+  
+  // If still loading, show a loading indicator
+  if (loading) {
+    return <div className="loading-container">Loading...</div>;
+  }
   
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
       
-      {/* Protected routes - wrap in authentication check */}
+      {/* Dashboard routes - accessible by both authenticated and guest users */}
       <Route path="/dashboard/*" element={
         isAuthenticated ? (
           <div className="app-container">
@@ -61,7 +64,7 @@ function AppContent() {
                 <Route path="/achievements" element={
                   <div className="content">
                     <h3 className="section-title">Your Achievements</h3>
-                    <AchievementSystem userStats={userStats} />
+                    <AchievementSystem userStats={userStats || defaultUserStats} />
                   </div>
                 } />
                 <Route path="/stats" element={
@@ -74,11 +77,7 @@ function AppContent() {
             </div>
             
             {showReward && (
-              <RewardAnimation 
-                xpGained={rewardXP} 
-                show={showReward} 
-                onComplete={handleRewardComplete} 
-              />
+              <RewardAnimation xp={rewardXP} onComplete={handleRewardComplete} />
             )}
           </div>
         ) : (
@@ -115,6 +114,7 @@ function App() {
 
 function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isGuest, logout } = useContext(UserContext);
   
   const toggleMobileMenu = () => {
     const sidebar = document.querySelector('.sidebar');
@@ -148,18 +148,33 @@ function Header() {
         </Link>
       </div>
       <div className="top-bar-right">
+        {isGuest && (
+          <div className="guest-indicator">
+            Guest Mode
+            <Link to="/" className="login-prompt">
+              Sign in to save progress
+            </Link>
+          </div>
+        )}
         <img
           className="user-avatar"
-          src="https://www.pngkey.com/png/full/159-1593637_photo-angry-face-meme.png"
+          src={isGuest 
+            ? "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png" 
+            : "https://www.pngkey.com/png/full/159-1593637_photo-angry-face-meme.png"}
           alt="User Avatar"
         />
+        {user && (
+          <button className="logout-button" onClick={logout}>
+            Logout
+          </button>
+        )}
       </div>
     </header>
   );
 }
 
 function Home() {
-  const { userStats } = useContext(UserContext);
+  const { userStats, loading } = useContext(UserContext);
   
   // Play click sound when game is selected
   const handleGameSelect = () => {
@@ -168,7 +183,7 @@ function Home() {
   
   return (
     <main className="content">
-      {/* Minimized Leaderboard */}
+      {/* Minimized Leaderboard - will handle loading state internally */}
       <Leaderboard minimized={true} />
       
       <h3 className="section-title">Choose a Game</h3>

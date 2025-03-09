@@ -549,6 +549,39 @@
   width: 100%;
 }
 
-.acronym-game .nav-buttons .back-button {
+.acronym-game .nav-buttons .back-btn {
   margin: 0;
+}
+
+/* Back to dashboard button */
+.back-to-dashboard {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.back-to-dashboard button {
+  background-color: rgba(45, 55, 72, 0.7);
+  color: #a0aec0;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-to-dashboard button:hover {
+  background-color: rgba(74, 85, 104, 0.7);
+  color: #f7fafc;
+}
+
+/* Ensure proper alignment in game mode cards */
+.acronym-game .game-mode-card h4,
+.acronym-game .game-mode-card h3 {
+  text-align: left;
+  width: 100%;
+}
+
+.acronym-game .game-mode-card p {
+  text-align: left;
+  width: 100%;
 } 

@@ -1,79 +1,192 @@
-import React, { useState, useEffect } from 'react';
-import { FiVolume2, FiVolumeX, FiMoon, FiSun, FiUser, FiMail, FiBell, FiBellOff, FiSliders, FiRefreshCw, FiCheck, FiX } from 'react-icons/fi';
-import SoundManager from '../../utils/SoundManager';
+import React, { useState, useEffect, useContext } from 'react';
+import { FiVolume2, FiVolumeX, FiMoon, FiSun, FiUser, FiBell, FiBellOff, FiSliders, FiRefreshCw, FiCheck, FiX } from 'react-icons/fi';
 import '../../styles/ui/Settings.css';
+import { UserContext } from '../../context/UserContext';
+import { updateUserProfile } from '../../services/api';
+import SoundManager from '../../utils/SoundManager';
+
+// Define localStorage keys
+const SETTINGS_PREFIX = 'net-study-settings-';
+const DARK_MODE_KEY = `${SETTINGS_PREFIX}darkMode`;
+const SOUND_KEY = `${SETTINGS_PREFIX}soundEnabled`;
+const NOTIFICATIONS_KEY = `${SETTINGS_PREFIX}notificationsEnabled`;
+const DIFFICULTY_KEY = `${SETTINGS_PREFIX}defaultDifficulty`;
+const USERNAME_KEY = `${SETTINGS_PREFIX}username`;
+const EMAIL_KEY = `${SETTINGS_PREFIX}email`;
 
 function Settings() {
-  // Default to dark mode (set true to start with dark mode enabled)
-  const [darkMode, setDarkMode] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(SoundManager.isSoundEnabled());
-  const [notifications, setNotifications] = useState(true);
-  const [defaultDifficulty, setDefaultDifficulty] = useState('medium');
-  const [username, setUsername] = useState('NetworkMaster');
-  const [email, setEmail] = useState('user@example.com');
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  // Get user context for logged-in user data
+  const { user, loading } = useContext(UserContext);
 
-  // When darkMode changes, add or remove the "light-mode" class from <body>
+  // Initialize settings with localStorage values or defaults
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem(DARK_MODE_KEY);
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const saved = localStorage.getItem(SOUND_KEY);
+    return saved !== null ? JSON.parse(saved) : SoundManager.isSoundEnabled();
+  });
+  
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+    const saved = localStorage.getItem(NOTIFICATIONS_KEY);
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  
+  const [defaultDifficulty, setDefaultDifficulty] = useState(() => {
+    const saved = localStorage.getItem(DIFFICULTY_KEY);
+    return saved !== null ? saved : 'medium';
+  });
+  
+  const [username, setUsername] = useState(() => {
+    const saved = localStorage.getItem(USERNAME_KEY);
+    return saved !== null ? saved : '';
+  });
+  
+  const [email, setEmail] = useState(() => {
+    const saved = localStorage.getItem(EMAIL_KEY);
+    return saved !== null ? saved : '';
+  });
+
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Set username and email from user data when loaded
+  useEffect(() => {
+    if (!loading && user) {
+      if (user.username && user.username !== username) {
+        setUsername(user.username);
+      }
+      if (user.email && user.email !== email) {
+        setEmail(user.email);
+      }
+    }
+  }, [user, loading, username, email]);
+
+  // Apply theme effect
   useEffect(() => {
     if (darkMode) {
       document.body.classList.remove('light-mode');
     } else {
       document.body.classList.add('light-mode');
     }
+    
+    // Save theme preference to localStorage
+    localStorage.setItem(DARK_MODE_KEY, JSON.stringify(darkMode));
   }, [darkMode]);
 
+  // Save sound setting to localStorage and update SoundManager
+  useEffect(() => {
+    // We don't call enableSound/disableSound as those don't exist
+    // Instead, we'll just update localStorage, and SoundManager checks this value
+    localStorage.setItem(SOUND_KEY, JSON.stringify(soundEnabled));
+    
+    // SoundManager reads directly from localStorage, so we just need to update that
+    localStorage.setItem('netQuestSoundEnabled', soundEnabled.toString());
+  }, [soundEnabled]);
+
+  // Save other settings to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notificationsEnabled));
+    localStorage.setItem(DIFFICULTY_KEY, defaultDifficulty);
+    localStorage.setItem(USERNAME_KEY, username);
+    localStorage.setItem(EMAIL_KEY, email);
+  }, [notificationsEnabled, defaultDifficulty, username, email]);
+
   const toggleSound = () => {
-    // Initialize audio context if enabling sound
+    setSoundEnabled(!soundEnabled);
+    
+    // Play click sound if we're enabling sound
     if (!soundEnabled) {
-      // This creates an AudioContext which will allow sounds to play
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        const audioCtx = new AudioContext();
-        
-        // Create and play a silent sound to initialize audio
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0; // Silent
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.01);
-      }
-    }
-    
-    const isEnabled = SoundManager.toggleSound();
-    setSoundEnabled(isEnabled);
-    
-    // Play test sound if enabled
-    if (isEnabled) {
       SoundManager.play('click');
     }
   };
 
-  const saveSettings = () => {
-    // In a real app, you would save these settings to backend/localStorage
-    console.log('Saving settings:', {
-      darkMode,
-      soundEnabled,
-      notifications,
-      defaultDifficulty,
-      username,
-      email
-    });
+  const saveSettings = async () => {
+    setIsSaving(true);
+    setErrorMessage('');
     
-    // Show success message
-    setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+    try {
+      // If user is logged in (and not a guest), update profile
+      if (user && !user.isGuest && user.id) {
+        try {
+          // Only attempt to update if there are changes
+          if (username !== (user.displayName || user.username) || email !== user.email) {
+            await updateUserProfile(user.id, {
+              displayName: username,
+              email: email,
+              preferences: {
+                darkMode,
+                soundEnabled,
+                notificationsEnabled,
+                defaultDifficulty
+              }
+            });
+          }
+        } catch (profileError) {
+          console.error('Error updating user profile:', profileError);
+          setErrorMessage('Failed to update profile. Please try again.');
+          setIsSaving(false);
+          return;
+        }
+      }
+      
+      // Show success message
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
+      
+      // Play success sound if enabled
+      if (soundEnabled) {
+        SoundManager.play('success');
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      setErrorMessage('Failed to save settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const resetSettings = () => {
+    // Reset to default values
     setDarkMode(true);
     setSoundEnabled(true);
-    setNotifications(true);
+    setNotificationsEnabled(true);
     setDefaultDifficulty('medium');
+    
+    // Don't reset username/email if user is logged in
+    if (!user || user.isGuest) {
+      setUsername('');
+      setEmail('');
+    }
+    
+    // Apply changes immediately
     document.body.classList.remove('light-mode');
-    SoundManager.enableSound();
+    // Update localStorage for sound
+    localStorage.setItem('netQuestSoundEnabled', 'true');
+    
+    // Clear any error messages
+    setErrorMessage('');
+    
+    // Play click sound if enabled
+    if (soundEnabled) {
+      SoundManager.play('click');
+    }
   };
+
+  // Show loading state while user data is being fetched
+  if (loading) {
+    return (
+      <div className="content">
+        <h3 className="section-title">Settings</h3>
+        <div className="settings-container">
+          <div className="loading-message">Loading settings...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="content">
@@ -83,6 +196,13 @@ function Settings() {
         <div className="settings-success-message">
           <FiCheck size={18} />
           <span>Settings saved successfully!</span>
+        </div>
+      )}
+      
+      {errorMessage && (
+        <div className="settings-error-message">
+          <FiX size={18} />
+          <span>{errorMessage}</span>
         </div>
       )}
       
@@ -96,20 +216,24 @@ function Settings() {
             <label htmlFor="username">Username</label>
             <input 
               type="text" 
-              id="username" 
+              id="username"
+              className="settings-input" 
               value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-              className="settings-input"
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter username"
+              disabled={loading} 
             />
           </div>
           <div className="settings-option">
             <label htmlFor="email">Email</label>
             <input 
               type="email" 
-              id="email" 
+              id="email"
+              className="settings-input" 
               value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              className="settings-input"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email"
+              disabled={loading} 
             />
           </div>
         </div>
@@ -174,10 +298,10 @@ function Settings() {
           <div className="settings-option">
             <span>Daily Challenges</span>
             <button 
-              className={`settings-toggle-btn ${notifications ? 'active' : ''}`}
-              onClick={() => setNotifications(!notifications)}
+              className={`settings-toggle-btn ${notificationsEnabled ? 'active' : ''}`}
+              onClick={() => setNotificationsEnabled(!notificationsEnabled)}
             >
-              {notifications ? (
+              {notificationsEnabled ? (
                 <>
                   <FiBell size={18} />
                   <span>Enabled</span>
@@ -200,48 +324,65 @@ function Settings() {
           <div className="settings-option">
             <span>Default Difficulty</span>
             <div className="settings-radio-group">
-              <label className={defaultDifficulty === 'easy' ? 'active' : ''}>
-                <input 
-                  type="radio" 
-                  name="difficulty" 
-                  value="easy" 
-                  checked={defaultDifficulty === 'easy'} 
-                  onChange={() => setDefaultDifficulty('easy')} 
+              <label 
+                className={defaultDifficulty === 'easy' ? 'active' : ''}
+                onClick={() => setDefaultDifficulty('easy')}
+              >
+                <input
+                  type="radio"
+                  name="difficulty"
+                  value="easy"
+                  checked={defaultDifficulty === 'easy'}
+                  onChange={() => setDefaultDifficulty('easy')}
                 />
                 <span>Easy</span>
               </label>
-              <label className={defaultDifficulty === 'medium' ? 'active' : ''}>
-                <input 
-                  type="radio" 
-                  name="difficulty" 
-                  value="medium" 
-                  checked={defaultDifficulty === 'medium'} 
-                  onChange={() => setDefaultDifficulty('medium')} 
+              <label 
+                className={defaultDifficulty === 'medium' ? 'active' : ''}
+                onClick={() => setDefaultDifficulty('medium')}
+              >
+                <input
+                  type="radio"
+                  name="difficulty"
+                  value="medium"
+                  checked={defaultDifficulty === 'medium'}
+                  onChange={() => setDefaultDifficulty('medium')}
                 />
                 <span>Medium</span>
               </label>
-              <label className={defaultDifficulty === 'hard' ? 'active' : ''}>
-                <input 
-                  type="radio" 
-                  name="difficulty" 
-                  value="hard" 
-                  checked={defaultDifficulty === 'hard'} 
-                  onChange={() => setDefaultDifficulty('hard')} 
+              <label 
+                className={defaultDifficulty === 'hard' ? 'active' : ''}
+                onClick={() => setDefaultDifficulty('hard')}
+              >
+                <input
+                  type="radio"
+                  name="difficulty"
+                  value="hard"
+                  checked={defaultDifficulty === 'hard'}
+                  onChange={() => setDefaultDifficulty('hard')}
                 />
                 <span>Hard</span>
               </label>
             </div>
           </div>
         </div>
-        
+
         <div className="settings-actions">
-          <button className="settings-btn settings-reset" onClick={resetSettings}>
+          <button 
+            className="settings-btn settings-reset" 
+            onClick={resetSettings}
+            disabled={isSaving}
+          >
             <FiRefreshCw size={18} />
             <span>Reset to Default</span>
           </button>
-          <button className="settings-btn settings-save" onClick={saveSettings}>
+          <button 
+            className="settings-btn settings-save" 
+            onClick={saveSettings}
+            disabled={isSaving}
+          >
             <FiCheck size={18} />
-            <span>Save Changes</span>
+            <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
           </button>
         </div>
       </div>

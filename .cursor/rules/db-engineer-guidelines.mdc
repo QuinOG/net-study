@@ -1,0 +1,70 @@
+---
+description: This set of guidelines covers best practices across code quality, security, performance, documentation, and collaboration, ensuring a robust and maintainable backend system.
+globs: 
+alwaysApply: false
+---
+1. Code Quality & Best Practices
+Modularity and Clean Architecture:
+Ensure the backend code is broken into clear, modular components. Adhere to principles such as SOLID, DRY, and KISS. Each module should have a well-defined responsibility to improve maintainability and testability.
+Coding Standards & Reviews:
+Follow a consistent coding style (using linters and formatters) and enforce code reviews to catch issues early. This includes peer reviews and automated quality checks as part of your CI/CD pipeline.
+Version Control:
+Use version control rigorously. Keep a clean commit history, use feature branches, and document changes clearly. Tag releases and maintain a clear branching strategy (e.g., GitFlow).
+
+2. Data Modeling & Schema Design
+Normalization & Denormalization:
+Design database schemas that balance normalization to avoid data redundancy with potential denormalization for performance gains when needed.
+Indexing & Query Optimization:
+Create appropriate indexes to speed up queries while avoiding over-indexing that could hinder write performance. Regularly analyze query performance and optimize slow queries.
+Scalability Considerations:
+Design schemas and choose data types that facilitate horizontal and vertical scaling. Consider partitioning, sharding, or other distributed database approaches as your data grows.
+
+3. Security & Compliance
+Data Encryption:
+Ensure that sensitive data is encrypted both in transit (using protocols like TLS/SSL) and at rest. Regularly update encryption standards as new vulnerabilities are discovered.
+Access Control & Authentication:
+Implement robust authentication and authorization mechanisms. Use role-based access control (RBAC) and principle of least privilege for database access.
+Regular Audits & Compliance:
+Stay compliant with data protection regulations (e.g., GDPR, HIPAA) as applicable. Regularly audit security practices, perform vulnerability assessments, and have incident response plans in place.
+Backup & Recovery:
+Implement automated backup processes and regularly test restore procedures to ensure data can be recovered quickly after an incident.
+
+4. Performance & Monitoring
+Performance Testing:
+Continuously test the performance of database queries and backend endpoints. Use profiling tools and load testing to identify and fix bottlenecks.
+Resource Monitoring & Alerting:
+Set up comprehensive logging and monitoring. Use tools that track database performance metrics (latency, throughput, error rates) and integrate alerts for anomalies.
+Caching Strategies:
+Use caching mechanisms where appropriate (in-memory caches, query result caching) to reduce load on the database and improve response times.
+
+5. Documentation & Maintainability
+Code Documentation:
+Document all code modules, functions, and data models. Maintain in-line documentation and comprehensive external documentation that describes overall system architecture.
+API & Schema Documentation:
+Provide clear API documentation (e.g., via Swagger/OpenAPI) and maintain an updated data dictionary for your database schemas.
+Change Management:
+Keep a changelog for database schema changes and backend updates. Use migration tools to manage database schema evolution safely and reproducibly.
+
+6. Testing & Quality Assurance
+Automated Testing:
+Implement unit tests, integration tests, and end-to-end tests. This includes testing database transactions, error handling, and API endpoints.
+Continuous Integration/Continuous Deployment (CI/CD):
+Integrate automated tests into your CI/CD pipeline to catch errors early and ensure that every deployment meets quality standards.
+Disaster Recovery Drills:
+Regularly perform disaster recovery and failover drills to validate that backup and recovery processes work as expected.
+
+7. Collaboration & Communication
+Clear Communication Channels:
+Use project management and communication tools (e.g., JIRA, Slack) to keep all team members aligned. Regularly update documentation and share progress reports.
+Interdisciplinary Collaboration:
+Ensure that the database engineer collaborates with front-end developers, DevOps, and security teams to align on system requirements and address cross-functional challenges.
+Feedback Loops:
+Establish a process for collecting and addressing feedback from stakeholders, ensuring that the backend evolves to meet user needs and business objectives.
+
+8. Ethical and Responsible AI Practices
+Bias and Fairness:
+When applicable, implement checks to ensure data and algorithms do not inadvertently introduce bias. Maintain transparency about how data is used and processed.
+Privacy by Design:
+Incorporate privacy into the design of your backend systems. Ensure that any AI components handling user data comply with ethical guidelines and legal requirements.
+Audit Trails:
+Maintain logs for key actions, changes, and access to sensitive data to support auditing and compliance efforts.

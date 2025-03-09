@@ -4,9 +4,11 @@ import '../../styles/games/EncryptionChallengeGame.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeCard from '../ui/GameModeCard';
 import SoundManager from '../../utils/SoundManager';
+import { useNavigate } from 'react-router-dom';
 
 function EncryptionChallengeGame() {
   const { addXP } = useContext(UserContext);
+  const navigate = useNavigate();
   const [gameState, setGameState] = useState('setup'); // 'setup', 'playing', 'results'
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
   const [selectedMode, setSelectedMode] = useState(null);
@@ -225,42 +227,84 @@ function EncryptionChallengeGame() {
   return (
     <div className="game-interface encryption-challenge-game">
       {gameState === 'setup' && !selectedMode && (
-        <div className="game-setup">
-          <h3>Encryption Challenge</h3>
-          <div className="game-modes">
-            {gameModes.map(mode => (
-              <GameModeCard 
-                key={mode.id}
-                title={mode.title}
-                description={mode.description}
-                icon={mode.icon}
-                onClick={() => handleModeSelect(mode.id)}
-              />
-            ))}
+        <>
+          <h3 className="game-title">Encryption Challenge</h3>
+          <p className="game-description">Test your knowledge of encryption algorithms and cryptography.</p>
+          
+          <div className="stats-container">
+            <h3>Your Stats</h3>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Best Score</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Challenges Completed</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Games Played</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0%</span>
+                <span className="stat-label">Decrypt Rate</span>
+              </div>
+            </div>
           </div>
-        </div>
+        
+          <div className="game-setup">
+            <h3>Encryption Challenge</h3>
+            <div className="game-modes">
+              {gameModes.map(mode => (
+                <GameModeCard 
+                  key={mode.id}
+                  title={mode.title}
+                  description={mode.description}
+                  icon={mode.icon}
+                  onClick={() => handleModeSelect(mode.id)}
+                />
+              ))}
+            </div>
+          </div>
+          
+          <div className="nav-buttons">
+            <button 
+              className="back-btn"
+              onClick={() => navigate('/dashboard')}
+            >
+              ← Back to Dashboard
+            </button>
+          </div>
+        </>
       )}
       
       {gameState === 'setup' && selectedMode && (
         <div className="game-setup">
           <h3>Select Difficulty</h3>
           <div className="difficulty-select">
-            {difficulties.map(difficulty => (
-              <button 
-                key={difficulty.id} 
-                className="difficulty-btn"
-                onClick={() => handleDifficultySelect(difficulty.id)}
-              >
-                {difficulty.label}
-                <small>
-                  {difficulty.challenges} challenges, {Math.floor(difficulty.timeLimit / 60)}:{(difficulty.timeLimit % 60).toString().padStart(2, '0')} minutes
-                </small>
-              </button>
-            ))}
+            <div className="difficulty-cards">
+              {difficulties.map(difficulty => (
+                <button 
+                  key={difficulty.id} 
+                  className="difficulty-card"
+                  onClick={() => handleDifficultySelect(difficulty.id)}
+                >
+                  <h4>{difficulty.label}</h4>
+                  <ul>
+                    <li>{difficulty.challenges} challenges</li>
+                    <li>{Math.floor(difficulty.timeLimit / 60)}:{(difficulty.timeLimit % 60).toString().padStart(2, '0')} minutes time limit</li>
+                    {difficulty.id === 'easy' && <li>Basic encryption techniques</li>}
+                    {difficulty.id === 'medium' && <li>Moderate cryptographic concepts</li>}
+                    {difficulty.id === 'hard' && <li>Advanced encryption algorithms</li>}
+                  </ul>
+                </button>
+              ))}
+            </div>
+            <button className="back-btn" onClick={() => setSelectedMode(null)}>
+              ← Back to Modes
+            </button>
           </div>
-          <button className="back-btn" onClick={() => setSelectedMode(null)}>
-            Back to Modes
-          </button>
         </div>
       )}
       

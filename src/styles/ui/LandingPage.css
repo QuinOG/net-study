@@ -11,9 +11,12 @@
 /* Header Styles */
 .landing-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: 2rem 0;
+  padding: 1.5rem 5%;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .landing-logo {
@@ -23,15 +26,54 @@
 }
 
 .landing-logo img {
-  height: 3.5rem;
+  height: 3rem;
   width: auto;
 }
 
-.landing-logo h2 {
-  font-size: 2rem;
+.landing-logo span {
+  font-size: 1.75rem;
   font-weight: 700;
   color: #1a202c;
   margin: 0;
+}
+
+.landing-nav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.landing-nav a {
+  color: #4a5568;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.landing-nav a:hover {
+  color: #3182ce;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  color: #4a5568;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #3182ce;
+}
+
+/* Content Container */
+.landing-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Hero Section */
@@ -40,7 +82,7 @@
   flex: 1;
   justify-content: center;
   align-items: center;
-  padding: 0 5%;
+  padding: 4rem 5%;
   text-align: center;
 }
 
@@ -52,10 +94,10 @@
 }
 
 .hero-title {
-  font-size: 4rem;
+  font-size: 3.5rem;
   font-weight: 800;
   line-height: 1.2;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: #2d3748;
 }
 
@@ -76,15 +118,15 @@
   border-radius: 1rem;
 }
 
-.hero-mission {
-  font-size: 1.4rem;
+.hero-subtitle {
+  font-size: 1.25rem;
   color: #4a5568;
   line-height: 1.6;
   margin-bottom: 3rem;
   max-width: 700px;
 }
 
-.button-group {
+.hero-buttons {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -94,8 +136,8 @@
   margin-right: auto;
 }
 
+.explore-button,
 .login-button {
-  margin-top: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -106,30 +148,34 @@
   text-decoration: none;
   transition: all 0.3s ease;
   text-align: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
 }
 
-.login-button.primary {
+.explore-button.primary {
   background-color: #3182ce;
   color: white;
   box-shadow: 0 6px 18px rgba(49, 130, 206, 0.3);
 }
 
-.login-button.secondary {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.login-button.primary {
+  background-color: white;
+  color: #3182ce;
+  border: 2px solid #3182ce;
+  box-shadow: 0 6px 18px rgba(49, 130, 206, 0.1);
 }
 
-.login-button.primary:hover {
+.explore-button.primary:hover {
   background-color: #2c5282;
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(49, 130, 206, 0.4);
 }
 
-.login-button.secondary:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+.login-button.primary:hover {
+  background-color: #f7fafc;
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(49, 130, 206, 0.2);
 }
 
 .icon-right {
@@ -143,26 +189,39 @@
   color: #e2e8f0;
   padding: 2rem 0;
   text-align: center;
+  margin-top: auto;
 }
 
-.footer-copyright {
+.landing-footer p {
   color: #a0aec0;
   font-size: 0.9rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .landing-header {
+    padding: 1rem 5%;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .landing-nav {
+    gap: 1.5rem;
+  }
+  
   .hero-title {
-    font-size: 3rem;
+    font-size: 2.75rem;
   }
   
-  .hero-mission {
-    font-size: 1.2rem;
+  .hero-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
   }
   
+  .explore-button,
   .login-button {
     font-size: 1.1rem;
-    padding: 0.875rem 2rem;
+    padding: 0.875rem 1.5rem;
   }
 }
 
@@ -171,17 +230,27 @@
     height: 2.5rem;
   }
   
-  .landing-logo h2 {
+  .landing-logo span {
     font-size: 1.5rem;
   }
   
-  .hero-title {
-    font-size: 2.25rem;
-    margin-bottom: 1.5rem;
+  .landing-nav {
+    gap: 1rem;
   }
   
-  .hero-mission {
-    font-size: 1.1rem;
+  .hero-title {
+    font-size: 2rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
     margin-bottom: 2rem;
+  }
+  
+  .explore-button,
+  .login-button {
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
   }
 } 

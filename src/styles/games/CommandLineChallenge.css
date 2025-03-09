@@ -663,4 +663,16 @@
 
 .command-line-game .example-item code {
   color: #63b3ed;
+}
+
+/* Ensure proper alignment in game mode cards */
+.command-line-game .game-mode-card h4,
+.command-line-game .game-mode-card h3 {
+  text-align: left;
+  width: 100%;
+}
+
+.command-line-game .game-mode-card p {
+  text-align: left;
+  width: 100%;
 } 

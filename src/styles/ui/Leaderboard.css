@@ -5,6 +5,23 @@
   margin: 20px 0;
 }
 
+/* Loading message styles */
+.loading-message {
+  padding: 20px;
+  text-align: center;
+  color: #e2e8f0;
+  font-style: italic;
+  background-color: rgba(45, 55, 72, 0.4);
+  border-radius: 8px;
+  margin-top: 10px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 /* Minimized leaderboard styles */
 .leaderboard-container.minimized {
   background-color: rgba(26, 32, 44, 0.6);

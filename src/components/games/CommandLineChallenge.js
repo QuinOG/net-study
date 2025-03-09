@@ -286,7 +286,7 @@ const DIFFICULTY_LEVELS = {
 
 function CommandLineChallenge() {
   const navigate = useNavigate();
-  const { userStats, addXP, updateGameStats } = useContext(UserContext);
+  const { addXP } = useContext(UserContext);
   const timerRef = useRef(null);
   
   // Game state
@@ -302,12 +302,15 @@ function CommandLineChallenge() {
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [startTime, setStartTime] = useState(null);
   const [showGameOver, setShowGameOver] = useState(false);
-  const [gameStats, setGameStats] = useState({
-    bestScore: 0,
-    bestStreak: 0,
-    gamesPlayed: 0,
-    totalAttempts: 0,
-    correctAnswers: 0
+  const [gameStats, setGameStats] = useState(() => {
+    const savedStats = localStorage.getItem('commandLineStats');
+    return savedStats ? JSON.parse(savedStats) : {
+      bestScore: 0,
+      bestStreak: 0,
+      gamesPlayed: 0,
+      totalAttempts: 0,
+      correctAnswers: 0
+    };
   });
   const [showDifficultySelect, setShowDifficultySelect] = useState(false);
   const [powerUps, setPowerUps] = useState({
@@ -325,9 +328,6 @@ function CommandLineChallenge() {
 
   // Load game stats from context
   useEffect(() => {
-    if (userStats && userStats.games && userStats.games.commandLine) {
-      setGameStats(userStats.games.commandLine);
-    }
     scrollToTop();
     
     // Set game context for volume balancing
@@ -343,7 +343,7 @@ function CommandLineChallenge() {
       // Reset game context when unmounting
       SoundManager.setGameContext('default');
     };
-  }, [userStats]);
+  }, []);
 
   // Timer effect
   useEffect(() => {
@@ -368,16 +368,56 @@ function CommandLineChallenge() {
     };
   }, [gameStarted, gameMode, showGameOver]);
 
+  // Effect to load game stats from localStorage when component mounts
+  useEffect(() => {
+    const savedStats = localStorage.getItem('commandLineStats');
+    if (savedStats) {
+      try {
+        setGameStats(JSON.parse(savedStats));
+      } catch (error) {
+        console.error("Error parsing saved game stats:", error);
+      }
+    }
+  }, []);
+
   // Function to get a random command
   const getRandomCommand = () => {
-    const commandEntries = Object.entries(COMMAND_DATA);
-    const filteredCommands = osFilter 
-      ? commandEntries.filter(([_, data]) => data.os === osFilter)
-      : commandEntries;
-    
-    const randomIndex = Math.floor(Math.random() * filteredCommands.length);
-    const [command, data] = filteredCommands[randomIndex];
-    return { command, ...data };
+    try {
+      const commandEntries = Object.entries(COMMAND_DATA);
+      
+      // Filter commands by OS if a filter is set
+      const filteredCommands = osFilter 
+        ? commandEntries.filter(([_, data]) => data.os === osFilter)
+        : commandEntries;
+      
+      // If no commands match the filter, return a command without filtering
+      if (filteredCommands.length === 0) {
+        console.warn(`No commands found matching OS filter: ${osFilter}. Using all commands.`);
+        
+        // Clear the filter and try again
+        setOsFilter(null);
+        
+        // Get a random command from all commands
+        const randomIndex = Math.floor(Math.random() * commandEntries.length);
+        const [command, data] = commandEntries[randomIndex];
+        return { command, ...data };
+      }
+      
+      // Get a random command from filtered list
+      const randomIndex = Math.floor(Math.random() * filteredCommands.length);
+      const [command, data] = filteredCommands[randomIndex];
+      return { command, ...data };
+    } catch (error) {
+      console.error("Error in getRandomCommand:", error);
+      // Return a fallback command if there's an error
+      return {
+        command: "ls",
+        description: "List directory contents",
+        os: "Linux/Unix",
+        category: "File Management",
+        examples: ["ls", "ls -la"]
+      };
+    }
   };
 
   // Generate a new question
@@ -564,40 +604,96 @@ function CommandLineChallenge() {
     }
   };
 
-  // Initialize game with selected mode and difficulty
+  // Initialize game
   const initializeGame = (mode, diff) => {
-    // Reset game state
-    setGameStarted(true);
-    setGameMode(mode);
-    setDifficulty(diff);
-    setScore(0);
-    setCorrectAnswers(0);
-    setTotalAttempts(0);
-    setCurrentStreak(0);
-    setTimeRemaining(DIFFICULTY_LEVELS[diff].timeLimit);
-    setStartTime(Date.now());
-    setShowGameOver(false);
-    setUserAnswer('');
-    setIsCorrect(null);
-    setShowExamples(false);
-    
-    // Set basic game state
-    setShowDifficultySelect(false);
-    setPowerUps({
-      timeFreeze: 2,
-      osReveal: 2,
-      skipQuestion: 1
-    });
-    
-    // Apply OS filter if applicable
-    if (DIFFICULTY_LEVELS[diff].osFilter !== undefined) {
-      setOsFilter(DIFFICULTY_LEVELS[diff].osFilter);
-    }
-    
-    // Generate the first question
     try {
-      generateQuestion();
-      SoundManager.play('gameStart');
+      // Reset game state
+      setScore(0);
+      setCorrectAnswers(0);
+      setTotalAttempts(0);
+      setCurrentStreak(0);
+      setShowGameOver(false);
+      setUserAnswer('');
+      setIsCorrect(null);
+      setShowExamples(false);
+      
+      // Set game parameters
+      setGameMode(mode);
+      setDifficulty(diff);
+      
+      // Load game settings based on difficulty
+      const settings = DIFFICULTY_LEVELS[diff];
+      setTimeRemaining(settings.timeLimit);
+      setPowerUps({
+        timeFreeze: settings.powerUps?.timeFreeze || 2,
+        osReveal: settings.powerUps?.osReveal || 2,
+        skipQuestion: settings.powerUps?.skipQuestion || 1
+      });
+      
+      // Apply OS filter if applicable
+      if (settings.osFilter !== undefined) {
+        setOsFilter(settings.osFilter);
+      }
+      
+      // Clear current question first to avoid render issues
+      setCurrentQuestion(null);
+      setOptions([]);
+      
+      // Generate first question (using a timeout to ensure state is updated)
+      setTimeout(() => {
+        try {
+          // Generate first question
+          const randomCommand = getRandomCommand();
+          if (!randomCommand) {
+            console.error("Failed to get a random command");
+            return;
+          }
+          
+          const questionType = Math.random() > 0.5 ? 'command' : 'description';
+          
+          const newQuestion = questionType === 'command'
+            ? {
+                type: 'command',
+                question: `What does the command "${randomCommand.command}" do?`,
+                answer: randomCommand.description,
+                command: randomCommand.command,
+                os: randomCommand.os,
+                category: randomCommand.category,
+                examples: randomCommand.examples
+              }
+            : {
+                type: 'description',
+                question: `Which command ${randomCommand.os ? `in ${randomCommand.os}` : ''} would you use to "${randomCommand.description}"?`,
+                answer: randomCommand.command,
+                command: randomCommand.command,
+                os: randomCommand.os,
+                category: randomCommand.category,
+                examples: randomCommand.examples
+              };
+          
+          setCurrentQuestion(newQuestion);
+          
+          // Generate options for the new question
+          const newOptions = generateOptions(
+            questionType === 'command' ? randomCommand.description : randomCommand.command, 
+            questionType
+          );
+          setOptions(newOptions);
+          
+          // Now that we have a valid question, start the game
+          setGameStarted(true);
+          
+          // Set start time
+          setStartTime(Date.now());
+          
+          // Play sound
+          SoundManager.play('gameStart');
+        } catch (innerError) {
+          console.error("Error generating initial question:", innerError);
+          alert("Error starting the game. Please try again.");
+        }
+      }, 0);
+      
       scrollToTop();
     } catch (error) {
       console.error("Error starting game:", error);
@@ -607,7 +703,9 @@ function CommandLineChallenge() {
   };
 
   // End the game and update stats
-  const endGame = () => {
+  const endGame = async () => {
+    console.log("Game ending! Processing final stats...");
+    
     // Clear interval
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -615,7 +713,10 @@ function CommandLineChallenge() {
     }
     
     // Update game stats
-    const newStats = {
+    const bestScoreUpdated = score > gameStats.bestScore;
+    const bestStreakUpdated = currentStreak > gameStats.bestStreak;
+    
+    const updatedStats = {
       ...gameStats,
       bestScore: Math.max(gameStats.bestScore, score),
       bestStreak: Math.max(gameStats.bestStreak, currentStreak),
@@ -624,28 +725,45 @@ function CommandLineChallenge() {
       correctAnswers: gameStats.correctAnswers + correctAnswers
     };
     
-    setGameStats(newStats);
+    setGameStats(updatedStats);
     
-    // Save stats to context
-    updateGameStats('commandLine', {
-      bestScore: newStats.bestScore,
-      bestStreak: newStats.bestStreak,
-      gamesPlayed: newStats.gamesPlayed,
-      correctAnswers: newStats.correctAnswers,
-      totalAttempts: newStats.totalAttempts
-    });
+    // Save stats to localStorage
+    localStorage.setItem('commandLineStats', JSON.stringify(updatedStats));
+    console.log("Game stats updated:", updatedStats);
     
-    // Award XP
-    const xpEarned = Math.round(score * 0.15);
-    if (xpEarned > 0) {
-      addXP(xpEarned);
-      setRewardText(`+${xpEarned} XP`);
-      setShowReward(true);
-      SoundManager.play('reward');
+    // Award XP based on score
+    if (score > 0) {
+      try {
+        const xpEarned = Math.max(10, Math.floor(score / 10));
+        console.log(`Awarding ${xpEarned} XP for score of ${score}`);
+        const result = await addXP(xpEarned);
+        
+        if (result.error) {
+          console.error("Error awarding XP:", result.error);
+        } else {
+          console.log("XP award successful:", result);
+          
+          if (result.oldXP !== undefined && result.newXP !== undefined) {
+            console.log(`XP updated: ${result.oldXP} → ${result.newXP} (+${result.xpEarned})`);
+          }
+          
+          if (result.levelUp) {
+            console.log("User leveled up!");
+            // TODO: Add level up celebration
+          }
+        }
+      } catch (error) {
+        console.error("Exception when awarding XP:", error);
+      }
+    } else {
+      console.log("No XP awarded - score was 0");
     }
     
-    // Show game over screen
+    // Set game over state
     setShowGameOver(true);
+    
+    // Play game over sound
+    SoundManager.play('gameOver');
   };
 
   // Return to home
@@ -749,7 +867,7 @@ function CommandLineChallenge() {
         
         <div className="nav-buttons">
           <button 
-            className="back-button"
+            className="back-btn"
             onClick={handleBack}
           >
             ← Back to Dashboard
@@ -842,7 +960,7 @@ function CommandLineChallenge() {
           
           <div className="nav-buttons">
             <button 
-              className="back-button"
+              className="back-btn"
               onClick={() => setShowDifficultySelect(false)}
             >
               ← Back to Mode Selection
@@ -965,49 +1083,57 @@ function CommandLineChallenge() {
           </div>
         )}
         
-        <div className="question-container">
-          <h3 className="question-text">{currentQuestion.question}</h3>
-          
-          {DIFFICULTY_LEVELS[difficulty].showHints && (
-            <div className="hint">
-              <span className="hint-label">Hint:</span> 
-              <span className="hint-text">Category: {currentQuestion.category}</span>
+        {currentQuestion ? (
+          <>
+            <div className="question-container">
+              <h3 className="question-text">{currentQuestion.question}</h3>
+              
+              {DIFFICULTY_LEVELS[difficulty].showHints && (
+                <div className="hint">
+                  <span className="hint-label">Hint:</span> 
+                  <span className="hint-text">Category: {currentQuestion.category}</span>
+                </div>
+              )}
+              
+              {gameMode === GAME_MODES.TIME_ATTACK && (
+                <div className="timer-bar-container">
+                  <div 
+                    className={`timer-bar ${timeRemaining < 10 ? 'urgent' : ''}`} 
+                    style={{width: `${(timeRemaining / DIFFICULTY_LEVELS[difficulty].timeLimit) * 100}%`}}
+                  ></div>
+                </div>
+              )}
             </div>
-          )}
-          
-          {gameMode === GAME_MODES.TIME_ATTACK && (
-            <div className="timer-bar-container">
-              <div 
-                className={`timer-bar ${timeRemaining < 10 ? 'urgent' : ''}`} 
-                style={{width: `${(timeRemaining / DIFFICULTY_LEVELS[difficulty].timeLimit) * 100}%`}}
-              ></div>
-            </div>
-          )}
-        </div>
-        
-        <div className="answer-options">
-          {options.map((option, index) => (
-            <button
-              key={index}
-              className={`answer-option ${userAnswer === option ? (isCorrect === true ? 'correct' : isCorrect === false ? 'incorrect' : '') : ''} ${isCorrect !== null && option === currentQuestion.answer ? 'correct' : ''}`}
-              onClick={() => handleAnswer(option)}
-              disabled={isCorrect !== null}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-        
-        {showExamples && (
-          <div className="examples-container">
-            <h4>Example usage of '{currentQuestion.command}':</h4>
-            <ul className="examples-list">
-              {currentQuestion.examples.map((example, index) => (
-                <li key={index} className="example-item">
-                  <code>{example}</code>
-                </li>
+            
+            <div className="answer-options">
+              {options.map((option, index) => (
+                <button
+                  key={index}
+                  className={`answer-option ${userAnswer === option ? (isCorrect === true ? 'correct' : isCorrect === false ? 'incorrect' : '') : ''} ${isCorrect !== null && option === currentQuestion.answer ? 'correct' : ''}`}
+                  onClick={() => handleAnswer(option)}
+                  disabled={isCorrect !== null}
+                >
+                  {option}
+                </button>
               ))}
-            </ul>
+            </div>
+            
+            {showExamples && currentQuestion.examples && (
+              <div className="examples-container">
+                <h4>Example usage of '{currentQuestion.command}':</h4>
+                <ul className="examples-list">
+                  {currentQuestion.examples.map((example, index) => (
+                    <li key={index} className="example-item">
+                      <code>{example}</code>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="loading-container">
+            <p>Loading question...</p>
           </div>
         )}
         
@@ -1030,7 +1156,7 @@ function CommandLineChallenge() {
           </button>
         ) : (
           <button 
-            className="back-button"
+            className="back-btn"
             onClick={() => {
               if (timerRef.current) {
                 clearInterval(timerRef.current);

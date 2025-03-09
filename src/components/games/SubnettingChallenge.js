@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
+import { getAllGames, submitGameResults } from '../../services/api';
 import '../../styles/games/SubnettingChallenge.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -42,7 +43,8 @@ const DIFFICULTY_LEVELS = {
 
 function SubnettingChallenge() {
   const navigate = useNavigate();
-  const { userStats, addXP, updateStats } = useContext(UserContext);
+  const { userStats, addXP, updateStats, user } = useContext(UserContext);
+  const timerIdRef = useRef(null); // Add ref for timer ID
   
   // Game state
   const [gameStarted, setGameStarted] = useState(false);
@@ -50,6 +52,7 @@ function SubnettingChallenge() {
   const [difficulty, setDifficulty] = useState('EASY');
   const [showDifficultySelect, setShowDifficultySelect] = useState(false);
   const [showGameOver, setShowGameOver] = useState(false);
+  const [gameId, setGameId] = useState(null);
   
   // Challenge state
   const [ip, setIp] = useState('');
@@ -63,9 +66,11 @@ function SubnettingChallenge() {
   // Performance tracking
   const [score, setScore] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [feedback, setFeedback] = useState({ show: false, isCorrect: false, message: '' });
+  const [startTime, setStartTime] = useState(null);
   
   // Power-ups
   const [powerUps, setPowerUps] = useState({
@@ -179,6 +184,7 @@ function SubnettingChallenge() {
     // Reset game state
     setScore(0);
     setCorrectAnswers(0);
+    setIncorrectAnswers(0);
     setCurrentStreak(0);
     setTimeRemaining(DIFFICULTY_LEVELS[diff].timeLimit);
     
@@ -194,6 +200,8 @@ function SubnettingChallenge() {
     
     // Play start sound
     SoundManager.play('gameStart');
+    
+    setStartTime(Date.now());
   };
 
   // Handle power-up usage
@@ -248,51 +256,90 @@ function SubnettingChallenge() {
     }, 1500);
   };
 
+  // Fetch game data from backend
+  useEffect(() => {
+    const fetchGameData = async () => {
+      try {
+        // Get the subnetting game from the database
+        const response = await getAllGames({ type: 'subnetting' });
+        if (response.data.data.games.length > 0) {
+          setGameId(response.data.data.games[0]._id);
+        }
+      } catch (error) {
+        console.error("Error fetching game data:", error);
+      }
+    };
+
+    fetchGameData();
+  }, []);
+
   // End the game and update stats
-  const endGame = () => {
+  const endGame = async () => {
+    console.log("Game ending! Processing final stats...");
+    
+    // Clear any existing timer if in time attack mode
+    if (gameMode === GAME_MODES.TIME_ATTACK && timerIdRef.current) {
+      clearInterval(timerIdRef.current);
+    }
+    
     // Update game stats
-    const newStats = {
+    const bestScoreUpdated = score > gameStats.bestScore;
+    const bestStreakUpdated = currentStreak > gameStats.bestStreak;
+    
+    const updatedStats = {
       ...gameStats,
       bestScore: Math.max(gameStats.bestScore, score),
       bestStreak: Math.max(gameStats.bestStreak, currentStreak),
       gamesPlayed: gameStats.gamesPlayed + 1,
-      totalAttempts: gameStats.totalAttempts + correctAnswers + (score > 0 ? 1 : 0),
+      totalAttempts: gameStats.totalAttempts + correctAnswers + incorrectAnswers,
       correctAnswers: gameStats.correctAnswers + correctAnswers
     };
     
-    setGameStats(newStats);
-    localStorage.setItem('subnettingGameStats', JSON.stringify(newStats));
+    // Store updated game stats
+    setGameStats(updatedStats);
+    localStorage.setItem('subnettingGameStats', JSON.stringify(updatedStats));
+    console.log("Game stats updated:", updatedStats);
     
-    // Award XP based on score
-    const xpEarned = Math.round(score / 10);
-    if (xpEarned > 0) {
-      addXP(xpEarned);
-      
-      // Update global stats if exists
-      if (updateStats) {
-        updateStats('subnettingGame', {
-          gamesPlayed: newStats.gamesPlayed,
-          bestScore: newStats.bestScore,
-          totalCorrect: newStats.correctAnswers
-        });
+    // Award XP (minimum 10 XP if score > 0, otherwise score-based)
+    if (score > 0) {
+      try {
+        const xpEarned = Math.max(10, Math.floor(score / 10));
+        console.log(`Awarding ${xpEarned} XP for score of ${score}`);
+        const result = await addXP(xpEarned);
+        
+        if (result.error) {
+          console.error("Error awarding XP:", result.error);
+        } else {
+          console.log("XP award successful:", result);
+          
+          if (result.oldXP !== undefined && result.newXP !== undefined) {
+            console.log(`XP updated: ${result.oldXP} → ${result.newXP} (+${result.xpEarned})`);
+          }
+          
+          if (result.levelUp) {
+            console.log("User leveled up!");
+            // TODO: Add level up celebration
+          }
+        }
+      } catch (error) {
+        console.error("Exception when awarding XP:", error);
       }
+    } else {
+      console.log("No XP awarded - score was 0");
     }
     
-    // Show game over screen
+    // Set game over state and play game over sound
     setShowGameOver(true);
-    
-    // Play game over sound
     SoundManager.play('gameOver');
   };
 
   // Timer effect for time attack mode
   useEffect(() => {
-    let timerId;
     if (gameStarted && gameMode === GAME_MODES.TIME_ATTACK && timeRemaining > 0) {
-      timerId = setInterval(() => {
+      timerIdRef.current = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            clearInterval(timerId);
+            clearInterval(timerIdRef.current);
             endGame();
             return 0;
           }
@@ -300,7 +347,11 @@ function SubnettingChallenge() {
         });
       }, 1000);
     }
-    return () => clearInterval(timerId);
+    return () => {
+      if (timerIdRef.current) {
+        clearInterval(timerIdRef.current);
+      }
+    };
   }, [gameStarted, gameMode, timeRemaining]);
 
   // Save game stats when they change
@@ -478,17 +529,15 @@ function SubnettingChallenge() {
               ))}
             </div>
             
-            <div className="nav-buttons">
-              <button 
-                className="back-button"
-                onClick={() => {
-                  setShowDifficultySelect(false);
-                  scrollToTop();
-                }}
-              >
-                ← Back to Mode Selection
-              </button>
-            </div>
+            <button 
+              className="back-btn"
+              onClick={() => {
+                setShowDifficultySelect(false);
+                scrollToTop();
+              }}
+            >
+              ← Back to Mode Selection
+            </button>
           </div>
         </div>
       );
@@ -567,7 +616,7 @@ function SubnettingChallenge() {
         
         <div className="nav-buttons">
           <button 
-            className="back-button"
+            className="back-btn"
             onClick={() => navigate('/dashboard')}
           >
             ← Back to Dashboard
@@ -770,7 +819,7 @@ function SubnettingChallenge() {
         )}
         
         <button 
-          className="back-button"
+          className="back-btn"
           onClick={() => {
             setGameStarted(false);
             scrollToTop();

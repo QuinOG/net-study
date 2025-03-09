@@ -33,20 +33,15 @@ const AchievementSystem = ({ userStats }) => {
   const [recentUnlock, setRecentUnlock] = useState(null);
 
   useEffect(() => {
+    // If userStats is not yet loaded, don't process achievements
+    if (!userStats) {
+      return;
+    }
+    
     // Check for unlocked achievements based on user stats
     const newUnlocked = achievements.filter(achievement => {
-      switch(achievement.category) {
-        case 'protocol':
-          return userStats.protocolChallengesCompleted >= achievement.requirement;
-        case 'port':
-          return userStats.portsMatchedCorrectly >= achievement.requirement;
-        case 'subnet':
-          return userStats.subnettingChallengesCompleted >= achievement.requirement;
-        case 'streak':
-          return userStats.currentStreak >= achievement.requirement;
-        default:
-          return false;
-      }
+      const progress = getUserProgressForAchievement(userStats, achievement);
+      return progress >= achievement.requirement;
     }).map(a => a.id);
     
     // Find newly unlocked achievements
@@ -66,6 +61,15 @@ const AchievementSystem = ({ userStats }) => {
     setUnlockedAchievements(newUnlocked);
   }, [userStats]);
 
+  // If userStats is not loaded yet, show a loading state
+  if (!userStats) {
+    return (
+      <div className="achievements-container">
+        <p>Loading achievements...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="achievements-container">
       {recentUnlock && (
@@ -81,28 +85,33 @@ const AchievementSystem = ({ userStats }) => {
       
       <div className="achievements-list">
         <h3>Your Achievements</h3>
-        {achievements.map(achievement => (
-          <div 
-            key={achievement.id} 
-            className={`achievement-item ${unlockedAchievements.includes(achievement.id) ? 'unlocked' : 'locked'}`}
-          >
-            <span className="achievement-icon">{achievement.icon}</span>
-            <div className="achievement-content">
-              <h4>{achievement.name}</h4>
-              <p>{achievement.description}</p>
-              {!unlockedAchievements.includes(achievement.id) && (
-                <div className="progress-container">
-                  <div 
-                    className="progress-bar" 
-                    style={{ 
-                      width: `${Math.min(100, (getUserProgressForAchievement(userStats, achievement) / achievement.requirement) * 100)}%` 
-                    }}
-                  ></div>
-                </div>
-              )}
+        {achievements.map(achievement => {
+          const progress = getUserProgressForAchievement(userStats, achievement);
+          const isUnlocked = unlockedAchievements.includes(achievement.id);
+          const progressPercent = Math.min(100, (progress / achievement.requirement) * 100);
+          
+          return (
+            <div 
+              key={achievement.id} 
+              className={`achievement-item ${isUnlocked ? 'unlocked' : 'locked'}`}
+            >
+              <span className="achievement-icon">{achievement.icon}</span>
+              <div className="achievement-content">
+                <h4>{achievement.name}</h4>
+                <p>{achievement.description}</p>
+                {!isUnlocked && (
+                  <div className="progress-container">
+                    <div 
+                      className="progress-bar" 
+                      style={{ width: `${progressPercent}%` }}
+                    ></div>
+                    <span className="progress-text">{progress}/{achievement.requirement}</span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -110,15 +119,20 @@ const AchievementSystem = ({ userStats }) => {
 
 // Helper function to calculate progress towards an achievement
 const getUserProgressForAchievement = (userStats, achievement) => {
+  // Check if userStats is null or undefined
+  if (!userStats) {
+    return 0;
+  }
+  
   switch(achievement.category) {
     case 'protocol':
-      return userStats.protocolChallengesCompleted;
+      return userStats.protocolChallengesCompleted || 0;
     case 'port':
-      return userStats.portsMatchedCorrectly;
+      return userStats.portsMatchedCorrectly || 0;
     case 'subnet':
-      return userStats.subnettingChallengesCompleted;
+      return userStats.subnettingChallengesCompleted || 0;
     case 'streak':
-      return userStats.currentStreak;
+      return userStats.currentStreak || 0;
     default:
       return 0;
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/ui/StreakCounter.css';
 
-const StreakCounter = ({ streakDays }) => {
+const StreakCounter = ({ streakDays = 0 }) => {
   // Determine flame color based on streak length
   const getFlameColor = () => {
     if (streakDays >= 30) return 'purple';

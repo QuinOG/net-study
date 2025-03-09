@@ -33,6 +33,9 @@ function Sidebar() {
     navigate(path);
   };
 
+  // Check if userStats is defined and has valid data
+  const hasValidStats = userStats && typeof userStats === 'object';
+
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
@@ -72,18 +75,6 @@ function Sidebar() {
               </span>
               <span className="nav-item-text">
                 Dashboard
-              </span>
-            </li>
-            <li 
-              className={isActive('/games') ? 'active' : ''} 
-              data-title="Games"
-              onClick={navigateTo('/dashboard')}
-            >
-              <span className="nav-item-icon">
-                <FiPlay size={20} />
-              </span>
-              <span className="nav-item-text">
-                Games
               </span>
             </li>
             <li 
@@ -134,7 +125,7 @@ function Sidebar() {
               </div>
               <h4>Level Progress</h4>
             </div>
-            <LevelProgress userXP={userStats.totalXP} />
+            <LevelProgress userXP={hasValidStats ? (userStats.totalXP || 0) : 0} />
           </div>
           
           {/* Streak Section */}
@@ -145,7 +136,7 @@ function Sidebar() {
               </div>
               <h4>Daily Streak</h4>
             </div>
-            <StreakCounter streakDays={userStats.currentStreak} />
+            <StreakCounter streakDays={hasValidStats ? (userStats.currentStreak || 0) : 0} />
           </div>
           
           {/* Daily Challenge */}
@@ -156,11 +147,11 @@ function Sidebar() {
               </div>
               <h4>Daily Challenge</h4>
             </div>
-            <DailyChallenge userStats={userStats} />
+            <DailyChallenge userStats={hasValidStats ? userStats : {}} />
           </div>
           
           {/* Recent Achievements Preview */}
-          {userStats.completedAchievements && userStats.completedAchievements.length > 0 && (
+          {hasValidStats && userStats.completedAchievements && userStats.completedAchievements.length > 0 && (
             <div className="sidebar-section achievements-section">
               <div className="section-header">
                 <div className="icon">
@@ -184,7 +175,7 @@ function Sidebar() {
           )}
           
           {/* Goals Section */}
-          {(!userStats.completedAchievements || userStats.completedAchievements.length === 0) && (
+          {(!hasValidStats || !userStats.completedAchievements || userStats.completedAchievements.length === 0) && (
             <div className="sidebar-section goals-section">
               <div className="section-header">
                 <div className="icon">

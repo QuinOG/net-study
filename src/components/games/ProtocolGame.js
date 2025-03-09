@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SoundManager from '../../utils/SoundManager';
 import { UserContext } from '../../context/UserContext';
 import scrollToTop from '../../utils/ScrollHelper';
+import { getAllGames, submitGameResults } from '../../services/api';
 import '../../styles/games/ProtocolGame.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -72,7 +73,13 @@ const DIFFICULTY_LEVELS = {
 
 function ProtocolGame() {
   const navigate = useNavigate();
-  const { userStats, addXP, updateStats } = useContext(UserContext);
+  const { userStats, addXP, updateStats, user } = useContext(UserContext);
+  const timerIdRef = useRef(null); // Add ref for timer ID
+  
+  // Get current user ID for localStorage key
+  const getUserKey = () => {
+    return user?.id || user?.guestId || 'guest';
+  };
 
   // Game state (note: "gameStarted" is used to match the port game)
   const [gameStarted, setGameStarted] = useState(false);
@@ -82,50 +89,77 @@ function ProtocolGame() {
   const [userAnswer, setUserAnswer] = useState('');
   const [score, setScore] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [startTime, setStartTime] = useState(null);
   const [showGameOver, setShowGameOver] = useState(false);
-  const [gameStats, setGameStats] = useState({
-    bestScore: 0,
-    bestStreak: 0,
-    gamesPlayed: 0,
-    totalAttempts: 0,
-    correctAnswers: 0
+  
+  // Initialize game stats with user-specific key
+  const [gameStats, setGameStats] = useState(() => {
+    const userKey = getUserKey();
+    const savedStats = localStorage.getItem(`protocolGameStats_${userKey}`);
+    return savedStats ? JSON.parse(savedStats) : {
+      bestScore: 0,
+      bestStreak: 0,
+      gamesPlayed: 0,
+      totalAttempts: 0,
+      correctAnswers: 0
+    };
   });
+  
   const [showDifficultySelect, setShowDifficultySelect] = useState(false);
   const [powerUps, setPowerUps] = useState({
     timeFreeze: 2,
     categoryReveal: 2,
     skipQuestion: 1
   });
+  
   const [feedback, setFeedback] = useState({
     show: false,
     message: '',
     isCorrect: false
   });
+  
+  const [gameId, setGameId] = useState(null);
 
-  // Load saved game stats from localStorage
+  // Update gameStats in localStorage when user changes
   useEffect(() => {
-    const savedStats = localStorage.getItem('protocolGameStats');
-    if (savedStats) {
-      setGameStats(JSON.parse(savedStats));
+    if (user) {
+      const userKey = getUserKey();
+      const savedStats = localStorage.getItem(`protocolGameStats_${userKey}`);
+      if (savedStats) {
+        setGameStats(JSON.parse(savedStats));
+      } else {
+        // Initialize stats for this user if they don't exist
+        const initialStats = {
+          bestScore: 0,
+          bestStreak: 0,
+          gamesPlayed: 0,
+          totalAttempts: 0,
+          correctAnswers: 0
+        };
+        localStorage.setItem(`protocolGameStats_${userKey}`, JSON.stringify(initialStats));
+        setGameStats(initialStats);
+      }
     }
-  }, []);
+  }, [user]);
 
-  // Save game stats to localStorage when they change
+  // Save game stats when they change
   useEffect(() => {
-    localStorage.setItem('protocolGameStats', JSON.stringify(gameStats));
+    if (gameStats) {
+      const userKey = getUserKey();
+      localStorage.setItem(`protocolGameStats_${userKey}`, JSON.stringify(gameStats));
+    }
   }, [gameStats]);
 
   // Timer effect for time attack mode (matching PortGame.js)
   useEffect(() => {
-    let timerId;
     if (gameStarted && gameMode === GAME_MODES.TIME_ATTACK && timeRemaining > 0) {
-      timerId = setInterval(() => {
+      timerIdRef.current = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            clearInterval(timerId);
+            clearInterval(timerIdRef.current);
             endGame();
             return 0;
           }
@@ -133,8 +167,29 @@ function ProtocolGame() {
         });
       }, 1000);
     }
-    return () => clearInterval(timerId);
+    return () => {
+      if (timerIdRef.current) {
+        clearInterval(timerIdRef.current);
+      }
+    };
   }, [gameStarted, gameMode, timeRemaining]);
+
+  // Fetch game data from backend
+  useEffect(() => {
+    const fetchGameData = async () => {
+      try {
+        // Get the protocol game from the database
+        const response = await getAllGames({ type: 'protocols' });
+        if (response.data.data.games.length > 0) {
+          setGameId(response.data.data.games[0]._id);
+        }
+      } catch (error) {
+        console.error("Error fetching game data:", error);
+      }
+    };
+
+    fetchGameData();
+  }, []);
 
   // Get a random port from our dictionary
   const getRandomPort = () => {
@@ -164,45 +219,87 @@ function ProtocolGame() {
     setGameMode(mode);
     setDifficulty(diff);
     setGameStarted(true);
-    setCurrentQuestion(generateQuestion());
     setShowGameOver(false);
+    
+    // Reset game state
+    setCurrentQuestion(generateQuestion());
     setScore(0);
     setCorrectAnswers(0);
+    setIncorrectAnswers(0);
     setCurrentStreak(0);
+    
+    // Set initial time based on difficulty
     setTimeRemaining(DIFFICULTY_LEVELS[diff].timeLimit);
     setStartTime(Date.now());
+    
+    // Reset power-ups
     setPowerUps({
       timeFreeze: 2,
       categoryReveal: 2,
       skipQuestion: 1
     });
+    
+    // Play start game sound
     SoundManager.play('gameStart');
   };
 
   // End the game and update stats
-  const endGame = () => {
-    const newStats = {
+  const endGame = async () => {
+    console.log("Game ending! Processing final stats...");
+    
+    // Clear any existing timer if in time attack mode
+    if (gameMode === GAME_MODES.TIME_ATTACK && timerIdRef.current) {
+      clearInterval(timerIdRef.current);
+    }
+    
+    // Update game stats 
+    const bestScoreUpdated = score > gameStats.bestScore;
+    const bestStreakUpdated = currentStreak > gameStats.bestStreak;
+    
+    const updatedStats = {
       ...gameStats,
       bestScore: Math.max(gameStats.bestScore, score),
       bestStreak: Math.max(gameStats.bestStreak, currentStreak),
       gamesPlayed: gameStats.gamesPlayed + 1,
-      totalAttempts: gameStats.totalAttempts + correctAnswers + (score > 0 ? 1 : 0),
+      totalAttempts: gameStats.totalAttempts + correctAnswers + incorrectAnswers,
       correctAnswers: gameStats.correctAnswers + correctAnswers
     };
-    setGameStats(newStats);
-    const xpEarned = Math.round(score / 10);
-    if (xpEarned > 0) {
-      addXP(xpEarned);
-      if (updateStats) {
-        updateStats('protocolGame', {
-          gamesPlayed: newStats.gamesPlayed,
-          bestScore: newStats.bestScore,
-          totalCorrect: newStats.correctAnswers
-        });
+    
+    // Store updated game stats
+    setGameStats(updatedStats);
+    localStorage.setItem(`protocolGameStats_${getUserKey()}`, JSON.stringify(updatedStats));
+    console.log("Game stats updated:", updatedStats);
+    
+    // Award XP (minimum 10 XP if score > 0, otherwise score-based)
+    if (score > 0) {
+      try {
+        const xpEarned = Math.max(10, Math.floor(score / 10));
+        console.log(`Awarding ${xpEarned} XP for score of ${score}`);
+        const result = await addXP(xpEarned);
+        
+        if (result.error) {
+          console.error("Error awarding XP:", result.error);
+        } else {
+          console.log("XP award successful:", result);
+          
+          if (result.oldXP !== undefined && result.newXP !== undefined) {
+            console.log(`XP updated: ${result.oldXP} → ${result.newXP} (+${result.xpEarned})`);
+          }
+          
+          if (result.levelUp) {
+            console.log("User leveled up!");
+            // TODO: Add level up celebration
+          }
+        }
+      } catch (error) {
+        console.error("Exception when awarding XP:", error);
       }
+    } else {
+      console.log("No XP awarded - score was 0");
     }
+    
+    // Set game over state and play game over sound
     setShowGameOver(true);
-    setGameStarted(false);
     SoundManager.play('gameOver');
   };
 
@@ -231,6 +328,7 @@ function ProtocolGame() {
   const handleIncorrectAnswer = () => {
     const correctProtocol = currentQuestion.protocol;
     setCurrentStreak(0);
+    setIncorrectAnswers(prev => prev + 1);
     
     // Apply time penalty in time attack mode
     if (gameMode === GAME_MODES.TIME_ATTACK) {
@@ -359,17 +457,15 @@ function ProtocolGame() {
               ))}
             </div>
             
-            <div className="nav-buttons">
-              <button 
-                className="back-button"
-                onClick={() => {
-                  setShowDifficultySelect(false);
-                  scrollToTop();
-                }}
-              >
-                ← Back to Mode Selection
-              </button>
-            </div>
+            <button 
+              className="back-btn"
+              onClick={() => {
+                setShowDifficultySelect(false);
+                scrollToTop();
+              }}
+            >
+              ← Back to Mode Selection
+            </button>
           </div>
         </div>
       );
@@ -447,7 +543,7 @@ function ProtocolGame() {
         
         <div className="nav-buttons">
           <button 
-            className="back-button"
+            className="back-btn"
             onClick={() => navigate('/dashboard')}
           >
             ← Back to Dashboard
@@ -472,6 +568,10 @@ function ProtocolGame() {
             <div className="stat-item">
               <span className="stat-label">Correct Answers</span>
               <span className="stat-value">{correctAnswers}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Incorrect Answers</span>
+              <span className="stat-value">{incorrectAnswers}</span>
             </div>
             <div className="stat-item">
               <span className="stat-label">Best Streak</span>
@@ -582,6 +682,18 @@ function ProtocolGame() {
           <button type="submit" className="submit-btn">Submit</button>
         </form>
       </div>
+      
+      {/* Add End Game button for practice mode */}
+      {gameMode === GAME_MODES.PRACTICE && (
+        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <button 
+            className="restart-btn"
+            onClick={() => endGame()}
+          >
+            End Game & Collect XP
+          </button>
+        </div>
+      )}
     </div>
   );
 }

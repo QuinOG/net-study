@@ -54,7 +54,7 @@ const dailyChallenges = [
   }
 ];
 
-const DailyChallenge = ({ userStats, onChallengeComplete }) => {
+const DailyChallenge = ({ userStats = {}, onChallengeComplete }) => {
   const [dailyChallenge, setDailyChallenge] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState('');
   const [completed, setCompleted] = useState(false);
@@ -99,29 +99,29 @@ const DailyChallenge = ({ userStats, onChallengeComplete }) => {
   
   // Check if challenge is completed
   useEffect(() => {
-    if (!dailyChallenge || completed) return;
+    if (!dailyChallenge || completed || !userStats) return;
     
     // Logic to check if challenge is completed based on userStats
     let isComplete = false;
     
     switch(dailyChallenge.type) {
       case 'protocol':
-        isComplete = userStats.protocolAccuracy >= 90;
+        isComplete = (userStats.protocolAccuracy || 0) >= 90;
         break;
       case 'port':
-        isComplete = userStats.portMatchesWithoutErrors >= 10;
+        isComplete = (userStats.portMatchesWithoutErrors || 0) >= 10;
         break;
       case 'subnet':
-        isComplete = userStats.subnettingChallengesCompletedToday >= 5;
+        isComplete = (userStats.subnettingChallengesCompletedToday || 0) >= 5;
         break;
       case 'acronym':
-        isComplete = userStats.acronymPerfectScore;
+        isComplete = userStats.acronymPerfectScore || false;
         break;
       case 'any':
-        isComplete = userStats.fastestGameCompletion < 120; // less than 2 minutes
+        isComplete = (userStats.fastestGameCompletion || Infinity) < 120; // less than 2 minutes
         break;
       case 'login':
-        isComplete = userStats.currentStreak >= 3;
+        isComplete = (userStats.currentStreak || 0) >= 3;
         break;
       default:
         break;
@@ -135,8 +135,10 @@ const DailyChallenge = ({ userStats, onChallengeComplete }) => {
       const dateString = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
       localStorage.setItem('lastDailyChallengeCompleted', dateString);
       
-      // Call the callback to add XP reward
-      onChallengeComplete(dailyChallenge.reward);
+      // Call the callback to add XP reward if available
+      if (onChallengeComplete) {
+        onChallengeComplete(dailyChallenge.reward);
+      }
     }
   }, [dailyChallenge, userStats, completed, onChallengeComplete]);
   

@@ -20,11 +20,12 @@ const dummyLeaderboardData = [
 ];
 
 const Leaderboard = ({ minimized = false }) => {
-  const { userStats } = useContext(UserContext);
+  const { userStats, loading } = useContext(UserContext);
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [activeTab, setActiveTab] = useState('xp');
   const [selectedTimeFrame, setSelectedTimeFrame] = useState('weekly');
   const [userRank, setUserRank] = useState(null);
+  const [localLoading, setLocalLoading] = useState(true);
   
   // Calculate user level based on XP
   const calculateLevel = (xp) => {
@@ -46,16 +47,33 @@ const Leaderboard = ({ minimized = false }) => {
   // Load and sort leaderboard data
   useEffect(() => {
     const loadLeaderboard = () => {
+      // Start with loading state
+      setLocalLoading(true);
+      
       // In a real app, fetch data from server
       // For now, just use dummy data
+      
+      // If we're still globally loading user data, wait for it
+      if (loading) {
+        return;
+      }
+      
+      // Even after loading is done, if there are no userStats, use dummy data
+      if (!userStats) {
+        setLeaderboardData(dummyLeaderboardData.slice(0, minimized ? 3 : 10));
+        setLocalLoading(false);
+        return;
+      }
+      
+      console.log("Rendering leaderboard with userStats:", userStats);
       
       // Add current user to the list
       const currentUserData = {
         id: 'currentUser',
         name: 'You',
-        xp: userStats.totalXP,
-        streak: userStats.currentStreak,
-        level: calculateLevel(userStats.totalXP),
+        xp: userStats.totalXP || 0,
+        streak: userStats.currentStreak || 0,
+        level: calculateLevel(userStats.totalXP || 0),
         isCurrentUser: true
       };
       
@@ -78,10 +96,23 @@ const Leaderboard = ({ minimized = false }) => {
       // Only show top entries (3 for minimized, 10 for full)
       const displayCount = minimized ? 3 : 10;
       setLeaderboardData(sortedData.slice(0, displayCount));
+      setLocalLoading(false);
     };
     
     loadLeaderboard();
-  }, [userStats, activeTab, selectedTimeFrame, minimized]);
+  }, [userStats, activeTab, selectedTimeFrame, minimized, loading]);
+  
+  // Show loading state while we wait for user stats to be loaded
+  if (localLoading || loading) {
+    return (
+      <div className={`leaderboard-container ${minimized ? 'minimized' : ''}`}>
+        <div className="leaderboard-header">
+          <h3>Leaderboard</h3>
+          <div className="loading-message">Loading leaderboard data...</div>
+        </div>
+      </div>
+    );
+  }
   
   // Render minimized leaderboard for home page
   if (minimized) {

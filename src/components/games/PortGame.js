@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
+import { getAllGames, submitGameResults } from '../../services/api';
 import '../../styles/games/PortGame.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -73,7 +74,13 @@ const DIFFICULTY_LEVELS = {
 
 function PortGame() {
   const navigate = useNavigate();
-  const { userStats, addXP, updateStats } = useContext(UserContext);
+  const { userStats, addXP, updateStats, user } = useContext(UserContext);
+  const timerIdRef = useRef(null); // Add ref for timer ID
+  
+  // Get current user ID for localStorage key
+  const getUserKey = () => {
+    return user?.id || user?.guestId || 'guest';
+  };
   
   // Game state
   const [gameStarted, setGameStarted] = useState(false);
@@ -83,17 +90,25 @@ function PortGame() {
   const [userAnswer, setUserAnswer] = useState('');
   const [score, setScore] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [startTime, setStartTime] = useState(null);
   const [showGameOver, setShowGameOver] = useState(false);
-  const [gameStats, setGameStats] = useState({
-    bestScore: 0,
-    bestStreak: 0,
-    gamesPlayed: 0,
-    totalAttempts: 0,
-    correctAnswers: 0
+  
+  // Initialize game stats with user-specific key
+  const [gameStats, setGameStats] = useState(() => {
+    const userKey = getUserKey();
+    const savedStats = localStorage.getItem(`portGameStats_${userKey}`);
+    return savedStats ? JSON.parse(savedStats) : {
+      bestScore: 0,
+      bestStreak: 0,
+      gamesPlayed: 0,
+      totalAttempts: 0,
+      correctAnswers: 0
+    };
   });
+  
   const [showDifficultySelect, setShowDifficultySelect] = useState(false);
   const [powerUps, setPowerUps] = useState({
     timeFreeze: 2,
@@ -105,18 +120,36 @@ function PortGame() {
     message: '',
     isCorrect: false
   });
+  const [gameId, setGameId] = useState(null);
 
-  // Load saved game stats from localStorage
+  // Update gameStats in localStorage when user changes
   useEffect(() => {
-    const savedStats = localStorage.getItem('portGameStats');
-    if (savedStats) {
-      setGameStats(JSON.parse(savedStats));
+    if (user) {
+      const userKey = getUserKey();
+      const savedStats = localStorage.getItem(`portGameStats_${userKey}`);
+      if (savedStats) {
+        setGameStats(JSON.parse(savedStats));
+      } else {
+        // Initialize stats for this user if they don't exist
+        const initialStats = {
+          bestScore: 0,
+          bestStreak: 0,
+          gamesPlayed: 0,
+          totalAttempts: 0,
+          correctAnswers: 0
+        };
+        localStorage.setItem(`portGameStats_${userKey}`, JSON.stringify(initialStats));
+        setGameStats(initialStats);
+      }
     }
-  }, []);
+  }, [user]);
 
   // Save game stats to localStorage when they change
   useEffect(() => {
-    localStorage.setItem('portGameStats', JSON.stringify(gameStats));
+    if (gameStats) {
+      const userKey = getUserKey();
+      localStorage.setItem(`portGameStats_${userKey}`, JSON.stringify(gameStats));
+    }
   }, [gameStats]);
 
   // Timer effect for time attack mode
@@ -138,6 +171,23 @@ function PortGame() {
     
     return () => clearInterval(timerId);
   }, [gameStarted, gameMode, timeRemaining]);
+
+  // Fetch game data from backend
+  useEffect(() => {
+    const fetchGameData = async () => {
+      try {
+        // Get the port game from the database
+        const response = await getAllGames({ type: 'ports' });
+        if (response.data.data.games.length > 0) {
+          setGameId(response.data.data.games[0]._id);
+        }
+      } catch (error) {
+        console.error("Error fetching game data:", error);
+      }
+    };
+
+    fetchGameData();
+  }, []);
 
   // Get a random port from our dictionary
   const getRandomPort = () => {
@@ -347,6 +397,7 @@ function PortGame() {
     setShowGameOver(false);
     setScore(0);
     setCorrectAnswers(0);
+    setIncorrectAnswers(0);
     setCurrentStreak(0);
     
     // Set initial time based on difficulty
@@ -365,39 +416,64 @@ function PortGame() {
   };
 
   // End the game and update stats
-  const endGame = () => {
+  const endGame = async () => {
+    console.log("Game ending! Processing final stats...");
+    
+    // We don't need to clear the timer manually since it's handled in the useEffect cleanup
+    // The timer variable is 'timerId' not 'timer'
+    
     // Update game stats
-    const newStats = {
+    const bestScoreUpdated = score > gameStats.bestScore;
+    const bestStreakUpdated = currentStreak > gameStats.bestStreak;
+    
+    const updatedStats = {
       ...gameStats,
-      bestScore: Math.max(gameStats.bestScore, score),
-      bestStreak: Math.max(gameStats.bestStreak, currentStreak),
       gamesPlayed: gameStats.gamesPlayed + 1,
-      totalAttempts: gameStats.totalAttempts + correctAnswers + (score > 0 ? 1 : 0), // Add one for current question if in progress
-      correctAnswers: gameStats.correctAnswers + correctAnswers
+      totalAttempts: gameStats.totalAttempts + correctAnswers + incorrectAnswers,
+      correctAnswers: gameStats.correctAnswers + correctAnswers,
+      bestScore: Math.max(gameStats.bestScore, score),
+      bestStreak: Math.max(gameStats.bestStreak, currentStreak)
     };
     
-    setGameStats(newStats);
+    // Store updated game stats
+    setGameStats(updatedStats);
+    localStorage.setItem(`portGameStats_${getUserKey()}`, JSON.stringify(updatedStats));
+    console.log("Game stats updated:", updatedStats);
     
-    // Award XP based on score
-    const xpEarned = Math.round(score / 10);
-    if (xpEarned > 0) {
-      addXP(xpEarned);
-      
-      // Update global stats if exists
-      if (updateStats) {
-        updateStats('portGame', {
-          gamesPlayed: newStats.gamesPlayed,
-          bestScore: newStats.bestScore,
-          totalCorrect: newStats.correctAnswers
-        });
+    // Award XP (minimum 10 XP if score > 0, otherwise score-based)
+    if (score > 0) {
+      try {
+        const xpEarned = Math.max(10, Math.floor(score / 10));
+        console.log(`Awarding ${xpEarned} XP for score of ${score}`);
+        const result = await addXP(xpEarned);
+        
+        if (result.error) {
+          console.error("Error awarding XP:", result.error);
+        } else {
+          console.log("XP award successful:", result);
+          
+          if (result.oldXP !== undefined && result.newXP !== undefined) {
+            console.log(`XP updated: ${result.oldXP} → ${result.newXP} (+${result.xpEarned})`);
+          }
+          
+          if (result.levelUp) {
+            console.log("User leveled up!");
+            // TODO: Add level up celebration
+          }
+        }
+      } catch (error) {
+        console.error("Exception when awarding XP:", error);
       }
+    } else {
+      console.log("No XP awarded - score was 0");
     }
     
-    // Show game over screen
+    // Set game over
     setShowGameOver(true);
     
     // Play game over sound
     SoundManager.play('gameOver');
+    console.log("Game over process complete");
   };
 
   // Game mode selection and rendering
@@ -432,7 +508,7 @@ function PortGame() {
             
             <div className="nav-buttons">
               <button 
-                className="back-button"
+                className="back-btn"
                 onClick={() => {
                   setShowDifficultySelect(false);
                   scrollToTop();
@@ -520,7 +596,7 @@ function PortGame() {
         
         <div className="nav-buttons">
           <button 
-            className="back-button"
+            className="back-btn"
             onClick={() => navigate('/dashboard')}
           >
             ← Back to Dashboard
@@ -669,6 +745,18 @@ function PortGame() {
           <button type="submit" className="submit-btn">Submit</button>
         </form>
       </div>
+      
+      {/* Add End Game button for practice mode */}
+      {gameMode === GAME_MODES.PRACTICE && (
+        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <button 
+            className="restart-btn"
+            onClick={() => endGame()}
+          >
+            End Game & Collect XP
+          </button>
+        </div>
+      )}
     </div>
   );
 }

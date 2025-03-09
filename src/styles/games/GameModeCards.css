@@ -5,14 +5,15 @@
   justify-content: center;
   gap: 1.5rem;
   margin: 2rem auto;
-  max-width: 800px;
+  max-width: 1200px;
+  padding: 0 1rem;
 }
 
 .game-mode-card {
   flex: 1;
   background-color: rgba(45, 55, 72, 0.5);
   border-radius: 10px;
-  padding: 1.5rem;
+  padding: 1.8rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   text-align: center;
@@ -20,7 +21,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 220px;
+  min-width: 250px;
 }
 
 .game-mode-card:hover {
@@ -56,48 +57,93 @@
   line-height: 1.4;
 }
 
+/* List styling for game mode cards with bullet points on the left */
+.game-mode-card ul {
+  list-style-type: none;
+  padding-left: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.game-mode-card li {
+  margin-bottom: 0.3rem;
+  padding-left: 1.5rem;
+  position: relative;
+  color: #a0aec0;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.game-mode-card li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #4299e1;
+}
+
 /* Difficulty selection */
 .difficulty-select {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 1rem;
-  margin: 2rem auto;
-  max-width: 800px;
-}
-
-.difficulty-btn {
-  display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-radius: 10px;
-  border: none;
-  background-color: rgba(45, 55, 72, 0.5);
-  color: #e2e8f0;
-  font-size: 1.2rem;
-  font-weight: 600;
+  margin: 2rem auto;
+  max-width: 900px;
+}
+
+.difficulty-card {
+  background-color: rgba(45, 55, 72, 0.7);
+  border-radius: 12px;
+  padding: 1.5rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-  min-width: 140px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
-.difficulty-btn small {
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
+.difficulty-card[data-difficulty="EASY"]:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+  background-color: rgba(72, 187, 120, 0.2);
+}
+
+.difficulty-card[data-difficulty="MEDIUM"]:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
+  background-color: rgba(237, 137, 54, 0.2);
+}
+
+.difficulty-card[data-difficulty="HARD"]:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(245, 101, 101, 0.4);
+  background-color: rgba(245, 101, 101, 0.2);
+}
+
+.difficulty-card h4 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #f7fafc;
+}
+
+.difficulty-card ul {
+  list-style-type: none;
+  padding-left: 1rem;
+}
+
+.acronym-game .difficulty-card li {
+  margin-bottom: 0.5rem;
   color: #a0aec0;
-  font-weight: 400;
+  position: relative;
 }
 
-.difficulty-btn:hover {
-  background-color: rgba(66, 153, 225, 0.2);
-  transform: translateY(-3px);
+.acronym-game .difficulty-card li::before {
+  content: "•";
+  position: absolute;
+  left: -1rem;
+  color: #4299e1;
 }
 
 .back-btn {
   display: block;
-  margin: 1.5rem auto;
+  margin: 0 auto;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   border: none;
@@ -106,6 +152,7 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  max-width: fit-content;
 }
 
 .back-btn:hover {
@@ -230,7 +277,8 @@
   .game-mode-card,
   .difficulty-btn {
     width: 100%;
-    max-width: 300px;
+    max-width: 100%;
+    min-width: unset;
   }
   
   .results-summary {

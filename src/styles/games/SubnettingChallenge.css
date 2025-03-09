@@ -515,4 +515,16 @@
 
 .subnetting-game .nav-buttons .back-button {
   margin: 0;
+}
+
+/* Ensure proper alignment in game mode cards */
+.subnetting-game .game-mode-card h4,
+.subnetting-game .game-mode-card h3 {
+  text-align: left;
+  width: 100%;
+}
+
+.subnetting-game .game-mode-card p {
+  text-align: left;
+  width: 100%;
 } 

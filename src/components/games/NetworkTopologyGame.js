@@ -4,9 +4,11 @@ import '../../styles/games/NetworkTopologyGame.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeCard from '../ui/GameModeCard';
 import SoundManager from '../../utils/SoundManager';
+import { useNavigate } from 'react-router-dom';
 
 function NetworkTopologyGame() {
   const { addXP } = useContext(UserContext);
+  const navigate = useNavigate();
   const [gameState, setGameState] = useState('setup'); // 'setup', 'playing', 'results'
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
   const [selectedMode, setSelectedMode] = useState(null);
@@ -167,42 +169,84 @@ function NetworkTopologyGame() {
   return (
     <div className="game-interface network-topology-game">
       {gameState === 'setup' && !selectedMode && (
-        <div className="game-setup">
-          <h3>Network Topology Challenge</h3>
-          <div className="game-modes">
-            {gameModes.map(mode => (
-              <GameModeCard 
-                key={mode.id}
-                title={mode.title}
-                description={mode.description}
-                icon={mode.icon}
-                onClick={() => handleModeSelect(mode.id)}
-              />
-            ))}
+        <>
+          <h3 className="game-title">Network Topology Challenge</h3>
+          <p className="game-description">Test your knowledge of network topologies and design.</p>
+          
+          <div className="stats-container">
+            <h3>Your Stats</h3>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Best Score</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Questions Answered</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0</span>
+                <span className="stat-label">Games Played</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">0%</span>
+                <span className="stat-label">Accuracy</span>
+              </div>
+            </div>
           </div>
-        </div>
+        
+          <div className="game-setup">
+            <h3>Network Topology Challenge</h3>
+            <div className="game-modes">
+              {gameModes.map(mode => (
+                <GameModeCard 
+                  key={mode.id}
+                  title={mode.title}
+                  description={mode.description}
+                  icon={mode.icon}
+                  onClick={() => handleModeSelect(mode.id)}
+                />
+              ))}
+            </div>
+          </div>
+          
+          <div className="nav-buttons">
+            <button 
+              className="back-btn"
+              onClick={() => navigate('/dashboard')}
+            >
+              ← Back to Dashboard
+            </button>
+          </div>
+        </>
       )}
       
       {gameState === 'setup' && selectedMode && (
         <div className="game-setup">
           <h3>Select Difficulty</h3>
           <div className="difficulty-select">
-            {difficulties.map(difficulty => (
-              <button 
-                key={difficulty.id} 
-                className="difficulty-btn"
-                onClick={() => handleDifficultySelect(difficulty.id)}
-              >
-                {difficulty.label}
-                <small>
-                  {difficulty.questions} questions, {difficulty.timeLimit} seconds
-                </small>
-              </button>
-            ))}
+            <div className="difficulty-cards">
+              {difficulties.map(difficulty => (
+                <button 
+                  key={difficulty.id} 
+                  className="difficulty-card"
+                  onClick={() => handleDifficultySelect(difficulty.id)}
+                >
+                  <h4>{difficulty.label}</h4>
+                  <ul>
+                    <li>{difficulty.questions} questions</li>
+                    <li>{difficulty.timeLimit} seconds time limit</li>
+                    {difficulty.id === 'easy' && <li>Detailed explanations</li>}
+                    {difficulty.id === 'medium' && <li>Moderate complexity</li>}
+                    {difficulty.id === 'hard' && <li>Advanced network concepts</li>}
+                  </ul>
+                </button>
+              ))}
+            </div>
+            <button className="back-btn" onClick={() => setSelectedMode(null)}>
+              ← Back to Modes
+            </button>
           </div>
-          <button className="back-btn" onClick={() => setSelectedMode(null)}>
-            Back to Modes
-          </button>
         </div>
       )}
       
