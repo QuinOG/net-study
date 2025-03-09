@@ -145,7 +145,6 @@ const DailyChallenge = ({ userStats, onChallengeComplete }) => {
   return (
     <div className="daily-challenge">
       <div className="challenge-header">
-        <h3>Daily Challenge</h3>
         <div className="time-remaining">Resets in: {timeRemaining}</div>
       </div>
       

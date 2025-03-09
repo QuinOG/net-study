@@ -1,4 +1,5 @@
 import React from 'react';
+import { FiAward, FiStar, FiUnlock } from 'react-icons/fi';
 import '../../styles/ui/LevelProgress.css';
 
 // Experience required for each level
@@ -16,47 +17,69 @@ const levelTitles = [
   "Protocol Professor", "Encryption Expert", "System Sage", "Network Maestro"
 ];
 
-const LevelProgress = ({ userXP }) => {
-  // Calculate current level
-  const level = levelThresholds.findIndex(threshold => userXP < threshold) - 1;
-  const currentLevel = level < 0 ? 0 : level;
-  const nextLevel = currentLevel + 1;
+function LevelProgress({ userXP = 0 }) {
+  // Calculate level and progress
+  const xpPerLevel = 1000;
+  const currentLevel = Math.floor(userXP / xpPerLevel);
+  const currentLevelXP = userXP % xpPerLevel;
+  const progressPercent = (currentLevelXP / xpPerLevel) * 100;
   
-  // Calculate progress to next level
-  const currentLevelXP = levelThresholds[currentLevel];
-  const nextLevelXP = levelThresholds[nextLevel];
-  const xpForCurrentLevel = userXP - currentLevelXP;
-  const xpRequiredForNextLevel = nextLevelXP - currentLevelXP;
-  const progressPercent = (xpForCurrentLevel / xpRequiredForNextLevel) * 100;
-  
+  // Calculate milestones
+  const milestones = [
+    { position: 25, reward: "New Challenge Unlocked" },
+    { position: 50, reward: "Bonus XP Multiplier" },
+    { position: 75, reward: "Special Achievement" }
+  ];
+
+  // Get next milestone
+  const nextMilestone = {
+    title: levelTitles[Math.min(currentLevel + 1, levelTitles.length - 1)],
+    description: `${xpPerLevel - currentLevelXP} XP until next level`,
+    icon: <FiAward size={24} />
+  };
+
   return (
-    <div className="level-container">
-      <div className="level-header">
-        <div className="level-badge">Lvl {currentLevel}</div>
-        <div className="level-title">{levelTitles[currentLevel]}</div>
+    <div className="progress-section">
+      <div className="level-info">
+        <div className="current-level">
+          <div className="level-number">{currentLevel}</div>
+          <div className="level-label">
+            <span>Current Level</span>
+            <span>{levelTitles[currentLevel]}</span>
+          </div>
+        </div>
+        <FiStar size={24} color="#4299e1" />
       </div>
+
       <div className="xp-progress">
-        <div className="xp-bar-container">
-          <div 
-            className="xp-bar" 
-            style={{ width: `${progressPercent}%` }}
-          ></div>
-        </div>
-        <div className="xp-text">
-          {xpForCurrentLevel}/{xpRequiredForNextLevel} XP to Level {nextLevel}
-        </div>
+        <div className="xp-bar" style={{ width: `${progressPercent}%` }} />
+        {milestones.map((milestone, index) => (
+          <div
+            key={index}
+            className="milestone-marker"
+            style={{ left: `${milestone.position}%` }}
+            title={milestone.reward}
+          />
+        ))}
       </div>
-      <div className="level-benefits">
-        <h4>Level {nextLevel} Unlocks:</h4>
-        <ul>
-          {getLevelBenefits(nextLevel).map((benefit, index) => (
-            <li key={index}>{benefit}</li>
-          ))}
-        </ul>
+
+      <div className="xp-info">
+        <span className="xp-current">{currentLevelXP} XP</span>
+        <span>{xpPerLevel} XP needed</span>
+      </div>
+
+      <div className="next-milestone">
+        <span className="milestone-icon">
+          {nextMilestone.icon}
+        </span>
+        <div className="milestone-info">
+          <div className="milestone-title">{nextMilestone.title}</div>
+          <div className="milestone-description">{nextMilestone.description}</div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 // Helper function to get benefits for the next level
 const getLevelBenefits = (level) => {

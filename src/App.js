@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import './styles/layout/App.css';
 import logo from './assets/images/netquest.png';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode } from 'react-icons/fi';
+import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode, FiChevronRight, FiTrendingUp, FiTarget, FiAward, FiFlag, FiArrowRight } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 import PortGame from './components/games/PortGame';
 import ProtocolGame from './components/games/ProtocolGame';
@@ -135,54 +135,105 @@ function Header() {
 
 function RightPanel() {
   const { userStats } = useContext(UserContext);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   return (
-    <aside className="right-panel">
-      <h3 className="panel-title">Study Progress</h3>
-      
-      {/* Level Progress */}
-      <div className="progress-section">
-        <LevelProgress userXP={userStats.totalXP} />
+    <aside className={`right-panel ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="right-panel-header">
+        <h3 className="panel-title">Study Progress</h3>
+        <button 
+          className="collapse-btn"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          title={isCollapsed ? "Expand panel" : "Collapse panel"}
+        >
+          <FiChevronRight size={20} />
+        </button>
       </div>
       
-      {/* Streak Section with colored flames */}
-      <div className="streak-section">
-        <StreakCounter streakDays={userStats.currentStreak} />
-      </div>
-      
-      {/* Daily Challenge - only show if available */}
-      <div className="challenge-section">
-        <DailyChallenge userStats={userStats} />
-      </div>
-      
-      {/* Recent Achievements Preview - only show if there are achievements */}
-      {userStats.completedAchievements && userStats.completedAchievements.length > 0 && (
-        <div className="achievements-section">
-          <h4>Recent Achievements</h4>
-          <div className="recent-achievements-preview">
-            {userStats.completedAchievements.slice(-2).map(achievement => (
-              <div key={achievement.id} className="mini-achievement">
-                <span className="achievement-icon">{achievement.icon}</span>
-                <span className="achievement-name">{achievement.name}</span>
-              </div>
-            ))}
+      <div className="panel-content">
+        {/* Level Progress */}
+        <div className="progress-section">
+          <div className="section-header">
+            <div className="icon">
+              <FiBarChart2 size={18} />
+            </div>
+            <h4>Level Progress</h4>
           </div>
-          <Link to="/dashboard/achievements" className="view-all-link">
-            View All Achievements
-          </Link>
+          <LevelProgress userXP={userStats.totalXP} />
         </div>
-      )}
-      
-      {/* Only show goals section if there are goals or no achievements */}
-      {(!userStats.completedAchievements || userStats.completedAchievements.length === 0) && (
-        <div className="goals-section">
-          <h4>Daily Goals</h4>
-          <ul>
-            <li>Play 2 rounds of Protocol Game</li>
-            <li>Score at least 80% in Port Game</li>
-          </ul>
+        
+        {/* Streak Section with colored flames */}
+        <div className="streak-section">
+          <div className="section-header">
+            <div className="icon">
+              <FiTrendingUp size={18} />
+            </div>
+            <h4>Daily Streak</h4>
+          </div>
+          <StreakCounter streakDays={userStats.currentStreak} />
         </div>
-      )}
+        
+        {/* Daily Challenge - only show if available */}
+        <div className="challenge-section">
+          <div className="section-header">
+            <div className="icon">
+              <FiTarget size={18} />
+            </div>
+            <h4>Daily Challenge</h4>
+          </div>
+          <DailyChallenge userStats={userStats} />
+        </div>
+        
+        {/* Recent Achievements Preview - only show if there are achievements */}
+        {userStats.completedAchievements && userStats.completedAchievements.length > 0 && (
+          <div className="achievements-section">
+            <div className="section-header">
+              <div className="icon">
+                <FiAward size={18} />
+              </div>
+              <h4>Recent Achievements</h4>
+            </div>
+            <div className="recent-achievements-preview">
+              {userStats.completedAchievements.slice(-2).map(achievement => (
+                <div key={achievement.id} className="mini-achievement">
+                  <span className="achievement-icon">{achievement.icon}</span>
+                  <span className="achievement-name">{achievement.name}</span>
+                </div>
+              ))}
+            </div>
+            <Link to="/dashboard/achievements" className="view-all-link">
+              <span>View All Achievements</span>
+              <FiArrowRight size={16} />
+            </Link>
+          </div>
+        )}
+        
+        {/* Only show goals section if there are goals or no achievements */}
+        {(!userStats.completedAchievements || userStats.completedAchievements.length === 0) && (
+          <div className="goals-section">
+            <div className="section-header">
+              <div className="icon">
+                <FiFlag size={18} />
+              </div>
+              <h4>Daily Goals</h4>
+            </div>
+            <ul>
+              <li>
+                <span className="goal-icon">
+                  <FiPlay size={16} />
+                </span>
+                <span className="goal-text">Play 2 rounds of Protocol Game</span>
+              </li>
+              <li>
+                <span className="goal-icon">
+                  <FiTarget size={16} />
+                </span>
+                <span className="goal-text">Score at least 80% in Port Game</span>
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
     </aside>
   );
 }
