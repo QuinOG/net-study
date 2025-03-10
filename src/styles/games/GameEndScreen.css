@@ -462,34 +462,159 @@ body.light-mode .dashboard-btn:hover {
   }
 }
 
-/* Enhanced Shareable Card Overlay */
+/* Enhanced Shareable Card Overlay with NetQuest branding */
 .shareable-card-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease-in-out;
   padding: 1rem;
+  backdrop-filter: blur(8px);
+}
+
+/* Confetti Animation */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 16px;
+  background-color: #4299e1;
+  opacity: 0.7;
+  animation: confetti-fall 10s ease-in-out infinite, confetti-shake 3s ease-in-out infinite alternate;
+}
+
+.confetti:nth-child(1) {
+  left: 7%;
+  animation-delay: 0s;
+  background-color: #4299e1;
+}
+
+.confetti:nth-child(2) {
+  left: 14%;
+  animation-delay: 0.5s;
+  background-color: #48bb78;
+}
+
+.confetti:nth-child(3) {
+  left: 25%;
+  animation-delay: 1s;
+  background-color: #f6ad55;
+}
+
+.confetti:nth-child(4) {
+  left: 40%;
+  animation-delay: 1.5s;
+  background-color: #ed64a6;
+}
+
+.confetti:nth-child(5) {
+  left: 55%;
+  animation-delay: 2s;
+  background-color: #4299e1;
+}
+
+.confetti:nth-child(6) {
+  left: 65%;
+  animation-delay: 2.5s;
+  background-color: #48bb78;
+}
+
+.confetti:nth-child(7) {
+  left: 75%;
+  animation-delay: 3s;
+  background-color: #f6ad55;
+}
+
+.confetti:nth-child(8) {
+  left: 80%;
+  animation-delay: 3.5s;
+  background-color: #4299e1;
+}
+
+.confetti:nth-child(9) {
+  left: 85%;
+  animation-delay: 4s;
+  background-color: #48bb78;
+}
+
+.confetti:nth-child(10) {
+  left: 90%;
+  animation-delay: 4.5s;
+  background-color: #f6ad55;
+}
+
+.confetti:nth-child(11) {
+  left: 60%;
+  animation-delay: 5s;
+  background-color: #4299e1;
+}
+
+.confetti:nth-child(12) {
+  left: 30%;
+  animation-delay: 5.5s;
+  background-color: #48bb78;
+}
+
+.confetti:nth-child(even) {
+  width: 16px;
+  height: 8px;
+}
+
+@keyframes confetti-fall {
+  0% {
+    top: -100px;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: 100vh;
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes confetti-shake {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(30px) rotate(90deg);
+  }
+  100% {
+    transform: translateX(-30px) rotate(180deg);
+  }
 }
 
 .shareable-card-container {
   background-color: #f9f9fb;
   border-radius: 20px;
-  padding: 2rem;
+  padding: 2rem 2rem 1.5rem;
   max-width: 480px;
   width: 90%;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+              0 0 80px rgba(66, 153, 225, 0.2);
   position: relative;
   animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: 1px solid rgba(66, 153, 225, 0.2);
+  overflow: hidden;
 }
 
 .close-card-button {
@@ -507,21 +632,93 @@ body.light-mode .dashboard-btn:hover {
 }
 
 .close-card-button:hover {
-  color: #333;
+  color: #4299e1;
 }
 
-/* Redesigned Shareable Card */
+/* Achievement Banner */
+.achievement-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, #4299e1, #48bb78);
+  color: white;
+  text-align: center;
+  padding: 0.5rem 0;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Redesigned Shareable Card with NetQuest branding */
 .shareable-card {
   position: relative;
-  background: linear-gradient(145deg, #ffffff, #f5f7ff);
+  background: linear-gradient(145deg, #ffffff, #f0f8ff);
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: 3rem 1.5rem 1.5rem;
   width: 100%;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(66, 153, 225, 0.1);
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(50, 50, 93, 0.1);
+  box-shadow: 0 10px 20px rgba(66, 153, 225, 0.1);
   margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+/* Score-based styling for cards */
+.shareable-card.perfect-score {
+  background: linear-gradient(145deg, #ffffff, #fffaf0);
+  border: 1px solid rgba(246, 173, 85, 0.3);
+  box-shadow: 0 10px 20px rgba(246, 173, 85, 0.15);
+}
+
+.shareable-card.high-score {
+  background: linear-gradient(145deg, #ffffff, #f7fafc);
+  border: 1px solid rgba(160, 174, 192, 0.3);
+  box-shadow: 0 10px 20px rgba(160, 174, 192, 0.15);
+}
+
+.shareable-card.good-score {
+  background: linear-gradient(145deg, #ffffff, #fff5f5);
+  border: 1px solid rgba(237, 137, 54, 0.2);
+  box-shadow: 0 10px 20px rgba(237, 137, 54, 0.1);
+}
+
+.shareable-card:before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.1), rgba(72, 187, 120, 0.1));
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.shareable-card:after {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  left: -50px;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.1), rgba(72, 187, 120, 0.1));
+  border-radius: 50%;
+  z-index: 0;
 }
 
 .card-brand-header {
@@ -530,28 +727,25 @@ body.light-mode .dashboard-btn:hover {
   justify-content: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.netquest-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .brand-name {
   font-size: 1.4rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  background: linear-gradient(90deg, #4299e1, #48bb78);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-}
-
-.shareable-card .logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #6e8efb, #a777e3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 10px rgba(66, 153, 225, 0.1);
 }
 
 .shareable-card h3 {
@@ -559,20 +753,57 @@ body.light-mode .dashboard-btn:hover {
   color: #333;
   font-size: 1.2rem;
   padding: 0.5rem 1rem;
-  background-color: #f0f4ff;
+  background-color: rgba(66, 153, 225, 0.1);
   display: inline-block;
   border-radius: 20px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 2px 5px rgba(66, 153, 225, 0.05);
 }
 
 .shareable-card .score-display {
   font-size: 3rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  background: linear-gradient(90deg, #4299e1, #48bb78);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   margin: 0.5rem 0;
-  text-shadow: 1px 1px 2px rgba(167, 119, 227, 0.1);
+  text-shadow: 1px 1px 2px rgba(66, 153, 225, 0.1);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Medal icons */
+.medal {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  animation: medalPulse 2s infinite alternate;
+}
+
+.medal.gold {
+  color: #f6ad55;
+}
+
+.medal.silver {
+  color: #a0aec0;
+}
+
+.medal.bronze {
+  color: #ed8936;
+}
+
+@keyframes medalPulse {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1);
+  }
 }
 
 .card-stats {
@@ -581,12 +812,15 @@ body.light-mode .dashboard-btn:hover {
   gap: 1.5rem;
   margin: 1rem 0;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 
 .card-stat {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 80px;
 }
 
 .card-stat .stat-label {
@@ -599,11 +833,15 @@ body.light-mode .dashboard-btn:hover {
 .card-stat .stat-value {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #333;
+  color: #4299e1;
 }
 
 .card-stat .stat-value.streak {
-  color: #ff5722;
+  color: #f6ad55;
+}
+
+.card-stat .stat-value.xp {
+  color: #48bb78;
 }
 
 .shareable-card .tagline {
@@ -612,8 +850,10 @@ body.light-mode .dashboard-btn:hover {
   color: #444;
   margin: 1rem 0;
   padding: 0.5rem 0;
-  border-top: 1px dashed #e0e0e0;
-  border-bottom: 1px dashed #e0e0e0;
+  border-top: 1px dashed rgba(66, 153, 225, 0.3);
+  border-bottom: 1px dashed rgba(66, 153, 225, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .card-footer {
@@ -621,23 +861,36 @@ body.light-mode .dashboard-btn:hover {
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .shareable-card .website {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #6e8efb;
+  color: #4299e1;
 }
 
-.qr-placeholder {
+.card-game-icon {
   width: 40px;
   height: 40px;
-  background-color: #f0f0f0;
-  border: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.2), rgba(72, 187, 120, 0.2));
+  border: 1px solid rgba(66, 153, 225, 0.3);
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-/* Card Share Options */
+.card-game-icon:before {
+  content: 'NQ';
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(66, 153, 225, 0.7);
+}
+
+/* Card Share Options with NetQuest branding */
 .card-share-options {
   display: flex;
   flex-direction: column;
@@ -645,29 +898,71 @@ body.light-mode .dashboard-btn:hover {
   width: 100%;
 }
 
-.copy-card-button {
-  background: linear-gradient(135deg, #6e8efb, #a777e3);
+.share-primary-buttons {
+  display: flex;
+  width: 100%;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.copy-card-button,
+.screenshot-button {
+  flex: 1;
+  background: linear-gradient(90deg, #4299e1, #48bb78);
   color: white;
   border: none;
   border-radius: 10px;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
+  padding: 0.8rem 0;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  width: 100%;
-  margin-bottom: 1rem;
-  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
+  box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
   transition: all 0.3s ease;
 }
 
-.copy-card-button:hover {
+.copy-card-button:hover,
+.screenshot-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
-  background: linear-gradient(135deg, #5a7cf3, #9260db);
+  box-shadow: 0 7px 14px rgba(66, 153, 225, 0.4);
+  background: linear-gradient(90deg, #3182ce, #38a169);
+}
+
+.share-divider {
+  width: 100%;
+  text-align: center;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.share-divider:before,
+.share-divider:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 70px);
+  height: 1px;
+  background-color: #e2e8f0;
+}
+
+.share-divider:before {
+  left: 0;
+}
+
+.share-divider:after {
+  right: 0;
+}
+
+.share-divider span {
+  display: inline-block;
+  padding: 0 10px;
+  background-color: #f9f9fb;
+  position: relative;
+  color: #718096;
+  font-size: 0.9rem;
 }
 
 .direct-share-buttons {
@@ -704,14 +999,41 @@ body.light-mode .dashboard-btn:hover {
   background-color: #25D366;
 }
 
-/* Enhanced media queries for responsive design */
-@media (min-width: 600px) {
-  .social-share-options {
-    grid-template-columns: repeat(2, 1fr);
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .shareable-card-container {
+    padding: 1.5rem 1.5rem 1rem;
   }
   
-  .challenge {
-    grid-column: 1 / -1;
+  .shareable-card {
+    padding: 3rem 1rem 1rem;
+  }
+  
+  .share-primary-buttons {
+    flex-direction: column;
+  }
+  
+  .achievement-banner {
+    font-size: 0.9rem;
+  }
+  
+  .shareable-card .score-display {
+    font-size: 2.5rem;
+  }
+  
+  .card-stat {
+    min-width: 70px;
   }
 }
 

@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiBarChart2, FiAward, FiCheck, FiTrendingUp, FiTarget } from 'react-icons/fi';
-import '../../styles/games/GameEndScreen.css';
-import { UserContext } from '../../context/UserContext';
 import { 
   FaTwitter, 
   FaWhatsapp,
+  FaShare,
   FaCamera,
-  FaNetworkWired,
   FaTrophy,
-  FaShare
+  FaMedal,
+  FaDownload
 } from 'react-icons/fa';
+import '../../styles/games/GameEndScreen.css';
+import { UserContext } from '../../context/UserContext';
+import logo from '../../assets/images/netquest.png';
 
 /**
  * Standardized Game End Screen component
@@ -202,6 +204,57 @@ const GameEndScreen = ({
     window.open(shareLink, '_blank');
   };
   
+  // Add function to get an achievement message based on score
+  const getAchievementTitle = (score, totalAttempts, bestScore) => {
+    const percentage = totalAttempts > 0 ? (score / totalAttempts) * 100 : 0;
+    
+    if (score > bestScore) return "New Record!";
+    if (percentage === 100) return "Perfect Score!";
+    if (percentage >= 90) return "Networking Expert!";
+    if (percentage >= 80) return "Network Pro!";
+    if (percentage >= 70) return "Network Enthusiast!";
+    if (percentage >= 60) return "Getting There!";
+    
+    return "Challenge Complete!";
+  };
+
+  // Add function to get card background based on score
+  const getCardStyle = (score, totalAttempts) => {
+    const percentage = totalAttempts > 0 ? (score / totalAttempts) * 100 : 0;
+    
+    if (percentage === 100) {
+      return "perfect-score"; // Gold background for perfect score
+    } else if (percentage >= 80) {
+      return "high-score"; // Silver background for high score
+    } else if (percentage >= 60) {
+      return "good-score"; // Bronze background for good score
+    }
+    
+    return ""; // Default background
+  };
+
+  // Add function to get medal icon based on score
+  const getMedalIcon = (score, totalAttempts) => {
+    const percentage = totalAttempts > 0 ? (score / totalAttempts) * 100 : 0;
+    
+    if (percentage === 100) {
+      return <FaTrophy className="medal gold" />;
+    } else if (percentage >= 80) {
+      return <FaMedal className="medal silver" />;
+    } else if (percentage >= 60) {
+      return <FaMedal className="medal bronze" />;
+    }
+    
+    return null;
+  };
+
+  // Function to take a screenshot of the card
+  const takeScreenshot = () => {
+    // In a real implementation, we would use html2canvas or a similar library
+    // For now, we'll just show an alert
+    alert("💡 In the full implementation, this would capture an image of your card.\n\nFor now, please use your device's screenshot functionality.");
+  };
+
   return (
     <div className="game-end-screen">
       <div className="game-end-header">
@@ -264,17 +317,35 @@ const GameEndScreen = ({
         </div>
       )}
       
-      {/* Enhanced Share Card Overlay */}
+      {/* Enhanced Share Card Overlay with proper branding and celebratory elements */}
       {showShareCard && (
         <div className="shareable-card-overlay">
+          <div className="confetti-container">
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+            <div className="confetti"></div>
+          </div>
+          
           <div className="shareable-card-container">
             <button className="close-card-button" onClick={closeShareCard}>×</button>
             
-            <div className="shareable-card" ref={shareCardRef}>
+            <div className={`shareable-card ${getCardStyle(score, totalAttempts)}`} ref={shareCardRef}>
+              {/* Achievement Banner */}
+              <div className="achievement-banner">
+                {getAchievementTitle(score, totalAttempts, bestScore)}
+              </div>
+              
               <div className="card-brand-header">
-                <div className="logo">
-                  <FaNetworkWired />
-                </div>
+                <img src={logo} alt="NetQuest Logo" className="netquest-logo" />
                 <div className="brand-name">NetQuest</div>
               </div>
               
@@ -282,6 +353,7 @@ const GameEndScreen = ({
               
               <div className="score-display">
                 {score}/{totalAttempts}
+                {getMedalIcon(score, totalAttempts)}
               </div>
               
               <div className="card-stats">
@@ -296,25 +368,40 @@ const GameEndScreen = ({
                     <span className="stat-value streak">🔥 {bestStreak}</span>
                   </div>
                 )}
+                
+                <div className="card-stat">
+                  <span className="stat-label">XP Earned</span>
+                  <span className="stat-value xp">+{xpEarned}</span>
+                </div>
               </div>
               
               <p className="tagline">Think you can beat me? Accept the challenge!</p>
               
               <div className="card-footer">
                 <div className="website">netquest.app</div>
-                <div className="qr-placeholder"></div>
+                <div className="card-game-icon"></div>
               </div>
             </div>
             
             <div className="card-share-options">
-              <button onClick={copyCardContent} className="copy-card-button">
-                <FaShare /> Copy to Clipboard
-              </button>
+              <div className="share-primary-buttons">
+                <button onClick={copyCardContent} className="copy-card-button">
+                  <FaShare /> Copy to Clipboard
+                </button>
+                <button onClick={takeScreenshot} className="screenshot-button">
+                  <FaCamera /> Take Screenshot
+                </button>
+              </div>
+              
+              <div className="share-divider">
+                <span>or share on</span>
+              </div>
+              
               <div className="direct-share-buttons">
-                <button onClick={() => shareFromCard('twitter')} className="direct-share twitter">
+                <button onClick={() => shareFromCard('twitter')} className="direct-share twitter" aria-label="Share on Twitter">
                   <FaTwitter />
                 </button>
-                <button onClick={() => shareFromCard('whatsapp')} className="direct-share whatsapp">
+                <button onClick={() => shareFromCard('whatsapp')} className="direct-share whatsapp" aria-label="Share on WhatsApp">
                   <FaWhatsapp />
                 </button>
               </div>
