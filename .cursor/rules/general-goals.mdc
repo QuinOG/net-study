@@ -1,0 +1,77 @@
+---
+description: generalgoalfoNETQUEST
+globs: 
+alwaysApply: false
+---
+1. Structured Learning Pathways
+Current state: The app has individual games but might lack a structured curriculum.
+Recommendations:
+Create clear learning paths (beginner → intermediate → advanced)
+Organize content into modules like "Networking Fundamentals," "Security," "Troubleshooting"
+Implement prerequisites (e.g., must complete subnetting before advanced routing)
+Add a visual learning map showing connections between topics
+2. Enhanced Progress Tracking
+Recommendations:
+Implement skill trees showing mastery levels across different networking domains
+Add progress bars for completion percentage within learning paths
+Create a dashboard showing strengths/weaknesses and suggesting focus areas
+Track streak days (like Duolingo) to encourage regular practice
+3. Deeper Gamification
+Current state: You have some game mechanics, achievements, and XP.
+Recommendations:
+Add skill levels (apprentice, journeyman, master) for different networking domains
+Implement daily challenges with bonus rewards
+Create a virtual currency to "unlock" advanced topics or cosmetic features
+Add competitive elements (leaderboards by topic, not just overall)
+Implement "certifications" upon completing major topic areas
+4. Community Features
+Recommendations:
+Add discussion forums for each topic area
+Create study groups/cohorts for peer learning
+Implement a "help request" system where users can ask specific questions
+Add a mentorship program connecting beginners with advanced users
+5. Content Enhancements
+Recommendations:
+Supplement games with short, focused video lessons (2-3 minutes)
+Add real-world scenario training with case studies from actual network issues
+Create interactive network simulations (e.g., build a network from scratch)
+Develop a "networking lab" where users can experiment with virtual equipment
+Add a "networking dictionary/encyclopedia" for reference
+6. Accessibility Improvements
+Recommendations:
+Ensure mobile responsiveness for learning on-the-go
+Add offline mode for core exercises
+Implement text-to-speech for theoretical content
+Provide multiple learning approaches for different learning styles
+7. Personalization
+Recommendations:
+Implement adaptive learning that focuses on weak areas
+Allow users to set goals (e.g., "Learn subnetting in 2 weeks")
+Create personalized daily practice routines
+Offer customized learning paths based on career goals (network admin, security specialist, etc.)
+8. Assessment & Feedback
+Recommendations:
+Add comprehensive assessments at module completion
+Provide detailed explanations for incorrect answers
+Implement spaced repetition to revisit challenging concepts
+Create "networking challenges" that combine multiple skills
+9. Technical Improvements
+Recommendations:
+Implement a progressive web app (PWA) for offline capabilities
+Add push notifications for learning reminders
+Create a companion mobile app
+Improve loading times and performance
+10. Monetization Strategy (If Applicable)
+Recommendations:
+Free tier with basic content and premium tier with advanced simulations
+Offer verified certifications for a fee
+Partner with networking companies for sponsored content
+Create enterprise solutions for team training
+11. Content Expansion Ideas
+Recommendations:
+Cloud networking concepts
+SD-WAN and modern networking techniques
+IoT networking
+5G/6G networking principles
+Network automation (with Python integration)
+Container networking (Docker, Kubernetes)

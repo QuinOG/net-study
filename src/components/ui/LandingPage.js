@@ -1,6 +1,19 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowRight, FaSignOutAlt } from 'react-icons/fa';
+import { 
+  FaArrowRight, 
+  FaSignOutAlt, 
+  FaGamepad, 
+  FaTrophy, 
+  FaUsers, 
+  FaChalkboardTeacher, 
+  FaShare, 
+  FaUserPlus,
+  FaTwitter,
+  FaFacebook,
+  FaWhatsapp,
+  FaEnvelope
+} from 'react-icons/fa';
 import '../../styles/ui/LandingPage.css';
 import logo from '../../assets/images/netquest.png';
 import LoginSignup from './LoginSignup';
@@ -8,11 +21,11 @@ import { UserContext } from '../../context/UserContext';
 
 const LandingPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { user, logout, startGuestSession, resetApplicationState } = useContext(UserContext);
+  const [showReferModal, setShowReferModal] = useState(false);
+  const { user, logout, startGuestSession, resetApplicationState, userStats, isLoggedIn } = useContext(UserContext);
   const navigate = useNavigate();
   
   // Check if user is already logged in (including guest)
-  const isLoggedIn = !!user;
   const isGuest = user?.isGuest || false;
 
   const handleLoginClick = (e) => {
@@ -46,6 +59,53 @@ const LandingPage = () => {
     e.preventDefault();
     // In a real app, you would scroll to the section or navigate
     console.log('Navigation clicked');
+  };
+
+  // Generate unique referral link
+  const getReferralLink = () => {
+    // In a real app, this would generate a unique code or use the user's username
+    // For now, we'll just use a placeholder
+    const baseUrl = window.location.origin;
+    return `${baseUrl}?ref=${isLoggedIn ? userStats.username || 'friend' : 'friend'}`;
+  };
+
+  // Copy referral link to clipboard
+  const copyReferralLink = () => {
+    const link = getReferralLink();
+    navigator.clipboard.writeText(link)
+      .then(() => {
+        alert('Referral link copied to clipboard!');
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+  };
+
+  // Share referral via platform
+  const shareReferral = (platform) => {
+    const link = getReferralLink();
+    const message = `Join me on NetQuest - the fun way to master networking skills! ${link} #NetQuest #NetworkingSkills`;
+    
+    let shareUrl;
+    
+    switch(platform) {
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+        break;
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(message)}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+        break;
+      case 'email':
+        shareUrl = `mailto:?subject=${encodeURIComponent('Join me on NetQuest!')}&body=${encodeURIComponent(message)}`;
+        break;
+      default:
+        return;
+    }
+    
+    window.open(shareUrl, '_blank');
   };
 
   // Different content depending on login status
@@ -146,6 +206,56 @@ const LandingPage = () => {
 
         {showLoginModal && (
           <LoginSignup onClose={() => setShowLoginModal(false)} />
+        )}
+
+        {/* Refer a Friend Section */}
+        <section className="referral-section">
+          <div className="referral-content">
+            <h2><FaUserPlus /> Invite Friends, Earn Rewards</h2>
+            <p>Share NetQuest with your friends and colleagues. Both of you will receive bonus XP and exclusive achievements!</p>
+            <button className="refer-button" onClick={() => setShowReferModal(true)}>
+              <FaShare /> Refer a Friend
+            </button>
+          </div>
+        </section>
+        
+        {/* Referral Modal */}
+        {showReferModal && (
+          <div className="referral-modal-overlay">
+            <div className="referral-modal">
+              <h3>Share NetQuest</h3>
+              <p>Invite your friends and you'll both get bonus XP and exclusive achievements!</p>
+              
+              <div className="referral-link-box">
+                <input 
+                  type="text" 
+                  readOnly 
+                  value={getReferralLink()} 
+                  className="referral-link-input"
+                />
+                <button onClick={copyReferralLink} className="copy-link-btn">Copy</button>
+              </div>
+              
+              <div className="share-options">
+                <button onClick={() => shareReferral('twitter')} className="share-btn twitter">
+                  <FaTwitter /> Twitter
+                </button>
+                <button onClick={() => shareReferral('facebook')} className="share-btn facebook">
+                  <FaFacebook /> Facebook
+                </button>
+                <button onClick={() => shareReferral('whatsapp')} className="share-btn whatsapp">
+                  <FaWhatsapp /> WhatsApp
+                </button>
+                <button onClick={() => shareReferral('email')} className="share-btn email">
+                  <FaEnvelope /> Email
+                </button>
+              </div>
+              
+              <button className="close-modal-btn" onClick={() => setShowReferModal(false)}>
+                Close
+              </button>
+            </div>
+          </div>
         )}
 
         <div className="landing-footer">
