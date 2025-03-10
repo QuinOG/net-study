@@ -135,8 +135,37 @@ export const calculateGuestProgress = (gameResults) => {
  * Clear guest user data from local storage
  */
 export const clearGuestData = () => {
+  // Remove the main guest user data
   localStorage.removeItem(GUEST_USER_KEY);
   localStorage.removeItem(GUEST_STATS_KEY);
+  
+  // Also remove any game-specific guest data that might exist
+  const keysToRemove = [];
+  
+  // Find all localStorage keys that might be related to guest data, settings, or user preferences
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && (
+        // Guest-specific keys
+        key.includes('guest') || 
+        key.includes('Game') || 
+        key.includes('Stats_guest') ||
+        key.includes('_guest_') ||
+        // Settings keys
+        key.includes('net-study-settings-') ||
+        key.includes('netQuestSound')
+    )) {
+      keysToRemove.push(key);
+    }
+  }
+  
+  // Remove all found keys
+  keysToRemove.forEach(key => {
+    console.log(`[Data Cleanup] Removing key: ${key}`);
+    localStorage.removeItem(key);
+  });
+  
+  console.log(`[Data Cleanup] Removed ${keysToRemove.length} guest/settings items`);
 };
 
 // Named export for the utility object - best practice

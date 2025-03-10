@@ -161,19 +161,106 @@ export const UserProvider = ({ children }) => {
     }
   };
   
-  // Logout user
-  const logout = () => {
-    localStorage.removeItem('token');
+  // A utility function to completely reset application state
+  const resetApplicationState = () => {
+    console.log('[App] Beginning complete application state reset');
+    
+    // Reset all state variables
     setUser(null);
     setUserStats(null);
+    setError(null);
+    setShowReward(false);
+    setRewardXP(0);
+    
+    // Remove any auth tokens
+    localStorage.removeItem('token');
+    
+    // Clear all guest and settings data
+    try {
+      clearGuestData();
+      
+      // Also clear other potential user-specific data
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (
+          key.includes('token') ||
+          key.includes('user') ||
+          key.includes('stats') ||
+          key.includes('settings') ||
+          key.includes('net-study')
+        )) {
+          console.log(`[App Reset] Removing: ${key}`);
+          localStorage.removeItem(key);
+        }
+      }
+    } catch (err) {
+      console.error('[App Reset] Error clearing localStorage:', err);
+    }
+    
+    console.log('[App] Application state has been completely reset');
+  };
+
+  // Logout user
+  const logout = () => {
+    // Reset all application state
+    resetApplicationState();
+    
+    // Force a complete page reload to reset all React component state and event listeners
+    // This should resolve issues with event listener conflicts
+    setTimeout(() => {
+      window.location.replace('/');
+    }, 0);
   };
   
-  // Start guest session
+  // Start guest session with a completely fresh state
   const startGuestSession = () => {
-    const guestData = getGuestUser() || createGuestUser();
-    setUser(guestData.user);
-    setUserStats(guestData.stats);
-    return guestData;
+    console.log("[UserContext] Starting fresh guest session");
+    
+    // First completely reset application state
+    resetApplicationState();
+    
+    try {
+      // Create a new guest user 
+      const guestUser = {
+        id: `guest_${Date.now()}`,
+        displayName: 'Guest User',
+        username: 'Guest',
+        isGuest: true,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Create basic stats for the guest
+      const guestStats = {
+        ...defaultUserStats,
+        userId: guestUser.id,
+        lastActive: new Date().toISOString()
+      };
+      
+      // Store in localStorage manually
+      localStorage.setItem('guest_user', JSON.stringify(guestUser));
+      localStorage.setItem('guest_stats', JSON.stringify(guestStats));
+      
+      // Update state - explicitly force state update
+      console.log("[UserContext] Setting guest user state:", guestUser);
+      setUser(guestUser);
+      setUserStats(guestStats);
+      
+      console.log("[UserContext] Guest session created successfully");
+      return { user: guestUser, stats: guestStats };
+    } catch (error) {
+      console.error("[UserContext] Error creating guest session:", error);
+      
+      // Fallback: create basic guest user even if something fails
+      const fallbackUser = { 
+        id: 'guest_fallback', 
+        displayName: 'Guest User',
+        username: 'Guest',
+        isGuest: true
+      };
+      setUser(fallbackUser);
+      
+      return { user: fallbackUser, stats: defaultUserStats };
+    }
   };
   
   // Add XP to user (called by games)
@@ -348,25 +435,25 @@ export const UserProvider = ({ children }) => {
     setShowReward(false);
   };
   
+  // Return context provider with all values and functions
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        userStats,
-        loading,
-        error,
-        login,
-        register,
-        logout,
-        startGuestSession,
-        addXP,
-        updateStats,
-        showReward,
-        setShowReward,
-        rewardXP,
-        handleRewardComplete
-      }}
-    >
+    <UserContext.Provider value={{
+      user,
+      userStats,
+      loading,
+      error,
+      isGuest: user?.isGuest || false,
+      showReward,
+      rewardXP,
+      login,
+      register,
+      logout,
+      startGuestSession,
+      addXP,
+      updateStats,
+      handleRewardComplete,
+      resetApplicationState // Expose the reset function
+    }}>
       {children}
     </UserContext.Provider>
   );

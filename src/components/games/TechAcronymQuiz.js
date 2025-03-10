@@ -4,6 +4,8 @@ import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
+import GameEndScreen from '../ui/GameEndScreen';
+import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
 import '../../styles/games/TechAcronymQuiz.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -44,6 +46,15 @@ const DIFFICULTY_LEVELS = {
     multiplier: 2,
     showHints: false
   }
+};
+
+// Default statistics for new users
+const DEFAULT_STATS = {
+  bestScore: 0,
+  bestStreak: 0,
+  gamesPlayed: 0,
+  totalAttempts: 0,
+  correctAnswers: 0
 };
 
 // Dictionary of tech acronyms with variants and categories
@@ -204,21 +215,46 @@ function TechAcronymQuiz() {
     }
   }, [gameStats, user]);
   
-  // Fetch game data from backend
+  // Initial loading of game stats from localStorage or API 
   useEffect(() => {
-    const fetchGameData = async () => {
+    const loadGameData = async () => {
       try {
-        // Get the acronyms game from the database
-        const response = await getAllGames({ type: 'acronyms' });
-        if (response.data.data.games.length > 0) {
-          setGameId(response.data.data.games[0]._id);
+        // Get user-specific key for localStorage
+        const userKey = getUserKey();
+        
+        // Load game stats from localStorage
+        const savedStats = localStorage.getItem(`acronymQuizStats_${userKey}`);
+        
+        if (savedStats) {
+          setGameStats(JSON.parse(savedStats));
+        } else {
+          // If no saved stats found, initialize with defaults
+          setGameStats(DEFAULT_STATS);
+          localStorage.setItem(`acronymQuizStats_${userKey}`, JSON.stringify(DEFAULT_STATS));
         }
+        
+        // Get game ID from API if needed for future features
+        const gamesResponse = await getAllGames();
+        const techAcronymGame = gamesResponse.data.data.find(game => 
+          game.slug === 'tech-acronym-quiz'
+        );
+        
+        if (techAcronymGame) {
+          setGameId(techAcronymGame.id);
+        }
+        
+        // Initialize topics progress
+        const initialTopicsProgress = getGameTopicsProgress('techAcronymQuiz', userKey);
+        setTopicsProgress(initialTopicsProgress);
+        
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching game data:", error);
+        console.error('Error loading game data:', error);
+        setLoading(false);
       }
     };
-
-    fetchGameData();
+    
+    loadGameData();
   }, []);
 
   // Timer effect for time attack mode
@@ -384,10 +420,21 @@ function TechAcronymQuiz() {
     localStorage.setItem(`acronymQuizStats_${userKey}`, JSON.stringify(updatedStats));
     console.log(`Game stats updated for user ${userKey}:`, updatedStats);
     
+    // Calculate XP earned
+    const xpEarned = score > 0 ? Math.max(10, Math.floor(score / 10)) : 0;
+    
+    // Update learning progress tracking
+    const gameResults = {
+      totalQuestions: correctAnswers + incorrectAnswers,
+      correctAnswers: correctAnswers
+    };
+    
+    const { topicsProgress } = updateProgress('techAcronymQuiz', userKey, gameResults, selectedCategory);
+    setTopicsProgress(topicsProgress);
+    
     // Award XP (minimum 10 XP if score > 0, otherwise score-based)
     if (score > 0) {
       try {
-        const xpEarned = Math.max(10, Math.floor(score / 10));
         console.log(`Awarding ${xpEarned} XP for score of ${score}`);
         const result = await addXP(xpEarned);
         
@@ -401,15 +448,15 @@ function TechAcronymQuiz() {
           }
           
           if (result.levelUp) {
-            console.log("User leveled up!");
-            // TODO: Add level up celebration
+            console.log("Level Up!", result.newLevel);
+            // Maybe add a level up celebration in the future
           }
         }
       } catch (error) {
-        console.error("Exception when awarding XP:", error);
+        console.error("Error in XP award process:", error);
       }
     } else {
-      console.log("No XP awarded - score was 0");
+      console.log("No XP awarded - score is 0");
     }
     
     // Set game over
@@ -474,8 +521,21 @@ function TechAcronymQuiz() {
       
       // Update score and streak
       setScore(prev => prev + earnedPoints);
-      setCurrentStreak(prev => prev + 1);
+      const newStreak = currentStreak + 1;
+      setCurrentStreak(newStreak);
       setCorrectAnswers(prev => prev + 1);
+      
+      // Update best streak immediately if needed
+      if (newStreak > gameStats.bestStreak) {
+        const updatedStats = {
+          ...gameStats,
+          bestStreak: newStreak
+        };
+        setGameStats(updatedStats);
+        
+        // Save to localStorage
+        localStorage.setItem(`acronymQuizStats_${getUserKey()}`, JSON.stringify(updatedStats));
+      }
       
       // Update combo (max 2.0)
       setCombo(prev => Math.min(prev + 0.1, 2.0));
@@ -530,8 +590,12 @@ function TechAcronymQuiz() {
     await endGame();
   };
 
-      return (
-        <div className="acronym-game">
+  const [loading, setLoading] = useState(true);
+  const [showStats, setShowStats] = useState(false);
+  const [topicsProgress, setTopicsProgress] = useState([]);
+  
+  return (
+    <div className="acronym-game">
       <h2 className="game-title">Tech Acronym Quiz</h2>
       <p className="game-description">
         Test your knowledge of technical acronyms across networking, hardware, and security.
@@ -539,17 +603,22 @@ function TechAcronymQuiz() {
       
       {/* Game Over Screen */}
       {showGameOver && (
-        <div className="game-over">
-          <h2>Game Over!</h2>
-          <div className="score-display">
-            <h3>Score: {score}</h3>
-            <p>Correct Answers: {correctAnswers}</p>
-            <p>Accuracy: {Math.round((correctAnswers / (correctAnswers + incorrectAnswers)) * 100)}%</p>
-            <p>Best Streak: {Math.max(currentStreak, gameStats.bestStreak)}</p>
-                  </div>
-          
-          <button className="primary-button" onClick={goBackToMenu}>Back to Menu</button>
-              </div>
+        <GameEndScreen
+          gameTitle="Tech Acronym Quiz"
+          score={score}
+          bestScore={gameStats.bestScore}
+          xpEarned={score > 0 ? Math.max(10, Math.floor(score / 10)) : 0}
+          correctAnswers={correctAnswers}
+          totalAttempts={correctAnswers + incorrectAnswers}
+          bestStreak={Math.max(currentStreak, gameStats.bestStreak)}
+          isNewHighScore={score > gameStats.bestScore}
+          topicsProgress={topicsProgress}
+          onPlayAgain={() => {
+            setShowGameOver(false);
+            initializeGame(gameMode, difficulty, selectedCategory);
+          }}
+          onBackToMenu={goBackToMenu}
+        />
       )}
       
       {/* Show stats first when in menu (consistent with other games) */}

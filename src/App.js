@@ -29,18 +29,56 @@ import SoundManager from './utils/SoundManager';
 import { defaultUserStats } from './utils/GuestUser';
 
 function AppContent() {
-  const { user, userStats, loading, showReward, rewardXP, handleRewardComplete } = useContext(UserContext);
+  const { user, userStats, loading, showReward, rewardXP, handleRewardComplete, startGuestSession } = useContext(UserContext);
+  const [initializingGuest, setInitializingGuest] = useState(false);
+  
+  // Handle guest mode from URL parameter
+  useEffect(() => {
+    // Parse the URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    
+    if (mode === 'guest' && !user && !initializingGuest) {
+      console.log('[App] Detected guest mode parameter, initializing guest session');
+      
+      // Set flag to prevent repeated initialization
+      setInitializingGuest(true);
+      
+      // Remove the parameter from URL without page reload
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+      
+      // Initialize guest session immediately
+      try {
+        startGuestSession();
+        console.log('[App] Guest session started successfully');
+      } catch (error) {
+        console.error('[App] Failed to start guest session:', error);
+        // Reset the flag if initialization failed
+        setInitializingGuest(false);
+      }
+    }
+  }, [loading, startGuestSession, user, initializingGuest]);
+  
+  // Reset initialization flag when user is set
+  useEffect(() => {
+    if (user && initializingGuest) {
+      setInitializingGuest(false);
+    }
+  }, [user, initializingGuest]);
   
   // Determine if user is authenticated or a guest
   const isAuthenticated = !!user;
+  const isGuest = user?.isGuest || false;
   
-  // If still loading, show a loading indicator
-  if (loading) {
+  // If still loading or initializing guest session, show a loading indicator
+  if (loading || initializingGuest) {
     return <div className="loading-container">Loading...</div>;
   }
   
   return (
     <Routes>
+      {/* Landing page is accessible by everyone, but authenticated users will see a special version */}
       <Route path="/" element={<LandingPage />} />
       
       {/* Dashboard routes - accessible by both authenticated and guest users */}
@@ -123,6 +161,21 @@ function Header() {
       setIsMobileMenuOpen(!isMobileMenuOpen);
     }
   };
+  
+  // Handle logo click to go to landing page
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    // Use window.location.href instead of React Router navigation
+    // to ensure a clean page load
+    window.location.href = "/";
+  };
+  
+  // Handle sign in click for guest users
+  const handleSignInClick = (e) => {
+    e.preventDefault();
+    // Direct to landing page for sign in
+    window.location.href = "/";
+  };
 
   return (
     <header className="top-bar">
@@ -136,24 +189,30 @@ function Header() {
           <FiMenu size={24} />
         </button>
         
-        <Link to="/" style={{ textDecoration: 'none' }}>
-          <div className="logo">
-            <img 
-              src={logo} 
-              alt="NetQuest Logo" 
-              style={{ flexShrink: 0 }}
-            />
-            <span>NetQuest</span>
-          </div>
-        </Link>
+        {/* Logo with click handler instead of Link */}
+        <div 
+          className="logo" 
+          onClick={handleLogoClick}
+          style={{ cursor: 'pointer' }}
+        >
+          <img 
+            src={logo} 
+            alt="NetQuest Logo" 
+            style={{ flexShrink: 0 }}
+          />
+          <span>NetQuest</span>
+        </div>
       </div>
       <div className="top-bar-right">
         {isGuest && (
           <div className="guest-indicator">
             Guest Mode
-            <Link to="/" className="login-prompt">
+            <button 
+              className="login-prompt" 
+              onClick={handleSignInClick}
+            >
               Sign in to save progress
-            </Link>
+            </button>
           </div>
         )}
         <img
@@ -176,7 +235,7 @@ function Header() {
           })()}
           alt="User Avatar"
         />
-        {user && (
+        {user && !isGuest && (
           <button className="logout-button" onClick={logout}>
             Logout
           </button>

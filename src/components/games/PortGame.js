@@ -4,6 +4,8 @@ import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
+import GameEndScreen from '../ui/GameEndScreen';
+import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
 import '../../styles/games/PortGame.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -45,6 +47,15 @@ const PORT_DATA = {
 const GAME_MODES = {
   TIME_ATTACK: 'TIME_ATTACK',
   PRACTICE: 'PRACTICE'
+};
+
+// Default statistics for new users
+const DEFAULT_STATS = {
+  bestScore: 0,
+  bestStreak: 0,
+  gamesPlayed: 0,
+  totalAttempts: 0,
+  correctAnswers: 0
 };
 
 // Difficulty levels with their settings
@@ -121,6 +132,9 @@ function PortGame() {
     isCorrect: false
   });
   const [gameId, setGameId] = useState(null);
+  const [topicsProgress, setTopicsProgress] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentCategory, setCurrentCategory] = useState(null);
 
   // Update gameStats in localStorage when user changes
   useEffect(() => {
@@ -172,21 +186,45 @@ function PortGame() {
     return () => clearInterval(timerId);
   }, [gameStarted, gameMode, timeRemaining]);
 
-  // Fetch game data from backend
+  // Load game stats from localStorage
   useEffect(() => {
-    const fetchGameData = async () => {
+    const loadGameData = async () => {
       try {
-        // Get the port game from the database
-        const response = await getAllGames({ type: 'ports' });
-        if (response.data.data.games.length > 0) {
-          setGameId(response.data.data.games[0]._id);
+        const userKey = getUserKey();
+        
+        // Load game stats from localStorage
+        const savedStats = localStorage.getItem(`portGameStats_${userKey}`);
+        
+        if (savedStats) {
+          setGameStats(JSON.parse(savedStats));
+        } else {
+          // If no saved stats, initialize with defaults
+          setGameStats(DEFAULT_STATS);
+          localStorage.setItem(`portGameStats_${userKey}`, JSON.stringify(DEFAULT_STATS));
         }
+        
+        // Get game ID from API if needed for future features
+        const gamesResponse = await getAllGames();
+        const portGame = gamesResponse.data.data.find(game => 
+          game.slug === 'port-master'
+        );
+        
+        if (portGame) {
+          setGameId(portGame.id);
+        }
+        
+        // Initialize topics progress
+        const initialTopicsProgress = getGameTopicsProgress('portGame', userKey);
+        setTopicsProgress(initialTopicsProgress);
+        
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching game data:", error);
+        console.error('Error loading game data:', error);
+        setLoading(false);
       }
     };
-
-    fetchGameData();
+    
+    loadGameData();
   }, []);
 
   // Get a random port from our dictionary
@@ -258,6 +296,18 @@ function PortGame() {
     const newStreak = currentStreak + 1;
     setCurrentStreak(newStreak);
     
+    // Update best streak immediately if current streak is better
+    if (newStreak > gameStats.bestStreak) {
+      const updatedStats = {
+        ...gameStats,
+        bestStreak: newStreak
+      };
+      setGameStats(updatedStats);
+      
+      // Save to localStorage
+      localStorage.setItem(`portGameStats_${getUserKey()}`, JSON.stringify(updatedStats));
+    }
+    
     // Apply difficulty multiplier to score
     const pointsEarned = 100 * DIFFICULTY_LEVELS[difficulty].multiplier;
     const newScore = score + pointsEarned;
@@ -289,6 +339,9 @@ function PortGame() {
     
     // Reset streak
     setCurrentStreak(0);
+    
+    // Increment incorrect answers count
+    setIncorrectAnswers(prev => prev + 1);
     
     // Subtract time for time attack mode
     if (gameMode === GAME_MODES.TIME_ATTACK) {
@@ -437,13 +490,27 @@ function PortGame() {
     
     // Store updated game stats
     setGameStats(updatedStats);
-    localStorage.setItem(`portGameStats_${getUserKey()}`, JSON.stringify(updatedStats));
+    const userKey = getUserKey();
+    localStorage.setItem(`portGameStats_${userKey}`, JSON.stringify(updatedStats));
     console.log("Game stats updated:", updatedStats);
+    
+    // Calculate XP earned
+    const xpEarned = score > 0 ? Math.max(10, Math.floor(score / 10)) : 0;
+    
+    // Update learning progress tracking
+    const gameResults = {
+      totalQuestions: correctAnswers + incorrectAnswers,
+      correctAnswers: correctAnswers
+    };
+    
+    // Use the current category if available, otherwise pass null
+    const categoryForProgress = currentCategory || null;
+    const { topicsProgress } = updateProgress('portGame', userKey, gameResults, categoryForProgress);
+    setTopicsProgress(topicsProgress);
     
     // Award XP (minimum 10 XP if score > 0, otherwise score-based)
     if (score > 0) {
       try {
-        const xpEarned = Math.max(10, Math.floor(score / 10));
         console.log(`Awarding ${xpEarned} XP for score of ${score}`);
         const result = await addXP(xpEarned);
         
@@ -457,15 +524,14 @@ function PortGame() {
           }
           
           if (result.levelUp) {
-            console.log("User leveled up!");
-            // TODO: Add level up celebration
+            console.log("Level Up!", result.newLevel);
           }
         }
       } catch (error) {
-        console.error("Exception when awarding XP:", error);
+        console.error("Error in XP award process:", error);
       }
     } else {
-      console.log("No XP awarded - score was 0");
+      console.log("No XP awarded - score is 0");
     }
     
     // Set game over
@@ -608,51 +674,28 @@ function PortGame() {
 
   // Show game over screen
   if (showGameOver) {
-    const isNewHighScore = score > gameStats.bestScore;
-    
     return (
       <div className="port-game">
-        <div className="game-over-stats">
-          <h2>{isNewHighScore ? '🏆 New High Score! 🏆' : 'Game Over'}</h2>
-          
-          <div className="final-stats">
-            <div className="stat-item">
-              <span className="stat-label">Score</span>
-              <span className={`stat-value ${isNewHighScore ? 'highlight' : ''}`}>{score}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Correct Answers</span>
-              <span className="stat-value">{correctAnswers}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Best Streak</span>
-              <span className="stat-value">{Math.max(currentStreak, gameStats.bestStreak)}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">XP Earned</span>
-              <span className="stat-value">{Math.round(score / 10)}</span>
-            </div>
-          </div>
-          
-          <div className="game-over-buttons">
-            <button 
-              className="restart-btn"
-              onClick={() => initializeGame(gameMode, difficulty)}
-            >
-              Play Again
-            </button>
-            <button 
-              className="home-btn"
-              onClick={() => {
-                setGameStarted(false);
-                setGameMode(null);
-                scrollToTop();
-              }}
-            >
-              Back to Menu
-            </button>
-          </div>
-        </div>
+        <GameEndScreen
+          gameTitle="Port Master"
+          score={score}
+          bestScore={gameStats.bestScore}
+          xpEarned={score > 0 ? Math.max(10, Math.floor(score / 10)) : 0}
+          correctAnswers={correctAnswers}
+          totalAttempts={correctAnswers + incorrectAnswers}
+          bestStreak={Math.max(currentStreak, gameStats.bestStreak)}
+          isNewHighScore={score > gameStats.bestScore}
+          topicsProgress={topicsProgress}
+          onPlayAgain={() => {
+            setShowGameOver(false);
+            initializeGame(gameMode, difficulty);
+          }}
+          onBackToMenu={() => {
+            setGameStarted(false);
+            setGameMode(null);
+            scrollToTop();
+          }}
+        />
       </div>
     );
   }
