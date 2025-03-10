@@ -158,9 +158,22 @@ function Header() {
         )}
         <img
           className="user-avatar"
-          src={isGuest 
-            ? "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png" 
-            : "https://www.pngkey.com/png/full/159-1593637_photo-angry-face-meme.png"}
+          src={(() => {
+            // Get the avatar from localStorage
+            const storedAvatar = localStorage.getItem('net-study-settings-avatar');
+            
+            // Guest user - use stored avatar or default
+            if (isGuest) {
+              return storedAvatar ? `/avatars/${storedAvatar}` : "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png";
+            }
+            
+            // Logged in user - use user.avatar, stored avatar, or default
+            if (user?.avatar) {
+              return `/avatars/${user.avatar}`;
+            }
+            
+            return storedAvatar ? `/avatars/${storedAvatar}` : "https://www.pngkey.com/png/full/159-1593637_photo-angry-face-meme.png";
+          })()}
           alt="User Avatar"
         />
         {user && (

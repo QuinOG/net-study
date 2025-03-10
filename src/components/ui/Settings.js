@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FiVolume2, FiVolumeX, FiMoon, FiSun, FiUser, FiBell, FiBellOff, FiSliders, FiRefreshCw, FiCheck, FiX } from 'react-icons/fi';
+import { FiVolume2, FiVolumeX, FiMoon, FiSun, FiUser, FiBell, FiBellOff, FiSliders, FiRefreshCw, FiCheck, FiX, FiImage } from 'react-icons/fi';
 import '../../styles/ui/Settings.css';
 import { UserContext } from '../../context/UserContext';
 import { updateUserProfile } from '../../services/api';
@@ -13,6 +13,7 @@ const NOTIFICATIONS_KEY = `${SETTINGS_PREFIX}notificationsEnabled`;
 const DIFFICULTY_KEY = `${SETTINGS_PREFIX}defaultDifficulty`;
 const USERNAME_KEY = `${SETTINGS_PREFIX}username`;
 const EMAIL_KEY = `${SETTINGS_PREFIX}email`;
+const AVATAR_KEY = `${SETTINGS_PREFIX}avatar`;
 
 function Settings() {
   // Get user context for logged-in user data
@@ -47,6 +48,11 @@ function Settings() {
   const [email, setEmail] = useState(() => {
     const saved = localStorage.getItem(EMAIL_KEY);
     return saved !== null ? saved : '';
+  });
+
+  const [selectedAvatar, setSelectedAvatar] = useState(() => {
+    const saved = localStorage.getItem(AVATAR_KEY);
+    return saved !== null ? saved : 'avatar1.png';
   });
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -89,11 +95,16 @@ function Settings() {
 
   // Save other settings to localStorage when they change
   useEffect(() => {
-    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notificationsEnabled));
-    localStorage.setItem(DIFFICULTY_KEY, defaultDifficulty);
-    localStorage.setItem(USERNAME_KEY, username);
-    localStorage.setItem(EMAIL_KEY, email);
-  }, [notificationsEnabled, defaultDifficulty, username, email]);
+    try {
+      localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notificationsEnabled));
+      localStorage.setItem(DIFFICULTY_KEY, defaultDifficulty);
+      localStorage.setItem(USERNAME_KEY, username || '');
+      localStorage.setItem(EMAIL_KEY, email || '');
+      localStorage.setItem(AVATAR_KEY, selectedAvatar || 'avatar1.png');
+    } catch (error) {
+      console.error('Error saving settings to localStorage:', error);
+    }
+  }, [notificationsEnabled, defaultDifficulty, username, email, selectedAvatar]);
 
   const toggleSound = () => {
     setSoundEnabled(!soundEnabled);
@@ -101,6 +112,20 @@ function Settings() {
     // Play click sound if we're enabling sound
     if (!soundEnabled) {
       SoundManager.play('click');
+    }
+  };
+
+  const handleAvatarSelect = (avatar) => {
+    try {
+      setSelectedAvatar(avatar);
+      // Save immediately to localStorage
+      localStorage.setItem(AVATAR_KEY, avatar);
+      
+      if (soundEnabled) {
+        SoundManager.play('click');
+      }
+    } catch (error) {
+      console.error('Error selecting avatar:', error);
     }
   };
 
@@ -113,10 +138,13 @@ function Settings() {
       if (user && !user.isGuest && user.id) {
         try {
           // Only attempt to update if there are changes
-          if (username !== (user.displayName || user.username) || email !== user.email) {
+          if (username !== (user.displayName || user.username) || 
+              email !== user.email || 
+              selectedAvatar !== (user.avatar || 'avatar1.png')) {
             await updateUserProfile(user.id, {
               displayName: username,
               email: email,
+              avatar: selectedAvatar,
               preferences: {
                 darkMode,
                 soundEnabled,
@@ -155,6 +183,7 @@ function Settings() {
     setSoundEnabled(true);
     setNotificationsEnabled(true);
     setDefaultDifficulty('medium');
+    setSelectedAvatar('avatar1.png');
     
     // Don't reset username/email if user is logged in
     if (!user || user.isGuest) {
@@ -235,6 +264,28 @@ function Settings() {
               placeholder="Enter email"
               disabled={loading} 
             />
+          </div>
+          
+          <div className="settings-option avatar-selection">
+            <label>Select Avatar</label>
+            <div className="avatar-options">
+              {[1, 2, 3, 4, 5, 6].map((num) => {
+                const avatarFile = `avatar${num}.png`;
+                return (
+                  <div 
+                    key={num}
+                    className={`avatar-option ${selectedAvatar === avatarFile ? 'selected' : ''}`}
+                    onClick={() => handleAvatarSelect(avatarFile)}
+                  >
+                    <img 
+                      src={`/avatars/${avatarFile}`} 
+                      alt={`Avatar ${num}`} 
+                      title={`Avatar ${num}`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 

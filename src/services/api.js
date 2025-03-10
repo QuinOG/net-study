@@ -1,6 +1,21 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+// Determine the API host based on environment or configuration
+// 1. Use the REACT_APP_API_URL from environment if available and not containing placeholders
+// 2. Fallback to window.location.hostname to use the same host as the frontend
+// 3. Finally fallback to localhost if all else fails
+let API_HOST = process.env.REACT_APP_API_URL;
+
+// Check if API_HOST contains placeholders (like YOUR_LOCAL_IP) and is therefore invalid
+if (!API_HOST || API_HOST.includes('YOUR_LOCAL_IP') || API_HOST.includes('your_local_ip')) {
+  // Fallback to using the same hostname as the frontend
+  API_HOST = `http://${window.location.hostname}:5000/api`;
+  console.log('[API] Environment variable contains placeholder. Using current hostname instead:', API_HOST);
+}
+
+const API_URL = API_HOST.endsWith('/api') ? API_HOST : `${API_HOST}/api`;
+
+console.log(`[API] Using API URL: ${API_URL}`);
 
 // Create axios instance with request/response logging
 const api = axios.create({

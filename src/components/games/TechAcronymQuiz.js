@@ -242,7 +242,7 @@ function TechAcronymQuiz() {
       }
     };
   }, [gameStarted, gameMode, timeRemaining]);
-  
+
   // Generate a question based on selected category
   const generateQuestion = () => {
     // Filter acronyms by category if one is selected
@@ -302,7 +302,7 @@ function TechAcronymQuiz() {
     // Play start sound
     SoundManager.play('gameStart');
   };
-  
+
   // Handle power-up usage
   const handlePowerUp = (type) => {
     if (powerUps[type] <= 0) return;
@@ -350,9 +350,9 @@ function TechAcronymQuiz() {
       message: message || (isCorrect ? "Correct!" : "Incorrect!")
     });
     
-    setTimeout(() => {
-      setFeedback({ show: false, isCorrect: false, message: '' });
-    }, 1500);
+      setTimeout(() => {
+        setFeedback({ show: false, isCorrect: false, message: '' });
+      }, 1500);
   };
 
   // End the game and update stats
@@ -509,7 +509,7 @@ function TechAcronymQuiz() {
     }
     
     // Generate new question after delay
-    setTimeout(() => {
+        setTimeout(() => {
       setCurrentAcronym(generateQuestion());
       setAnswerCooldown(false);
     }, 1500);
@@ -530,8 +530,8 @@ function TechAcronymQuiz() {
     await endGame();
   };
 
-  return (
-    <div className="acronym-game">
+      return (
+        <div className="acronym-game">
       <h2 className="game-title">Tech Acronym Quiz</h2>
       <p className="game-description">
         Test your knowledge of technical acronyms across networking, hardware, and security.
@@ -546,10 +546,10 @@ function TechAcronymQuiz() {
             <p>Correct Answers: {correctAnswers}</p>
             <p>Accuracy: {Math.round((correctAnswers / (correctAnswers + incorrectAnswers)) * 100)}%</p>
             <p>Best Streak: {Math.max(currentStreak, gameStats.bestStreak)}</p>
-          </div>
+                  </div>
           
           <button className="primary-button" onClick={goBackToMenu}>Back to Menu</button>
-        </div>
+              </div>
       )}
       
       {/* Show stats first when in menu (consistent with other games) */}
@@ -580,7 +580,7 @@ function TechAcronymQuiz() {
           </div>
         </div>
       )}
-      
+        
       {/* Mode Selection - now inside a game-setup container like other games */}
       {showModeSelect && !gameStarted && (
         <div className="game-setup">
@@ -622,19 +622,19 @@ function TechAcronymQuiz() {
                 <li>Still earn XP for correct answers</li>
                 <li>Track your progress</li>
               </ul>
-            </div>
-          </div>
-          
-          {/* Add nav-buttons with Back to Dashboard button for consistency */}
-          <div className="nav-buttons">
-            <button 
-              className="back-btn"
-              onClick={() => navigate('/dashboard')}
-            >
-              ← Back to Dashboard
-            </button>
           </div>
         </div>
+        
+          {/* Add nav-buttons with Back to Dashboard button for consistency */}
+        <div className="nav-buttons">
+          <button 
+            className="back-btn"
+            onClick={() => navigate('/dashboard')}
+          >
+            ← Back to Dashboard
+          </button>
+        </div>
+      </div>
       )}
       
       {/* Category Selection */}
@@ -695,17 +695,17 @@ function TechAcronymQuiz() {
             </div>
           </div>
           
-          <button 
+            <button 
             className="back-button"
-            onClick={() => {
+              onClick={() => {
               setShowCategorySelect(false);
               setShowModeSelect(true);
-              scrollToTop();
-            }}
-          >
+                scrollToTop();
+              }}
+            >
             Back to Mode Selection
-          </button>
-        </div>
+            </button>
+          </div>
       )}
       
       {/* Difficulty Selection */}
@@ -726,7 +726,7 @@ function TechAcronymQuiz() {
                   <li>Score Multiplier: {DIFFICULTY_LEVELS[diff].multiplier}x</li>
                   {DIFFICULTY_LEVELS[diff].showHints && <li>Hints Available</li>}
                 </ul>
-              </div>
+          </div>
             ))}
           </div>
           
@@ -740,52 +740,52 @@ function TechAcronymQuiz() {
           >
             Back to Category Selection
           </button>
-        </div>
-      )}
-      
+            </div>
+          )}
+          
       {/* Game Interface */}
       {gameStarted && !showGameOver && currentAcronym && (
         <div className="game-interface">
           <div className="game-header">
             <div className="score">Score: {score}</div>
             <div className="time">Time: {timeRemaining}s</div>
-          </div>
-          
-          <div className="power-ups">
-            <button 
+        </div>
+        
+        <div className="power-ups">
+          <button 
               className={`power-up ${powerUps.timeFreeze <= 0 ? 'disabled' : ''}`}
-              onClick={() => handlePowerUp('timeFreeze')}
+            onClick={() => handlePowerUp('timeFreeze')}
               disabled={powerUps.timeFreeze <= 0}
-            >
+          >
               +5s ({powerUps.timeFreeze})
-            </button>
-            <button 
+          </button>
+          <button 
               className={`power-up ${powerUps.categoryReveal <= 0 ? 'disabled' : ''}`}
               onClick={() => handlePowerUp('categoryReveal')}
               disabled={powerUps.categoryReveal <= 0}
             >
               Hint ({powerUps.categoryReveal})
-            </button>
-            <button 
+          </button>
+          <button 
               className={`power-up ${powerUps.skipQuestion <= 0 ? 'disabled' : ''}`}
-              onClick={() => handlePowerUp('skipQuestion')}
+            onClick={() => handlePowerUp('skipQuestion')}
               disabled={powerUps.skipQuestion <= 0}
-            >
+          >
               Skip ({powerUps.skipQuestion})
-            </button>
-          </div>
-          
+          </button>
+      </div>
+      
           <div className="question-container">
             <h2 className="acronym">{currentAcronym}</h2>
             {DIFFICULTY_LEVELS[difficulty].showHints && (
               <p className="hint">{ACRONYM_DATA[currentAcronym].hint}</p>
             )}
             
-            {feedback.show && (
+        {feedback.show && (
               <div className={`feedback ${feedback.isCorrect ? 'correct' : 'incorrect'}`}>
-                {feedback.message}
-              </div>
-            )}
+            {feedback.message}
+          </div>
+        )}
           </div>
           
           <div className="timer-bar-container">
@@ -829,16 +829,16 @@ function TechAcronymQuiz() {
         )}
         
         {gameStarted && !showGameOver && (
-          <button 
-            className="back-btn"
-            onClick={() => {
+        <button 
+          className="back-btn"
+          onClick={() => {
               if (window.confirm('Are you sure you want to quit? Your progress will be lost.')) {
                 goBackToMenu();
-              }
-            }}
-          >
-            Back to Menu
-          </button>
+            }
+          }}
+        >
+          Back to Menu
+        </button>
         )}
       </div>
       
