@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FiLock, FiUnlock, FiKey, FiCheck, FiX, FiArrowRight } from 'react-icons/fi';
+import { FiLock, FiUnlock, FiKey, FiCheck, FiX, FiArrowRight, FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import '../../styles/games/EncryptionChallengeGame.css';
+import '../../styles/games/GameModeCards.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeCard from '../ui/GameModeCard';
+import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +23,14 @@ function EncryptionChallengeGame() {
   const [results, setResults] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
+  
+  // Game statistics
+  const [gameStats, setGameStats] = useState({
+    bestScore: 0,
+    gamesPlayed: 0,
+    challengesCompleted: 0,
+    decryptRate: '0%'
+  });
 
   // Game modes for encryption challenge
   const gameModes = [
@@ -48,7 +58,15 @@ function EncryptionChallengeGame() {
   // Select game mode
   const handleModeSelect = (modeId) => {
     SoundManager.play('click');
-    setSelectedMode(modeId);
+    if (modeId === 'time-attack') {
+      // Time attack mode
+      setSelectedMode('decrypt');
+    } else if (modeId === 'practice') {
+      // Practice mode
+      setSelectedMode('identify');
+    } else {
+      setSelectedMode(modeId);
+    }
   };
 
   // Select difficulty
@@ -226,58 +244,18 @@ function EncryptionChallengeGame() {
   };
 
   return (
-    <div className="game-interface encryption-challenge-game">
+    <div className="encryption-challenge-game">
+      <h2 className="game-title">Encryption Challenge</h2>
+      <p className="game-description">
+        Test your knowledge of encryption algorithms and cryptographic concepts!
+      </p>
+      
       {gameState === 'setup' && !selectedMode && (
-        <>
-          <h3 className="game-title">Encryption Challenge</h3>
-          <p className="game-description">Test your knowledge of encryption algorithms and cryptography.</p>
-          
-          <div className="stats-container">
-            <h3>Your Stats</h3>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <span className="stat-value">0</span>
-                <span className="stat-label">Best Score</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">0</span>
-                <span className="stat-label">Challenges Completed</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">0</span>
-                <span className="stat-label">Games Played</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">0%</span>
-                <span className="stat-label">Decrypt Rate</span>
-              </div>
-            </div>
-          </div>
-        
-          <div className="game-setup">
-            <h3>Encryption Challenge</h3>
-            <div className="game-modes">
-              {gameModes.map(mode => (
-                <GameModeCard 
-                  key={mode.id}
-                  title={mode.title}
-                  description={mode.description}
-                  icon={mode.icon}
-                  onClick={() => handleModeSelect(mode.id)}
-                />
-              ))}
-            </div>
-          </div>
-          
-          <div className="nav-buttons">
-            <button 
-              className="back-btn"
-              onClick={() => navigate('/dashboard')}
-            >
-              ← Back to Dashboard
-            </button>
-          </div>
-        </>
+        <GameModeSelectScreen 
+          gameStats={gameStats}
+          onTimeAttackSelect={() => handleModeSelect('time-attack')}
+          onPracticeModeSelect={() => handleModeSelect('practice')}
+        />
       )}
       
       {gameState === 'setup' && selectedMode && (

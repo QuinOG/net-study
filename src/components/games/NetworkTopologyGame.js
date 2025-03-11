@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FiShare2, FiSmile, FiFrown, FiArrowRight } from 'react-icons/fi';
+import { FiShare2, FiSmile, FiFrown, FiArrowRight, FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import '../../styles/games/NetworkTopologyGame.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeCard from '../ui/GameModeCard';
 import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
 import { useNavigate } from 'react-router-dom';
+import GameModeSelectScreen from '../ui/GameModeSelectScreen';
+import '../../styles/games/GameModeCards.css';
 
 function NetworkTopologyGame() {
   const { addXP } = useContext(UserContext);
@@ -21,6 +23,14 @@ function NetworkTopologyGame() {
   const [results, setResults] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
+  
+  // Game statistics
+  const [gameStats, setGameStats] = useState({
+    bestScore: 0,
+    gamesPlayed: 0,
+    questionsCompleted: 0,
+    successRate: '0%'
+  });
 
   // Game modes for network topology
   const gameModes = [
@@ -48,7 +58,15 @@ function NetworkTopologyGame() {
   // Select game mode
   const handleModeSelect = (modeId) => {
     SoundManager.play('click');
-    setSelectedMode(modeId);
+    if (modeId === 'time-attack') {
+      // Time attack mode
+      setSelectedMode('identify');
+    } else if (modeId === 'practice') {
+      // Practice mode
+      setSelectedMode('design');
+    } else {
+      setSelectedMode(modeId);
+    }
   };
 
   // Select difficulty
@@ -167,59 +185,20 @@ function NetworkTopologyGame() {
     setTimerActive(false);
   };
 
+  // Render the game
   return (
-    <div className="game-interface network-topology-game">
+    <div className="network-topology-game">
+      <h2 className="game-title">Network Topology Challenge</h2>
+      <p className="game-description">
+        Test your knowledge of network topologies and their characteristics!
+      </p>
+      
       {gameState === 'setup' && !selectedMode && (
-        <>
-          <h3 className="game-title">Network Topology Challenge</h3>
-          <p className="game-description">Test your knowledge of network topologies and design.</p>
-          
-          <div className="stats-container">
-            <h3>Your Stats</h3>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <span className="stat-value">0</span>
-                <span className="stat-label">Best Score</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">0</span>
-                <span className="stat-label">Questions Answered</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">0</span>
-                <span className="stat-label">Games Played</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">0%</span>
-                <span className="stat-label">Accuracy</span>
-              </div>
-            </div>
-          </div>
-        
-          <div className="game-setup">
-            <h3>Network Topology Challenge</h3>
-            <div className="game-modes">
-              {gameModes.map(mode => (
-                <GameModeCard 
-                  key={mode.id}
-                  title={mode.title}
-                  description={mode.description}
-                  icon={mode.icon}
-                  onClick={() => handleModeSelect(mode.id)}
-                />
-              ))}
-            </div>
-          </div>
-          
-          <div className="nav-buttons">
-            <button 
-              className="back-btn"
-              onClick={() => navigate('/dashboard')}
-            >
-              ← Back to Dashboard
-            </button>
-          </div>
-        </>
+        <GameModeSelectScreen 
+          gameStats={gameStats}
+          onTimeAttackSelect={() => handleModeSelect('time-attack')}
+          onPracticeModeSelect={() => handleModeSelect('practice')}
+        />
       )}
       
       {gameState === 'setup' && selectedMode && (

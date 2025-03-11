@@ -6,6 +6,8 @@ import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
 import GameEndScreen from '../ui/GameEndScreen';
 import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
+import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
+import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import '../../styles/games/TechAcronymQuiz.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -598,7 +600,7 @@ function TechAcronymQuiz() {
     <div className="acronym-game">
       <h2 className="game-title">Tech Acronym Quiz</h2>
       <p className="game-description">
-        Test your knowledge of technical acronyms across networking, hardware, and security.
+        Test your knowledge of common technology acronyms and what they stand for!
       </p>
       
       {/* Game Over Screen */}
@@ -621,89 +623,23 @@ function TechAcronymQuiz() {
         />
       )}
       
-      {/* Show stats first when in menu (consistent with other games) */}
-      {!gameStarted && !showGameOver && showModeSelect && (
-        <div className="stats-container">
-          <h3>Your Stats</h3>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestScore}</span>
-              <span className="stat-label">Best Score</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestStreak}</span>
-              <span className="stat-label">Best Streak</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.gamesPlayed}</span>
-              <span className="stat-label">Games Played</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">
-                {gameStats.totalAttempts === 0 
-                  ? '0%' 
-                  : `${Math.floor((gameStats.correctAnswers / gameStats.totalAttempts) * 100)}%`}
-              </span>
-              <span className="stat-label">Accuracy</span>
-            </div>
-          </div>
-        </div>
-      )}
-        
-      {/* Mode Selection - now inside a game-setup container like other games */}
+      {/* Mode Selection */}
       {showModeSelect && !gameStarted && (
-        <div className="game-setup">
-          <h3>Select Game Mode</h3>
-          <div className="game-modes">
-            <div 
-              className="game-mode-card"
-              onClick={() => {
-                setGameMode(GAME_MODES.TIME_ATTACK);
-                setShowModeSelect(false);
-                setShowCategorySelect(true);
-                scrollToTop();
-              }}
-            >
-              <h3>Time Attack</h3>
-              <p>Race against the clock to identify as many acronyms as possible.</p>
-              <ul>
-                <li>Time limit based on difficulty</li>
-                <li>Correct answers add time</li>
-                <li>Incorrect answers reduce time</li>
-                <li>Earn combo multipliers for consecutive correct answers</li>
-              </ul>
-            </div>
-            
-            <div 
-              className="game-mode-card"
-              onClick={() => {
-                setGameMode(GAME_MODES.PRACTICE);
-                setShowModeSelect(false);
-                setShowCategorySelect(true);
-                scrollToTop();
-              }}
-            >
-              <h3>Practice Mode</h3>
-              <p>Learn at your own pace without time pressure.</p>
-              <ul>
-                <li>No time limits</li>
-                <li>Focus on learning the acronyms</li>
-                <li>Still earn XP for correct answers</li>
-                <li>Track your progress</li>
-              </ul>
-          </div>
-        </div>
-        
-          {/* Add nav-buttons with Back to Dashboard button for consistency */}
-        <div className="nav-buttons">
-          <button 
-            className="back-btn"
-            onClick={() => navigate('/dashboard')}
-          >
-            ← Back to Dashboard
-          </button>
-        </div>
-      </div>
+        <GameModeSelectScreen 
+          gameStats={gameStats}
+          onTimeAttackSelect={() => {
+            setGameMode(GAME_MODES.TIME_ATTACK);
+            setShowModeSelect(false);
+            setShowCategorySelect(true);
+            scrollToTop();
+          }}
+          onPracticeModeSelect={() => {
+            setGameMode(GAME_MODES.PRACTICE);
+            setShowModeSelect(false);
+            setShowCategorySelect(true);
+            scrollToTop();
+          }}
+        />
       )}
       
       {/* Category Selection */}

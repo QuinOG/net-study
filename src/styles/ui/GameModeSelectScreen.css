@@ -1,0 +1,71 @@
+.game-mode-select-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.game-setup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.mode-selection-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #f7fafc;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0.8rem;
+}
+
+.mode-selection-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #3182ce, #63b3ed);
+  border-radius: 3px;
+}
+
+.game-modes {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2.5rem;
+  width: 100%;
+  flex-wrap: wrap;
+  padding: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .game-modes {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+  
+  .mode-selection-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Light mode styles */
+body.light-mode .mode-selection-title {
+  color: #2d3748;
+}
+
+body.light-mode .mode-selection-title::after {
+  background: linear-gradient(90deg, #3182ce, #63b3ed);
+} 

@@ -1,0 +1,164 @@
+.time-attack-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(45, 55, 72, 0.8) 0%, rgba(26, 32, 44, 0.9) 100%);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  overflow: hidden;
+  width: 300px;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgba(66, 153, 225, 0.1);
+}
+
+.time-attack-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, rgba(66, 153, 225, 0.15), transparent 70%);
+  z-index: 0;
+}
+
+.time-attack-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(66, 153, 225, 0.3);
+}
+
+.time-attack-card:hover .time-attack-icon-container {
+  transform: scale(1.1) rotate(5deg);
+  background-color: rgba(66, 153, 225, 0.25);
+}
+
+.time-attack-icon-container {
+  position: relative;
+  z-index: 1;
+  font-size: 2.8rem;
+  color: #63b3ed;
+  margin-bottom: 1.5rem;
+  background-color: rgba(66, 153, 225, 0.15);
+  padding: 1.2rem;
+  border-radius: 50%;
+  transition: all 0.4s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.time-attack-title {
+  position: relative;
+  z-index: 1;
+  color: #f7fafc;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.time-attack-description {
+  position: relative;
+  z-index: 1;
+  color: #a0aec0;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.time-attack-features {
+  position: relative;
+  z-index: 1;
+  list-style-type: none;
+  padding-left: 0;
+  text-align: left;
+  width: 100%;
+  margin-top: auto;
+}
+
+.time-attack-feature {
+  margin-bottom: 0.8rem;
+  padding-left: 1.8rem;
+  position: relative;
+  color: #cbd5e0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.time-attack-feature::before {
+  content: "⏱️";
+  position: absolute;
+  left: 0;
+  font-size: 0.9rem;
+}
+
+.time-attack-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #3182ce, #63b3ed);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.time-attack-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .time-attack-card {
+    width: 100%;
+    min-height: 320px;
+    padding: 2rem 1.5rem;
+  }
+  
+  .time-attack-icon-container {
+    font-size: 2.2rem;
+    padding: 1rem;
+  }
+  
+  .time-attack-title {
+    font-size: 1.4rem;
+  }
+}
+
+/* Light mode styles */
+body.light-mode .time-attack-card {
+  background: linear-gradient(135deg, rgba(247, 250, 252, 0.9) 0%, rgba(226, 232, 240, 0.95) 100%);
+  border: 1px solid rgba(66, 153, 225, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .time-attack-card::before {
+  background: radial-gradient(circle at top right, rgba(66, 153, 225, 0.1), transparent 70%);
+}
+
+body.light-mode .time-attack-title {
+  color: #2d3748;
+}
+
+body.light-mode .time-attack-description {
+  color: #4a5568;
+}
+
+body.light-mode .time-attack-feature {
+  color: #4a5568;
+}
+
+body.light-mode .time-attack-icon-container {
+  color: #3182ce;
+  background-color: rgba(66, 153, 225, 0.1);
+} 

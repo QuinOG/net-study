@@ -5,6 +5,8 @@ import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import RewardAnimation from '../ui/RewardAnimation';
 import GameEndScreen from '../ui/GameEndScreen';
+import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
+import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import '../../styles/games/CommandLineChallenge.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -798,82 +800,20 @@ function CommandLineChallenge() {
     initializeGame(gameMode, difficulty);
   };
 
-  // Rendering the start screen
+  // Render the game menu
   if (!gameStarted && !showGameOver && !showDifficultySelect) {
     return (
       <div className="command-line-game">
         <h2 className="game-title">Command Line Challenge</h2>
         <p className="game-description">
-          Test your knowledge of common terminal commands across different operating systems (Linux, Windows, macOS).
+          Test your knowledge of command line commands and their functions!
         </p>
         
-        <div className="stats-container">
-          <h3>Your Stats</h3>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestScore}</span>
-              <span className="stat-label">Best Score</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestStreak}</span>
-              <span className="stat-label">Best Streak</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.gamesPlayed}</span>
-              <span className="stat-label">Games Played</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">
-                {gameStats.totalAttempts === 0 
-                  ? '0%' 
-                  : `${Math.floor((gameStats.correctAnswers / gameStats.totalAttempts) * 100)}%`}
-              </span>
-              <span className="stat-label">Accuracy</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="game-setup">
-          <h3>Select Game Mode</h3>
-          <div className="game-modes">
-            <div 
-              className="game-mode-card"
-              onClick={() => handleModeSelect(GAME_MODES.TIME_ATTACK)}
-            >
-              <h3>Time Attack</h3>
-              <p>Race against the clock! Answer questions correctly to earn points and extend your time.</p>
-              <ul>
-                <li>Limited time</li>
-                <li>Penalties for wrong answers</li>
-                <li>Score multipliers for streaks</li>
-                <li>Challenge yourself</li>
-              </ul>
-            </div>
-            
-            <div 
-              className="game-mode-card"
-              onClick={() => handleModeSelect(GAME_MODES.PRACTICE)}
-            >
-              <h3>Practice Mode</h3>
-              <p>Learn at your own pace with no time pressure.</p>
-              <ul>
-                <li>Unlimited time</li>
-                <li>Detailed explanations</li>
-                <li>Focus on learning</li>
-                <li>Great for beginners</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div className="nav-buttons">
-          <button 
-            className="back-btn"
-            onClick={handleBack}
-          >
-            ← Back to Dashboard
-          </button>
-        </div>
+        <GameModeSelectScreen 
+          gameStats={gameStats}
+          onTimeAttackSelect={() => handleModeSelect(GAME_MODES.TIME_ATTACK)}
+          onPracticeModeSelect={() => handleModeSelect(GAME_MODES.PRACTICE)}
+        />
       </div>
     );
   }

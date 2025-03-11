@@ -9,6 +9,8 @@ import '../../styles/games/ProtocolGame.css';
 import '../../styles/games/GameModeCards.css';
 import { getAllGames, submitGameResults } from '../../services/api';
 import scrollToTop from '../../utils/ScrollHelper';
+import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
+import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 
 // Use the exact same port dictionary as in PortGame.js
 const PORT_DATA = {
@@ -430,8 +432,8 @@ function ProtocolGame() {
     setCurrentQuestion(generateQuestion());
   };
 
-  // Rendering the menu if the game has not started
-  if (!gameStarted && !showGameOver) {
+  // Game mode selection and rendering
+  if (!gameStarted) {
     if (showDifficultySelect) {
       return (
         <div className="protocol-game">
@@ -451,10 +453,10 @@ function ProtocolGame() {
                 >
                   <h4>{value.name}</h4>
                   <ul>
-                    <li>{value.timeLimit} second time limit</li>
-                    {value.showHints && <li>Hints available</li>}
-                    <li>{value.timePenalty} second penalty for wrong answers</li>
-                    <li>{value.multiplier}x score multiplier</li>
+                    <li>Time Limit: {value.timeLimit} seconds</li>
+                    <li>Time Penalty: -{value.timePenalty} seconds</li>
+                    <li>Score Multiplier: {value.multiplier}x</li>
+                    <li>Hints: {value.showHints ? 'Available' : 'Not Available'}</li>
                   </ul>
                 </div>
               ))}
@@ -467,91 +469,31 @@ function ProtocolGame() {
                 scrollToTop();
               }}
             >
-              ← Back to Mode Selection
+              ← Back to Game Modes
             </button>
           </div>
         </div>
       );
     }
+    
     return (
       <div className="protocol-game">
-        <h2 className="game-title">Protocol Master</h2>
+        <h2 className="game-title">Protocol Challenge</h2>
         <p className="game-description">
-          Test your knowledge of networking protocols and their functions.
+          Test your knowledge of network protocols and their functions!
         </p>
         
-        <div className="stats-container">
-          <h3>Your Stats</h3>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestScore}</span>
-              <span className="stat-label">Best Score</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestStreak}</span>
-              <span className="stat-label">Best Streak</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.gamesPlayed}</span>
-              <span className="stat-label">Games Played</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">
-                {gameStats.totalAttempts === 0 
-                  ? '0%' 
-                  : `${Math.floor((gameStats.correctAnswers / gameStats.totalAttempts) * 100)}%`}
-              </span>
-              <span className="stat-label">Accuracy</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="game-setup">
-          <h3>Select Game Mode</h3>
-          <div className="game-modes">
-            <div 
-              className="game-mode-card"
-              onClick={() => {
-                setShowDifficultySelect(true);
-                scrollToTop();
-              }}
-            >
-              <h3>Time Attack</h3>
-              <p>Race against the clock to identify as many protocols as possible!</p>
-              <ul>
-                <li>Limited time based on difficulty</li>
-                <li>Correct answers add time</li>
-                <li>Incorrect answers subtract time</li>
-                <li>Score based on speed and accuracy</li>
-              </ul>
-            </div>
-            <div 
-              className="game-mode-card"
-              onClick={() => {
-                initializeGame(GAME_MODES.PRACTICE, 'EASY');
-                scrollToTop();
-              }}
-            >
-              <h3>Practice Mode</h3>
-              <p>Learn at your own pace without time pressure</p>
-              <ul>
-                <li>No time limit</li>
-                <li>Hints available</li>
-                <li>Detailed explanations</li>
-                <li>Great for beginners</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div className="nav-buttons">
-          <button 
-            className="back-btn"
-            onClick={() => navigate('/dashboard')}
-          >
-            ← Back to Dashboard
-          </button>
-        </div>
+        <GameModeSelectScreen 
+          gameStats={gameStats}
+          onTimeAttackSelect={() => {
+            setShowDifficultySelect(true);
+            scrollToTop();
+          }}
+          onPracticeModeSelect={() => {
+            initializeGame(GAME_MODES.PRACTICE, 'EASY');
+            scrollToTop();
+          }}
+        />
       </div>
     );
   }

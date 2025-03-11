@@ -9,9 +9,10 @@ import '../../styles/games/GameModeCards.css';
  * @param {string} props.description A brief description of the game mode
  * @param {ReactNode} props.icon An icon element to display
  * @param {Function} props.onClick Function to call when the card is clicked
+ * @param {ReactNode} props.children Optional child elements to render inside the card
  * @returns {JSX.Element} A game mode card component
  */
-function GameModeCard({ title, description, icon, onClick }) {
+function GameModeCard({ title, description, icon, onClick, children }) {
   return (
     <div className="game-mode-card" onClick={onClick}>
       <div className="icon">
@@ -19,6 +20,7 @@ function GameModeCard({ title, description, icon, onClick }) {
       </div>
       <h4>{title}</h4>
       <p>{description}</p>
+      {children}
     </div>
   );
 }

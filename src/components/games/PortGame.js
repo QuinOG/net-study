@@ -7,41 +7,42 @@ import { getAllGames, submitGameResults } from '../../services/api';
 import GameEndScreen from '../ui/GameEndScreen';
 import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
 import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar, FiGift, FiActivity } from 'react-icons/fi';
+import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import '../../styles/games/PortGame.css';
 import '../../styles/games/GameModeCards.css';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {
-  20: { protocol: "FTP", description: "File Transfer Protocol (Data)", category: "File Transfer" },
-  21: { protocol: "FTP", description: "File Transfer Protocol (Control)", category: "File Transfer" },
-  22: { protocol: "SSH", description: "Secure Shell", category: "Remote Access" },
+  // 20: { protocol: "FTP", description: "File Transfer Protocol (Data)", category: "File Transfer" },
+  //21: { protocol: "FTP", description: "File Transfer Protocol (Control)", category: "File Transfer" },
+  // 22: { protocol: "SSH", description: "Secure Shell", category: "Remote Access" },
   23: { protocol: "Telnet", description: "Terminal Network", category: "Remote Access" },
-  25: { protocol: "SMTP", description: "Simple Mail Transfer Protocol", category: "Email" },
-  53: { protocol: "DNS", description: "Domain Name System", category: "Name Resolution" },
-  67: { protocol: "DHCP", description: "Dynamic Host Configuration Protocol (Server)", category: "Network Management" },
-  68: { protocol: "DHCP", description: "Dynamic Host Configuration Protocol (Client)", category: "Network Management" },
-  69: { protocol: "TFTP", description: "Trivial File Transfer Protocol", category: "File Transfer" },
-  80: { protocol: "HTTP", description: "Hypertext Transfer Protocol", category: "Web" },
-  110: { protocol: "POP3", description: "Post Office Protocol v3", category: "Email" },
-  119: { protocol: "NNTP", description: "Network News Transfer Protocol", category: "News" },
-  123: { protocol: "NTP", description: "Network Time Protocol", category: "Time Sync" },
-  143: { protocol: "IMAP", description: "Internet Message Access Protocol", category: "Email" },
-  161: { protocol: "SNMP", description: "Simple Network Management Protocol", category: "Network Management" },
-  162: { protocol: "SNMP", description: "Simple Network Management Protocol (Trap)", category: "Network Management" },
-  389: { protocol: "LDAP", description: "Lightweight Directory Access Protocol", category: "Directory Services" },
-  443: { protocol: "HTTPS", description: "HTTP Secure", category: "Web" },
-  445: { protocol: "SMB", description: "Server Message Block", category: "File Sharing" },
-  500: { protocol: "ISAKMP", description: "Internet Security Association and Key Management Protocol", category: "VPN" },
-  587: { protocol: "SMTP", description: "SMTP Submission", category: "Email" },
-  636: { protocol: "LDAPS", description: "LDAP over SSL", category: "Directory Services" },
-  993: { protocol: "IMAPS", description: "IMAP over SSL", category: "Email" },
-  995: { protocol: "POP3S", description: "POP3 over SSL", category: "Email" },
-  1433: { protocol: "MS SQL", description: "Microsoft SQL Server", category: "Database" },
-  1434: { protocol: "MS SQL", description: "Microsoft SQL Server Browser", category: "Database" },
-  3306: { protocol: "MySQL", description: "MySQL Database", category: "Database" },
-  3389: { protocol: "RDP", description: "Remote Desktop Protocol", category: "Remote Access" },
-  5060: { protocol: "SIP", description: "Session Initiation Protocol", category: "VoIP" },
-  5061: { protocol: "SIP", description: "Session Initiation Protocol (TLS)", category: "VoIP" }
+  //25: { protocol: "SMTP", description: "Simple Mail Transfer Protocol", category: "Email" },
+  // 53: { protocol: "DNS", description: "Domain Name System", category: "Name Resolution" },
+  // 67: { protocol: "DHCP", description: "Dynamic Host Configuration Protocol (Server)", category: "Network Management" },
+  // 68: { protocol: "DHCP", description: "Dynamic Host Configuration Protocol (Client)", category: "Network Management" },
+  // 69: { protocol: "TFTP", description: "Trivial File Transfer Protocol", category: "File Transfer" },
+  // 80: { protocol: "HTTP", description: "Hypertext Transfer Protocol", category: "Web" },
+  // 110: { protocol: "POP3", description: "Post Office Protocol v3", category: "Email" },
+  // 119: { protocol: "NNTP", description: "Network News Transfer Protocol", category: "News" },
+  // 123: { protocol: "NTP", description: "Network Time Protocol", category: "Time Sync" },
+  // 143: { protocol: "IMAP", description: "Internet Message Access Protocol", category: "Email" },
+  // 161: { protocol: "SNMP", description: "Simple Network Management Protocol", category: "Network Management" },
+  // 162: { protocol: "SNMP", description: "Simple Network Management Protocol (Trap)", category: "Network Management" },
+  // 389: { protocol: "LDAP", description: "Lightweight Directory Access Protocol", category: "Directory Services" },
+  // 443: { protocol: "HTTPS", description: "HTTP Secure", category: "Web" },
+  // 445: { protocol: "SMB", description: "Server Message Block", category: "File Sharing" },
+  // 500: { protocol: "ISAKMP", description: "Internet Security Association and Key Management Protocol", category: "VPN" },
+  // 587: { protocol: "SMTP", description: "SMTP Submission", category: "Email" },
+  // 636: { protocol: "LDAPS", description: "LDAP over SSL", category: "Directory Services" },
+  // 993: { protocol: "IMAPS", description: "IMAP over SSL", category: "Email" },
+  // 995: { protocol: "POP3S", description: "POP3 over SSL", category: "Email" },
+  // 1433: { protocol: "MS SQL", description: "Microsoft SQL Server", category: "Database" },
+  // 1434: { protocol: "MS SQL", description: "Microsoft SQL Server Browser", category: "Database" },
+  // 3306: { protocol: "MySQL", description: "MySQL Database", category: "Database" },
+  // 3389: { protocol: "RDP", description: "Remote Desktop Protocol", category: "Remote Access" },
+  // 5060: { protocol: "SIP", description: "Session Initiation Protocol", category: "VoIP" },
+  // 5061: { protocol: "SIP", description: "Session Initiation Protocol (TLS)", category: "VoIP" }
 };
 
 // Game modes
@@ -936,111 +937,47 @@ function PortGame() {
                 >
                   <h4>{value.name}</h4>
                   <ul>
-                    <li>{value.timeLimit} second time limit</li>
-                    {value.showHints && <li>Hints available</li>}
-                    <li>{value.timePenalty} second penalty for wrong answers</li>
-                    <li>{value.multiplier}x score multiplier</li>
+                    <li>Time Limit: {value.timeLimit} seconds</li>
+                    <li>Time Penalty: -{value.timePenalty} seconds</li>
+                    <li>Score Multiplier: {value.multiplier}x</li>
+                    <li>Hints: {value.showHints ? 'Available' : 'Not Available'}</li>
                   </ul>
                 </div>
               ))}
             </div>
             
-            <div className="nav-buttons">
-              <button 
-                className="back-btn"
-                onClick={() => {
-                  setShowDifficultySelect(false);
-                  scrollToTop();
-                }}
-              >
-                ← Back to Mode Selection
-              </button>
-            </div>
+            <button 
+              className="back-btn"
+              onClick={() => {
+                setShowDifficultySelect(false);
+                scrollToTop();
+              }}
+            >
+              ← Back to Game Modes
+            </button>
           </div>
         </div>
       );
     }
-
+    
     return (
       <div className="port-game">
-        <h2 className="game-title">Port Master</h2>
+        <h2 className="game-title">Port Number Challenge</h2>
         <p className="game-description">
-          Test your knowledge of network port numbers and which protocols use them.
+          Test your knowledge of common network port numbers and protocols!
         </p>
         
-        <div className="stats-container">
-          <h3>Your Stats</h3>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestScore}</span>
-              <span className="stat-label">Best Score</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestStreak}</span>
-              <span className="stat-label">Best Streak</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.gamesPlayed}</span>
-              <span className="stat-label">Games Played</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">
-                {gameStats.totalAttempts === 0 
-                  ? '0%' 
-                  : `${Math.floor((gameStats.correctAnswers / gameStats.totalAttempts) * 100)}%`}
-              </span>
-              <span className="stat-label">Accuracy</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="game-setup">
-          <h3>Select Game Mode</h3>
-          <div className="game-modes">
-            <div 
-              className="game-mode-card"
-              onClick={() => {
-                setShowDifficultySelect(true);
-                scrollToTop();
-              }}
-            >
-              <h3>Time Attack</h3>
-              <p>Race against the clock to identify as many port numbers as possible!</p>
-              <ul>
-                <li>Limited time based on difficulty</li>
-                <li>Correct answers add time</li>
-                <li>Incorrect answers subtract time</li>
-                <li>Score based on speed and accuracy</li>
-              </ul>
-            </div>
-            
-            <div 
-              className="game-mode-card"
-              onClick={() => {
-                initializeGame(GAME_MODES.PRACTICE, 'EASY');
-                scrollToTop();
-              }}
-            >
-              <h3>Practice Mode</h3>
-              <p>Learn at your own pace without time pressure</p>
-              <ul>
-                <li>No time limit</li>
-                <li>Hints available</li>
-                <li>Detailed explanations</li>
-                <li>Great for beginners</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div className="nav-buttons">
-          <button 
-            className="back-btn"
-            onClick={() => navigate('/dashboard')}
-          >
-            ← Back to Dashboard
-          </button>
-        </div>
+        <GameModeSelectScreen 
+          gameStats={gameStats}
+          onTimeAttackSelect={() => {
+            setShowDifficultySelect(true);
+            scrollToTop();
+          }}
+          onPracticeModeSelect={() => {
+            initializeGame(GAME_MODES.PRACTICE, 'EASY');
+            scrollToTop();
+          }}
+        />
       </div>
     );
   }

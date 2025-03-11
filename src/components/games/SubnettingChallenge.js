@@ -4,11 +4,13 @@ import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
+import GameEndScreen from '../ui/GameEndScreen';
+import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
+import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
+import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import '../../styles/games/SubnettingChallenge.css';
 import '../../styles/games/GameModeCards.css';
-import { FiClock, FiCheckCircle, FiZap, FiShield, FiSkipForward, FiShuffle } from 'react-icons/fi';
 import GameModeCard from '../ui/GameModeCard';
-import GameEndScreen from '../ui/GameEndScreen';
 
 // Game modes
 const GAME_MODES = {
@@ -486,12 +488,13 @@ function SubnettingChallenge() {
     }
   };
 
-  // Rendering the menu if the game has not started
-  if (!gameStarted && !showGameOver) {
+  // Game mode selection and rendering
+  if (!gameStarted) {
     if (showDifficultySelect) {
       return (
         <div className="subnetting-game">
           <h2 className="game-title">Select Difficulty</h2>
+          
           <div className="difficulty-select">
             <div className="difficulty-cards">
               {Object.entries(DIFFICULTY_LEVELS).map(([key, value]) => (
@@ -506,27 +509,10 @@ function SubnettingChallenge() {
                 >
                   <h4>{value.name}</h4>
                   <ul>
-                    <li>{value.timeLimit} second time limit</li>
-                    <li>{value.multiplier}x score multiplier</li>
-                    {key === 'EASY' ? (
-                      <>
-                        <li>Easier prefixes (/20-/24)</li>
-                        {value.showHints && <li>Hints available</li>}
-                        <li>{value.timePenalty} second penalty for wrong answers</li>
-                      </>
-                    ) : key === 'MEDIUM' ? (
-                      <>
-                        <li>Mixed prefixes (/16-/28)</li>
-                        {value.showHints && <li>Hints available</li>}
-                        <li>{value.timePenalty} second penalty for wrong answers</li>
-                      </>
-                    ) : (
-                      <>
-                        <li>All prefixes (/8-/30)</li>
-                        {value.showHints && <li>Hints available</li>}
-                        <li>{value.timePenalty} second penalty for wrong answers</li>
-                      </>
-                    )}
+                    <li>Time Limit: {value.timeLimit} seconds</li>
+                    <li>Time Penalty: -{value.timePenalty} seconds</li>
+                    <li>Score Multiplier: {value.multiplier}x</li>
+                    <li>Hints: {value.showHints ? 'Available' : 'Not Available'}</li>
                   </ul>
                 </div>
               ))}
@@ -539,7 +525,7 @@ function SubnettingChallenge() {
                 scrollToTop();
               }}
             >
-              ← Back to Mode Selection
+              ← Back to Game Modes
             </button>
           </div>
         </div>
@@ -550,81 +536,20 @@ function SubnettingChallenge() {
       <div className="subnetting-game">
         <h2 className="game-title">Subnetting Challenge</h2>
         <p className="game-description">
-          Test your subnetting skills by calculating network attributes from CIDR notation
+          Test your subnetting skills and calculate network addresses, broadcast addresses, and more!
         </p>
         
-        <div className="stats-container">
-          <h3>Your Stats</h3>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestScore}</span>
-              <span className="stat-label">Best Score</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.bestStreak}</span>
-              <span className="stat-label">Best Streak</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gameStats.gamesPlayed}</span>
-              <span className="stat-label">Games Played</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">
-                {gameStats.totalAttempts === 0 
-                  ? '0%' 
-                  : `${Math.floor((gameStats.correctAnswers / gameStats.totalAttempts) * 100)}%`}
-              </span>
-              <span className="stat-label">Accuracy</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="game-setup">
-          <h3>Select Game Mode</h3>
-          <div className="game-modes">
-            <div 
-              className="game-mode-card"
-              onClick={() => {
-                setShowDifficultySelect(true);
-                scrollToTop();
-              }}
-            >
-              <h3>Time Attack</h3>
-              <p>Race against the clock to solve as many subnetting problems as possible!</p>
-              <ul>
-                <li>Limited time based on difficulty</li>
-                <li>Correct answers add time</li>
-                <li>Incorrect answers subtract time</li>
-                <li>Score based on difficulty</li>
-              </ul>
-            </div>
-            <div 
-              className="game-mode-card"
-              onClick={() => {
-                initializeGame(GAME_MODES.PRACTICE, 'EASY');
-                scrollToTop();
-              }}
-            >
-              <h3>Practice Mode</h3>
-              <p>Learn at your own pace without time pressure</p>
-              <ul>
-                <li>No time limit</li>
-                <li>Detailed feedback</li>
-                <li>Hints available</li>
-                <li>Great for beginners</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div className="nav-buttons">
-          <button 
-            className="back-btn"
-            onClick={() => navigate('/dashboard')}
-          >
-            ← Back to Dashboard
-          </button>
-        </div>
+        <GameModeSelectScreen 
+          gameStats={gameStats}
+          onTimeAttackSelect={() => {
+            setShowDifficultySelect(true);
+            scrollToTop();
+          }}
+          onPracticeModeSelect={() => {
+            initializeGame(GAME_MODES.PRACTICE, 'EASY');
+            scrollToTop();
+          }}
+        />
       </div>
     );
   }
