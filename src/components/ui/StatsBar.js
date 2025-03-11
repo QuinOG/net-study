@@ -1,5 +1,6 @@
-import React from 'react';
-import '../../styles/games/GameModeCards.css';
+import React, { useState, useEffect } from 'react';
+import { FiAward, FiZap, FiActivity, FiTarget } from 'react-icons/fi';
+import '../../styles/ui/StatsBar.css';
 
 /**
  * A component to display game statistics
@@ -15,27 +16,92 @@ import '../../styles/games/GameModeCards.css';
  */
 function StatsBar({ stats }) {
   const { bestScore, bestStreak, gamesPlayed, totalAttempts, correctAnswers } = stats;
+  const [animatedStats, setAnimatedStats] = useState({
+    bestScore: 0,
+    bestStreak: 0,
+    gamesPlayed: 0,
+    accuracy: 0
+  });
+  
+  // Animate the stats when they change
+  useEffect(() => {
+    const accuracy = totalAttempts === 0 ? 0 : Math.floor((correctAnswers / totalAttempts) * 100);
+    
+    // Start with current animated values
+    const startValues = { ...animatedStats };
+    
+    // Target values
+    const targetValues = {
+      bestScore,
+      bestStreak,
+      gamesPlayed,
+      accuracy
+    };
+    
+    // Animation duration in ms
+    const duration = 1000;
+    const startTime = Date.now();
+    
+    const animateStats = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      
+      if (elapsed < duration) {
+        // Calculate progress (0 to 1)
+        const progress = elapsed / duration;
+        
+        // Easing function (ease-out)
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        
+        // Update animated values
+        setAnimatedStats({
+          bestScore: Math.floor(startValues.bestScore + (targetValues.bestScore - startValues.bestScore) * easeProgress),
+          bestStreak: Math.floor(startValues.bestStreak + (targetValues.bestStreak - startValues.bestStreak) * easeProgress),
+          gamesPlayed: Math.floor(startValues.gamesPlayed + (targetValues.gamesPlayed - startValues.gamesPlayed) * easeProgress),
+          accuracy: Math.floor(startValues.accuracy + (targetValues.accuracy - startValues.accuracy) * easeProgress)
+        });
+        
+        // Continue animation
+        requestAnimationFrame(animateStats);
+      } else {
+        // Ensure final values are exact
+        setAnimatedStats(targetValues);
+      }
+    };
+    
+    // Start animation
+    requestAnimationFrame(animateStats);
+    
+  }, [bestScore, bestStreak, gamesPlayed, totalAttempts, correctAnswers]);
   
   return (
     <div className="stats-bar">
       <div className="stat-item">
-        <span className="stat-value">{bestScore}</span>
+        <div className="stat-icon">
+          <FiAward />
+        </div>
+        <span className="stat-value">{animatedStats.bestScore}</span>
         <span className="stat-label">Best Score</span>
       </div>
       <div className="stat-item">
-        <span className="stat-value">{bestStreak}</span>
+        <div className="stat-icon">
+          <FiZap />
+        </div>
+        <span className="stat-value">{animatedStats.bestStreak}</span>
         <span className="stat-label">Best Streak</span>
       </div>
       <div className="stat-item">
-        <span className="stat-value">{gamesPlayed}</span>
+        <div className="stat-icon">
+          <FiActivity />
+        </div>
+        <span className="stat-value">{animatedStats.gamesPlayed}</span>
         <span className="stat-label">Games Played</span>
       </div>
       <div className="stat-item">
-        <span className="stat-value">
-          {totalAttempts === 0 
-            ? '0%' 
-            : `${Math.floor((correctAnswers / totalAttempts) * 100)}%`}
-        </span>
+        <div className="stat-icon">
+          <FiTarget />
+        </div>
+        <span className="stat-value">{animatedStats.accuracy}%</span>
         <span className="stat-label">Accuracy</span>
       </div>
     </div>
