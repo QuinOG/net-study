@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getCurrentUser, loginUser, registerUser, submitGameResults, getUserStats, updateUserStats, addUserXP } from '../services/api';
-import { getGuestUser, createGuestUser, updateGuestStats, calculateGuestProgress, clearGuestData, defaultUserStats } from '../utils/GuestUser';
+import { getCurrentUser, loginUser, registerUser, submitGameResults, getUserStats, addUserXP } from '../services/api';
+import { getGuestUser, updateGuestStats, calculateGuestProgress, clearGuestData, defaultUserStats } from '../utils/GuestUser';
 
 // Create context
 export const UserContext = createContext();
@@ -12,6 +12,11 @@ export const UserProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [showReward, setShowReward] = useState(false);
   const [rewardXP, setRewardXP] = useState(0);
+  const [showMilestone, setShowMilestone] = useState(false);
+  const [milestoneData, setMilestoneData] = useState({
+    type: 'level-up',
+    data: {}
+  });
   
   // Load user on app startup
   useEffect(() => {
@@ -263,6 +268,34 @@ export const UserProvider = ({ children }) => {
     }
   };
   
+  // Helper function to calculate level based on XP
+  const calculateLevel = (totalXP) => {
+    let xpRemaining = totalXP;
+    let level = 1;
+    let requiredXP = 50; // Base XP for level 1
+    
+    while (xpRemaining >= requiredXP) {
+      xpRemaining -= requiredXP;
+      level++;
+      requiredXP = Math.floor(requiredXP * 1.25); // Increase by 25% for next level
+    }
+    
+    return level;
+  };
+
+  // Helper function to calculate total XP required for a specific level
+  const getRequiredXPForLevel = (targetLevel) => {
+    let totalRequired = 0;
+    let requiredXP = 50; // Base XP for level 1
+    
+    for (let level = 1; level < targetLevel; level++) {
+      totalRequired += requiredXP;
+      requiredXP = Math.floor(requiredXP * 1.25); // Increase by 25% for next level
+    }
+    
+    return totalRequired;
+  };
+
   // Add XP to user (called by games)
   const addXP = async (amount) => {
     if (!user) {
@@ -283,8 +316,8 @@ export const UserProvider = ({ children }) => {
         const currentStats = { ...userStats };
         const newTotalXP = (currentStats.totalXP || 0) + amount;
         
-        // Calculate new level (simple formula: 100 XP per level)
-        const newLevel = Math.floor(newTotalXP / 100) + 1;
+        // Calculate new level using the progressive formula
+        const newLevel = calculateLevel(newTotalXP);
         const levelUp = newLevel > (currentStats.level || 1);
         
         const updatedStats = {
@@ -364,7 +397,8 @@ export const UserProvider = ({ children }) => {
           // Fall back to client-side update for better UX
           const currentStats = { ...userStats } || { totalXP: 0, level: 1 };
           const newTotalXP = (currentStats.totalXP || 0) + numericAmount;
-          const newLevel = Math.floor(newTotalXP / 100) + 1;
+          // Calculate new level using the progressive formula
+          const newLevel = calculateLevel(newTotalXP);
           const levelUp = newLevel > (currentStats.level || 1);
           
           const updatedStats = {
@@ -397,6 +431,9 @@ export const UserProvider = ({ children }) => {
   // Update user stats after completing a game
   const updateStats = async (gameId, gameResults) => {
     try {
+      // Save the old stats before updating
+      const oldStats = { ...userStats };
+      
       // Handle guest user
       if (user?.isGuest) {
         const { updatedStats, xpEarned, levelUp } = calculateGuestProgress(gameResults);
@@ -404,6 +441,10 @@ export const UserProvider = ({ children }) => {
         setUserStats(updatedStats);
         setRewardXP(xpEarned);
         setShowReward(true);
+        
+        // Check for milestones after updating stats
+        checkForMilestones(oldStats, updatedStats);
+        
         return { 
           data: { 
             stats: updatedStats,
@@ -424,6 +465,9 @@ export const UserProvider = ({ children }) => {
       const statsResponse = await getUserStats(user._id);
       setUserStats(statsResponse.data.data.stats);
       
+      // Check for milestones after updating stats
+      checkForMilestones(oldStats, statsResponse.data.data.stats);
+      
       return response.data;
     } catch (err) {
       console.error('Failed to update stats:', err);
@@ -435,25 +479,54 @@ export const UserProvider = ({ children }) => {
     setShowReward(false);
   };
   
+  // Add this in the updateUserStats function or wherever you update user XP/level
+  const checkForMilestones = (oldStats, newStats) => {
+    // Check for level up
+    if (newStats.level > oldStats.level) {
+      const levelRewards = [
+        "Access to more difficult questions",
+        "New achievement badges",
+        "Enhanced profile customization"
+      ];
+      
+      setMilestoneData({
+        type: 'level-up',
+        data: {
+          level: newStats.level,
+          rewards: levelRewards
+        }
+      });
+      setShowMilestone(true);
+    }
+    
+    // Other milestone checks can be added here later
+  };
+  
   // Return context provider with all values and functions
   return (
-    <UserContext.Provider value={{
-      user,
-      userStats,
-      loading,
-      error,
-      isGuest: user?.isGuest || false,
-      showReward,
-      rewardXP,
-      login,
-      register,
-      logout,
-      startGuestSession,
-      addXP,
-      updateStats,
-      handleRewardComplete,
-      resetApplicationState // Expose the reset function
-    }}>
+    <UserContext.Provider 
+      value={{
+        user,
+        userStats,
+        loading,
+        error,
+        isLoggedIn: !!user,
+        isGuest: user?.isGuest || false,
+        showReward,
+        rewardXP,
+        login,
+        register,
+        logout,
+        startGuestSession,
+        addXP,
+        updateStats,
+        handleRewardComplete,
+        resetApplicationState,
+        showMilestone,
+        setShowMilestone,
+        milestoneData,
+        setMilestoneData
+      }}>
       {children}
     </UserContext.Provider>
   );

@@ -6,6 +6,9 @@ import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
 import '../../styles/games/SubnettingChallenge.css';
 import '../../styles/games/GameModeCards.css';
+import { FiClock, FiCheckCircle, FiZap, FiShield, FiSkipForward, FiShuffle } from 'react-icons/fi';
+import GameModeCard from '../ui/GameModeCard';
+import GameEndScreen from '../ui/GameEndScreen';
 
 // Game modes
 const GAME_MODES = {
@@ -630,47 +633,22 @@ function SubnettingChallenge() {
   if (showGameOver) {
     const isNewHighScore = score > gameStats.bestScore;
     return (
-      <div className="subnetting-game">
-        <div className="game-over-stats">
-          <h2>{isNewHighScore ? '🏆 New High Score! 🏆' : 'Game Over'}</h2>
-          <div className="final-stats">
-            <div className="stat-item">
-              <span className="stat-label">Score</span>
-              <span className={`stat-value ${isNewHighScore ? 'highlight' : ''}`}>{score}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Correct Networks</span>
-              <span className="stat-value">{correctAnswers}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Best Streak</span>
-              <span className="stat-value">{Math.max(currentStreak, gameStats.bestStreak)}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">XP Earned</span>
-              <span className="stat-value">{Math.round(score / 10)}</span>
-            </div>
-          </div>
-          <div className="game-over-buttons">
-            <button 
-              className="restart-btn"
-              onClick={() => initializeGame(gameMode, difficulty)}
-            >
-              Play Again
-            </button>
-            <button 
-              className="home-btn"
-              onClick={() => {
-                setShowGameOver(false);
-                setGameStarted(false);
-                scrollToTop();
-              }}
-            >
-              Back to Menu
-            </button>
-          </div>
-        </div>
-      </div>
+      <GameEndScreen
+        gameTitle="Subnetting Challenge"
+        score={score}
+        bestScore={gameStats.bestScore}
+        xpEarned={Math.round(score / 10)}
+        correctAnswers={correctAnswers}
+        totalAttempts={correctAnswers + incorrectAnswers}
+        bestStreak={Math.max(currentStreak, gameStats.bestStreak)}
+        isNewHighScore={isNewHighScore}
+        onPlayAgain={() => initializeGame(gameMode, difficulty)}
+        onBackToMenu={() => {
+          setShowGameOver(false);
+          setGameMode(null);
+          scrollToTop();
+        }}
+      />
     );
   }
 

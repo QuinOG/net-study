@@ -95,8 +95,8 @@ export const calculateGuestProgress = (gameResults) => {
   const currentStats = JSON.parse(localStorage.getItem(GUEST_STATS_KEY) || '{}');
   const newTotalXP = (currentStats.totalXP || 0) + xpEarned;
   
-  // Calculate level (100 XP per level)
-  const newLevel = Math.floor(newTotalXP / 100) + 1;
+  // Calculate level using progressive formula
+  const newLevel = calculateLevel(newTotalXP);
   
   // Update other stats
   const updatedStats = {
@@ -166,6 +166,22 @@ export const clearGuestData = () => {
   });
   
   console.log(`[Data Cleanup] Removed ${keysToRemove.length} guest/settings items`);
+};
+
+// Calculate level based on XP with progressive system
+// Level 1 requires 50 XP, each level after increases by factor of 1.25
+const calculateLevel = (totalXP) => {
+  let xpRemaining = totalXP;
+  let level = 1;
+  let requiredXP = 50; // Base XP for level 1
+  
+  while (xpRemaining >= requiredXP) {
+    xpRemaining -= requiredXP;
+    level++;
+    requiredXP = Math.floor(requiredXP * 1.25); // Increase by 25% for next level
+  }
+  
+  return level;
 };
 
 // Named export for the utility object - best practice

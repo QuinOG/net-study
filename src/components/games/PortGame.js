@@ -6,6 +6,7 @@ import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
 import GameEndScreen from '../ui/GameEndScreen';
 import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
+import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar, FiGift, FiActivity } from 'react-icons/fi';
 import '../../styles/games/PortGame.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -83,6 +84,14 @@ const DIFFICULTY_LEVELS = {
   }
 };
 
+// Special bonus types for random events
+const BONUS_TYPES = {
+  DOUBLE_POINTS: 'doublePoints',
+  EXTRA_TIME: 'extraTime',
+  POWER_UP: 'powerUp',
+  INSTANT_POINTS: 'instantPoints'
+};
+
 function PortGame() {
   const navigate = useNavigate();
   const { userStats, addXP, updateStats, user } = useContext(UserContext);
@@ -136,6 +145,49 @@ function PortGame() {
   const [loading, setLoading] = useState(true);
   const [currentCategory, setCurrentCategory] = useState(null);
 
+  // Add visual feedback state
+  const [answerAnimation, setAnswerAnimation] = useState('');
+  const [scoreAnimation, setScoreAnimation] = useState(false);
+  const [streakAnimation, setStreakAnimation] = useState(false);
+  const [xpEarnedPreview, setXpEarnedPreview] = useState(0);
+  const [showXpPreview, setShowXpPreview] = useState(false);
+  const questionRef = useRef(null);
+  
+  // Add combo system
+  const [combo, setCombo] = useState(0);
+  const [comboMultiplier, setComboMultiplier] = useState(1);
+  const [showComboMessage, setShowComboMessage] = useState(false);
+  const [comboMessage, setComboMessage] = useState('');
+  const [speedBonus, setSpeedBonus] = useState(0);
+  const [showSpeedBonus, setShowSpeedBonus] = useState(false);
+  const [answerStartTime, setAnswerStartTime] = useState(null);
+  
+  // Add particle effect state
+  const [showParticles, setShowParticles] = useState(false);
+  const [particleType, setParticleType] = useState('');
+  const [particlePosition, setParticlePosition] = useState({ x: 0, y: 0 });
+  
+  // Add streak milestones and rewards
+  const streakMilestones = [5, 10, 15, 25, 50, 100];
+  const [achievedMilestones, setAchievedMilestones] = useState([]);
+  const [showStreakReward, setShowStreakReward] = useState(false);
+  const [streakReward, setStreakReward] = useState('');
+
+  // Add daily challenge state
+  const [dailyChallenge, setDailyChallenge] = useState(null);
+  const [dailyChallengeProgress, setDailyChallengeProgress] = useState(0);
+  const [dailyChallengeCompleted, setDailyChallengeCompleted] = useState(false);
+  const [showDailyChallengeComplete, setShowDailyChallengeComplete] = useState(false);
+  
+  // Add surprise bonuses
+  const [activeBonus, setActiveBonus] = useState(null);
+  const [showBonusMessage, setShowBonusMessage] = useState(false);
+  const [bonusMessage, setBonusMessage] = useState('');
+  const [bonusTimeRemaining, setBonusTimeRemaining] = useState(0);
+  
+  // Add state for bonus XP earned from challenges
+  const [bonusXpEarned, setBonusXpEarned] = useState(0);
+  
   // Update gameStats in localStorage when user changes
   useEffect(() => {
     if (user) {
@@ -227,6 +279,204 @@ function PortGame() {
     loadGameData();
   }, []);
 
+  // Generate daily challenge on mount
+  useEffect(() => {
+    generateDailyChallenge();
+  }, []);
+  
+  // Monitor bonus time
+  useEffect(() => {
+    if (bonusTimeRemaining > 0 && gameStarted) {
+      const timer = setTimeout(() => {
+        setBonusTimeRemaining(prev => prev - 1);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    } else if (bonusTimeRemaining === 0 && activeBonus) {
+      // End bonus when time runs out
+      setActiveBonus(null);
+      SoundManager.play('click');
+    }
+  }, [bonusTimeRemaining, gameStarted]);
+  
+  // Generate a daily challenge
+  const generateDailyChallenge = () => {
+    // Get today's date as a seed
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Check if user already completed today's challenge
+    const completedKey = `portGame_dailyChallenge_${today}_${getUserKey()}`;
+    const isCompleted = localStorage.getItem(completedKey) === 'completed';
+    
+    if (isCompleted) {
+      setDailyChallengeCompleted(true);
+    }
+    
+    // Choose a random challenge type
+    const challengeTypes = [
+      { type: 'streak', target: 10, description: 'Get a streak of 10 correct answers' },
+      { type: 'accuracy', target: 90, description: 'Maintain 90% accuracy with at least 20 answers' },
+      { type: 'score', target: 1500, description: 'Score 1500+ points in Time Attack mode' },
+      { type: 'time', target: 120, description: 'Survive for 120 seconds in Time Attack Hard mode' },
+      { type: 'combo', target: 8, description: 'Reach an 8x combo' }
+    ];
+    
+    // Use date as seed for consistent daily challenge
+    const seed = parseInt(today.replace(/-/g, ''));
+    const selectedChallenge = challengeTypes[seed % challengeTypes.length];
+    
+    setDailyChallenge(selectedChallenge);
+  };
+  
+  // Update daily challenge progress
+  const updateDailyChallenge = (stats) => {
+    if (!dailyChallenge || dailyChallengeCompleted) return;
+    
+    let progress = 0;
+    
+    switch (dailyChallenge.type) {
+      case 'streak':
+        progress = Math.min(100, (currentStreak / dailyChallenge.target) * 100);
+        break;
+      case 'accuracy':
+        if (correctAnswers + incorrectAnswers >= 20) {
+          const accuracy = (correctAnswers / (correctAnswers + incorrectAnswers)) * 100;
+          progress = Math.min(100, (accuracy / dailyChallenge.target) * 100);
+        } else {
+          progress = Math.min(100, ((correctAnswers / 20) * 90 / dailyChallenge.target) * 100);
+        }
+        break;
+      case 'score':
+        progress = Math.min(100, (score / dailyChallenge.target) * 100);
+        break;
+      case 'time':
+        if (gameMode === GAME_MODES.TIME_ATTACK && difficulty === 'HARD') {
+          progress = Math.min(100, ((stats.timeElapsed || 0) / dailyChallenge.target) * 100);
+        }
+        break;
+      case 'combo':
+        progress = Math.min(100, (combo / dailyChallenge.target) * 100);
+        break;
+    }
+    
+    setDailyChallengeProgress(progress);
+    
+    // Check if challenge completed
+    if (progress >= 100 && !dailyChallengeCompleted) {
+      completeDailyChallenge();
+    }
+  };
+  
+  // Complete daily challenge
+  const completeDailyChallenge = () => {
+    // Mark as completed
+    setDailyChallengeCompleted(true);
+    
+    // Store completion in localStorage
+    const today = new Date().toISOString().split('T')[0];
+    const completedKey = `portGame_dailyChallenge_${today}_${getUserKey()}`;
+    localStorage.setItem(completedKey, 'completed');
+    
+    // Show completion message and give bonus
+    setShowDailyChallengeComplete(true);
+    setTimeout(() => {
+      setShowDailyChallengeComplete(false);
+    }, 3000);
+    
+    // Award bonus XP (will be applied when game ends)
+    setBonusXpEarned(prev => prev + 50);
+    
+    // Add bonus power-ups
+    setPowerUps(prev => ({
+      timeFreeze: prev.timeFreeze + 1,
+      categoryReveal: prev.categoryReveal + 1,
+      skipQuestion: prev.skipQuestion + 1
+    }));
+    
+    // Play achievement sound
+    SoundManager.play('achievement');
+  };
+  
+  // Generate particles for effects
+  const generateParticles = () => {
+    return Array.from({ length: 20 }, (_, i) => (
+      <div key={i} className="particles" style={{ '--delay': `${i * 0.05}s` }}></div>
+    ));
+  };
+  
+  // Trigger random bonus (called occasionally during correct answers)
+  const triggerRandomBonus = () => {
+    // 10% chance of bonus on correct answer if no active bonus
+    if (activeBonus || Math.random() > 0.1) return;
+    
+    // Choose a random bonus
+    const bonusTypes = Object.values(BONUS_TYPES);
+    const randomBonus = bonusTypes[Math.floor(Math.random() * bonusTypes.length)];
+    
+    // Set active bonus
+    setActiveBonus(randomBonus);
+    
+    // Handle different bonus types
+    switch (randomBonus) {
+      case BONUS_TYPES.DOUBLE_POINTS:
+        setBonusMessage('🔥 DOUBLE POINTS! 🔥');
+        setBonusTimeRemaining(15); // 15 seconds of double points
+        break;
+        
+      case BONUS_TYPES.EXTRA_TIME:
+        if (gameMode === GAME_MODES.TIME_ATTACK) {
+          const extraTime = 30;
+          setTimeRemaining(prev => prev + extraTime);
+          setBonusMessage(`⏱️ +${extraTime} SECONDS! ⏱️`);
+        } else {
+          // If not in time attack, give a different bonus
+          setPowerUps(prev => ({...prev, skipQuestion: prev.skipQuestion + 1}));
+          setBonusMessage('🎁 FREE SKIP POWER-UP! 🎁');
+        }
+        setBonusTimeRemaining(3); // Just show message for 3 seconds
+        break;
+        
+      case BONUS_TYPES.POWER_UP:
+        // Add one of each power-up
+        setPowerUps(prev => ({
+          timeFreeze: prev.timeFreeze + 1,
+          categoryReveal: prev.categoryReveal + 1,
+          skipQuestion: prev.skipQuestion + 1
+        }));
+        setBonusMessage('🎁 ALL POWER-UPS +1! 🎁');
+        setBonusTimeRemaining(3); // Just show message for 3 seconds
+        break;
+        
+      case BONUS_TYPES.INSTANT_POINTS:
+        const bonusPoints = 250;
+        setScore(prev => prev + bonusPoints);
+        setBonusMessage(`💰 +${bonusPoints} BONUS POINTS! 💰`);
+        setBonusTimeRemaining(3); // Just show message for 3 seconds
+        break;
+    }
+    
+    // Show bonus message
+    setShowBonusMessage(true);
+    setTimeout(() => {
+      setShowBonusMessage(false);
+    }, 2500);
+    
+    // Trigger special particle effect
+    const rect = questionRef.current?.getBoundingClientRect();
+    if (rect) {
+      setParticlePosition({ 
+        x: rect.left + rect.width / 2, 
+        y: rect.top + rect.height / 2 
+      });
+      setParticleType('bonus');
+      setShowParticles(true);
+      setTimeout(() => setShowParticles(false), 1800);
+    }
+    
+    // Play special sound
+    SoundManager.play('achievement');
+  };
+
   // Get a random port from our dictionary
   const getRandomPort = () => {
     const portList = Object.keys(PORT_DATA);
@@ -234,8 +484,12 @@ function PortGame() {
     return portList[randomIndex];
   };
 
-  // Generate a new question
+  // Generate a new question and set answer start time
   const generateQuestion = () => {
+    // Set the start time for this question
+    setAnswerStartTime(Date.now());
+    
+    // Return the question
     const port = getRandomPort();
     const protocol = PORT_DATA[port].protocol;
     const description = PORT_DATA[port].description;
@@ -246,6 +500,8 @@ function PortGame() {
       protocol,
       description,
       category,
+      correctAnswer: port,
+      hint: `This protocol is used for ${category.toLowerCase()} purposes`,
       showCategory: false,
       options: generateOptions(protocol)
     };
@@ -273,8 +529,13 @@ function PortGame() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Check if answer is correct
-    const isCorrect = userAnswer === currentQuestion.port;
+    // Don't process empty submissions
+    if (!userAnswer.trim()) {
+      return;
+    }
+    
+    // Check if the answer is correct
+    const isCorrect = currentQuestion.correctAnswer === userAnswer.trim();
     
     if (isCorrect) {
       handleCorrectAnswer();
@@ -282,101 +543,204 @@ function PortGame() {
       handleIncorrectAnswer();
     }
     
-    // Reset input field and generate new question
+    // Clear the input field
     setUserAnswer('');
-    setCurrentQuestion(generateQuestion());
   };
 
-  // Handle correct answer
+  // Handle correct answer with enhanced feedback
   const handleCorrectAnswer = () => {
-    // Play correct sound
     SoundManager.play('correct');
     
-    // Update streak and score
+    // Calculate time taken to answer
+    const endTime = Date.now();
+    const timeTaken = endTime - (answerStartTime || endTime);
+    
+    // Calculate speed bonus (max 100 points for answering in less than 2 seconds)
+    const calculatedSpeedBonus = timeTaken < 2000 ? Math.round((2000 - timeTaken) / 20) : 0;
+    setSpeedBonus(calculatedSpeedBonus);
+    
+    if (calculatedSpeedBonus > 0) {
+      setShowSpeedBonus(true);
+      setTimeout(() => setShowSpeedBonus(false), 1500);
+    }
+    
+    // Update streak and set animation
     const newStreak = currentStreak + 1;
     setCurrentStreak(newStreak);
+    setStreakAnimation(true);
+    setTimeout(() => setStreakAnimation(false), 1000);
     
-    // Update best streak immediately if current streak is better
-    if (newStreak > gameStats.bestStreak) {
-      const updatedStats = {
-        ...gameStats,
-        bestStreak: newStreak
-      };
-      setGameStats(updatedStats);
+    // Update combo and combo multiplier
+    const newCombo = combo + 1;
+    setCombo(newCombo);
+    
+    // Update combo multiplier (increases every 3 combos)
+    let newMultiplier = 1;
+    if (newCombo >= 9) newMultiplier = 2.5;
+    else if (newCombo >= 6) newMultiplier = 2;
+    else if (newCombo >= 3) newMultiplier = 1.5;
+    
+    const multiplierChanged = newMultiplier > comboMultiplier;
+    setComboMultiplier(newMultiplier);
+    
+    // Show combo message if milestone reached or multiplier changed
+    if (multiplierChanged || newCombo === 3 || newCombo === 6 || newCombo === 9 || newCombo % 5 === 0) {
+      setComboMessage(`${newCombo}x Combo! ${newMultiplier}x Points`);
+      setShowComboMessage(true);
+      setTimeout(() => setShowComboMessage(false), 1500);
       
-      // Save to localStorage
-      localStorage.setItem(`portGameStats_${getUserKey()}`, JSON.stringify(updatedStats));
-    }
-    
-    // Apply difficulty multiplier to score
-    const pointsEarned = 100 * DIFFICULTY_LEVELS[difficulty].multiplier;
-    const newScore = score + pointsEarned;
-    setScore(newScore);
-    setCorrectAnswers(prev => prev + 1);
-    
-    // Add time for time attack mode
-    if (gameMode === GAME_MODES.TIME_ATTACK) {
-      setTimeRemaining(prev => prev + 5); // Add 5 seconds for correct answer
-    }
-    
-    // Show feedback
-    setFeedback({
-      show: true,
-      message: `Correct! +${pointsEarned} points`,
-      isCorrect: true
-    });
-    
-    // Hide feedback after 1.5 seconds
-    setTimeout(() => {
-      setFeedback({ show: false, message: '', isCorrect: false });
-    }, 1500);
-  };
-
-  // Handle incorrect answer
-  const handleIncorrectAnswer = () => {
-    // Play wrong sound
-    SoundManager.play('wrong');
-    
-    // Reset streak
-    setCurrentStreak(0);
-    
-    // Increment incorrect answers count
-    setIncorrectAnswers(prev => prev + 1);
-    
-    // Subtract time for time attack mode
-    if (gameMode === GAME_MODES.TIME_ATTACK) {
-      // Calculate new time after penalty
-      const newTime = Math.max(0, timeRemaining - DIFFICULTY_LEVELS[difficulty].timePenalty);
-      setTimeRemaining(newTime);
+      // Play special sound for combo milestones
+      SoundManager.play('streakMilestone');
       
-      // If time is now zero, end the game immediately
-      if (newTime <= 0) {
-        // Show feedback briefly before ending game
-        setFeedback({
-          show: true,
-          message: `Incorrect! The port for ${currentQuestion.protocol} is ${currentQuestion.port}`,
-          isCorrect: false
+      // Trigger particle effect
+      const rect = questionRef.current?.getBoundingClientRect();
+      if (rect) {
+        setParticlePosition({ 
+          x: rect.left + rect.width / 2, 
+          y: rect.top + rect.height / 2 
         });
-        
-        // Short delay before ending game
-        setTimeout(() => {
-          endGame();
-        }, 1000);
-        return;
+        setParticleType('combo');
+        setShowParticles(true);
+        setTimeout(() => setShowParticles(false), 1500);
       }
     }
     
-    // Show feedback
-    setFeedback({
-      show: true,
-      message: `Incorrect! The port for ${currentQuestion.protocol} is ${currentQuestion.port}`,
-      isCorrect: false
-    });
+    // Check for streak milestones
+    if (streakMilestones.includes(newStreak) && !achievedMilestones.includes(newStreak)) {
+      // Add to achieved milestones
+      setAchievedMilestones(prev => [...prev, newStreak]);
+      
+      // Generate reward based on streak milestone
+      let reward = '';
+      if (newStreak >= 25) {
+        reward = 'Extra Time Freeze Power-up';
+        setPowerUps(prev => ({...prev, timeFreeze: prev.timeFreeze + 1}));
+      } else if (newStreak >= 10) {
+        reward = 'Extra Skip Power-up';
+        setPowerUps(prev => ({...prev, skipQuestion: prev.skipQuestion + 1}));
+      } else {
+        reward = 'Extra Category Power-up';
+        setPowerUps(prev => ({...prev, categoryReveal: prev.categoryReveal + 1}));
+      }
+      
+      // Show streak reward message
+      setStreakReward(reward);
+      setShowStreakReward(true);
+      setTimeout(() => setShowStreakReward(false), 2500);
+      
+      // Play achievement sound
+      SoundManager.play('achievement');
+      
+      // Trigger special particle effect
+      const rect = questionRef.current?.getBoundingClientRect();
+      if (rect) {
+        setParticlePosition({ 
+          x: rect.left + rect.width / 2, 
+          y: rect.top + rect.height / 2 
+        });
+        setParticleType('milestone');
+        setShowParticles(true);
+        setTimeout(() => setShowParticles(false), 1800);
+      }
+    }
     
-    // Hide feedback after 2 seconds
+    // Possibly trigger a random bonus
+    triggerRandomBonus();
+    
+    // Update daily challenge
+    updateDailyChallenge({ timeElapsed: timeRemaining });
+    
+    // Calculate score increase with multiplier and any active bonuses
+    const basePoints = 100;
+    const difficultyMultiplier = DIFFICULTY_LEVELS[difficulty].multiplier;
+    let totalMultiplier = difficultyMultiplier * comboMultiplier;
+    
+    // Apply double points bonus if active
+    if (activeBonus === BONUS_TYPES.DOUBLE_POINTS) {
+      totalMultiplier *= 2;
+    }
+    
+    const scoreIncrease = Math.round(basePoints * totalMultiplier) + calculatedSpeedBonus;
+    const newScore = score + scoreIncrease;
+    
+    // Show score animation
+    setScore(newScore);
+    setScoreAnimation(true);
+    setTimeout(() => setScoreAnimation(false), 1000);
+    
+    // Show potential XP preview
+    const potentialXp = Math.max(10, Math.floor(newScore / 10));
+    setXpEarnedPreview(potentialXp);
+    setShowXpPreview(true);
+    setTimeout(() => setShowXpPreview(false), 2000);
+    
+    // Add time for time attack mode
+    if (gameMode === GAME_MODES.TIME_ATTACK) {
+      const bonusTime = 5 + Math.floor((newCombo / 5)); // Extra time for combos
+      setTimeRemaining(prevTime => prevTime + bonusTime);
+      setFeedback({
+        show: true,
+        isCorrect: true,
+        message: `Correct! +${scoreIncrease} points (${totalMultiplier.toFixed(1)}x)${calculatedSpeedBonus > 0 ? `, +${calculatedSpeedBonus} speed bonus` : ''}, +${bonusTime}s`
+      });
+    } else {
+      setFeedback({
+        show: true,
+        isCorrect: true,
+        message: `Correct! +${scoreIncrease} points (${totalMultiplier.toFixed(1)}x)${calculatedSpeedBonus > 0 ? `, +${calculatedSpeedBonus} speed bonus` : ''}`
+      });
+    }
+    
+    // Hide feedback after delay and generate new question
     setTimeout(() => {
-      setFeedback({ show: false, message: '', isCorrect: false });
-    }, 2000);
+      setFeedback({ show: false, isCorrect: true, message: '' });
+      setUserAnswer('');
+      setCurrentQuestion(generateQuestion()); // Generate new question
+    }, 1500);
+    
+    // Update stats
+    setCorrectAnswers(prev => prev + 1);
+  };
+
+  // Enhance incorrect answer feedback
+  const handleIncorrectAnswer = () => {
+    SoundManager.play('incorrect');
+    
+    // Reset streak and combo
+    setCurrentStreak(0);
+    setCombo(0);
+    setComboMultiplier(1);
+    
+    // Prepare visual feedback
+    setAnswerAnimation('incorrect-animation');
+    setTimeout(() => setAnswerAnimation(''), 1000);
+    
+    // Add time penalty for time attack mode
+    if (gameMode === GAME_MODES.TIME_ATTACK) {
+      const timePenalty = DIFFICULTY_LEVELS[difficulty].timePenalty;
+      setTimeRemaining(prevTime => Math.max(0, prevTime - timePenalty));
+      setFeedback({
+        show: true,
+        isCorrect: false,
+        message: `Incorrect! Port ${currentQuestion.port} is used for ${currentQuestion.protocol}. -${timePenalty}s time penalty`
+      });
+    } else {
+      setFeedback({
+        show: true,
+        isCorrect: false,
+        message: `Incorrect! Port ${currentQuestion.port} is used for ${currentQuestion.protocol}`
+      });
+    }
+    
+    // Hide feedback after delay and generate new question
+    setTimeout(() => {
+      setFeedback({ show: false, isCorrect: false, message: '' });
+      setUserAnswer('');
+      setCurrentQuestion(generateQuestion()); // Generate new question
+    }, 1500);
+    
+    // Update stats
+    setIncorrectAnswers(prev => prev + 1);
   };
 
   // Handle power-up usage
@@ -440,6 +804,15 @@ function PortGame() {
 
   // Initialize game with selected mode and difficulty
   const initializeGame = (mode, diff) => {
+    // Reset combo and streak tracking
+    setCombo(0);
+    setComboMultiplier(1);
+    setAchievedMilestones([]);
+    
+    // Reset bonus state
+    setActiveBonus(null);
+    setBonusTimeRemaining(0);
+    
     // Scroll to top when game initializes
     scrollToTop();
     
@@ -702,102 +1075,220 @@ function PortGame() {
 
   // Main game interface
   return (
-    <div className="port-game">
-      <div className="game-header">
-        <div className="game-info">
-          <div className="mode-indicator">
-            {gameMode === GAME_MODES.TIME_ATTACK ? 'Time Attack' : 'Practice Mode'}
-            <span className="difficulty-badge">{DIFFICULTY_LEVELS[difficulty].name}</span>
+    <div className={`port-game ${gameStarted ? 'game-active' : ''}`}>
+      {/* Daily Challenge Banner (if available and not completed) */}
+      {dailyChallenge && !dailyChallengeCompleted && gameStarted && (
+        <div className="daily-challenge-banner">
+          <div className="daily-challenge-title">
+            <FiGift size={18} /> Daily Challenge:
           </div>
-          
-          <div className="score-display">
-            Score: <span>{score}</span>
+          <div className="daily-challenge-description">
+            {dailyChallenge.description}
           </div>
-          
-          {gameMode === GAME_MODES.TIME_ATTACK && (
-            <div className={`time-display ${timeRemaining < 10 ? 'urgent' : ''}`}>
-              Time: <span>{timeRemaining}s</span>
-            </div>
-          )}
-          
-          <div className="streak-display">
-            Streak: <span>{currentStreak}</span>
+          <div className="daily-challenge-progress">
+            <div className="progress-bar" style={{ width: `${dailyChallengeProgress}%` }}></div>
           </div>
         </div>
+      )}
+      
+      {/* Show completed message */}
+      {showDailyChallengeComplete && (
+        <div className="daily-challenge-complete">
+          <div className="challenge-complete-title">Daily Challenge Complete!</div>
+          <div className="challenge-complete-rewards">
+            Rewards: +50 XP, +1 All Power-ups
+          </div>
+        </div>
+      )}
+      
+      {/* Game Mode Display at the top */}
+      <div className="game-mode-display">
+        <div className="mode-indicator">
+          {gameMode === GAME_MODES.TIME_ATTACK ? (
+            <><FiClock size={18} /> Time Attack</>
+          ) : (
+            <><FiTarget size={18} /> Practice Mode</>
+          )}
+          <span className="difficulty-badge">{DIFFICULTY_LEVELS[difficulty].name}</span>
+        </div>
+      </div>
+      
+      {/* Score, Streak, Combo, Multiplier row */}
+      <div className="game-stats-row">
+        <div className={`score-display ${scoreAnimation ? 'score-bump' : ''}`}>
+          <FiStar size={16} /> Score: <span>{score}</span>
+          {showXpPreview && (
+            <div className="xp-preview">+{xpEarnedPreview} XP potential</div>
+          )}
+          {showSpeedBonus && (
+            <div className="speed-bonus">+{speedBonus} SPEED BONUS!</div>
+          )}
+        </div>
         
+        <div className={`streak-display ${streakAnimation ? 'streak-bump' : ''}`}>
+          <FiZap size={16} /> Streak: <span>{currentStreak}</span>
+        </div>
+        
+        <div className="combo-display">
+          <FiZap size={16} /> Combo: <span className={combo >= 6 ? 'high-combo' : combo >= 3 ? 'medium-combo' : ''}>{combo}x</span>
+        </div>
+        
+        <div className="multiplier-display">
+          <FiActivity size={16} /> Multiplier: <span className={comboMultiplier > 1.5 ? 'high-multiplier' : comboMultiplier > 1 ? 'medium-multiplier' : ''}>{comboMultiplier}x</span>
+        </div>
+        
+        {gameMode === GAME_MODES.TIME_ATTACK && (
+          <div className={`time-display ${timeRemaining < 10 ? 'urgent' : ''}`}>
+            <FiClock size={16} /> Time: <span>{timeRemaining}s</span>
+          </div>
+        )}
+      </div>
+      
+      {/* Active Bonus */}
+      {activeBonus && (
+        <div className="active-bonus">
+          <div className="bonus-label">
+            {activeBonus === BONUS_TYPES.DOUBLE_POINTS && "DOUBLE POINTS"}
+            {activeBonus === BONUS_TYPES.EXTRA_TIME && "TIME BONUS"}
+            {activeBonus === BONUS_TYPES.POWER_UP && "POWER-UP BONUS"}
+            {activeBonus === BONUS_TYPES.INSTANT_POINTS && "POINT BONUS"}
+          </div>
+          {bonusTimeRemaining > 0 && (
+            <div className="bonus-timer">{bonusTimeRemaining}s</div>
+          )}
+        </div>
+      )}
+      
+      {/* Powerups (only in timed mode) */}
+      {gameMode === GAME_MODES.TIME_ATTACK && (
         <div className="power-ups">
           <button 
             className={`power-up-btn ${powerUps.timeFreeze > 0 ? '' : 'disabled'}`}
             onClick={() => handlePowerUp('timeFreeze')}
-            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.timeFreeze <= 0}
+            disabled={powerUps.timeFreeze <= 0}
+            title="Freeze the timer for 10 seconds"
           >
-            ⏱️ Freeze ({powerUps.timeFreeze})
+            <FiClock size={16} /> Freeze ({powerUps.timeFreeze})
           </button>
           
           <button 
             className={`power-up-btn ${powerUps.categoryReveal > 0 ? '' : 'disabled'}`}
             onClick={() => handlePowerUp('categoryReveal')}
-            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.categoryReveal <= 0 || currentQuestion.showCategory}
+            disabled={powerUps.categoryReveal <= 0 || currentQuestion.showCategory}
+            title="Reveal the protocol category"
           >
-            🔍 Category ({powerUps.categoryReveal})
+            <FiTarget size={16} /> Category ({powerUps.categoryReveal})
           </button>
           
           <button 
             className={`power-up-btn ${powerUps.skipQuestion > 0 ? '' : 'disabled'}`}
             onClick={() => handlePowerUp('skipQuestion')}
-            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.skipQuestion <= 0}
+            disabled={powerUps.skipQuestion <= 0}
+            title="Skip this question without penalty"
           >
-            ⏭️ Skip ({powerUps.skipQuestion})
+            <FiSkipForward size={16} /> Skip ({powerUps.skipQuestion})
           </button>
         </div>
-      </div>
+      )}
       
       <div className="game-content">
+        {showComboMessage && (
+          <div className="combo-message">{comboMessage}</div>
+        )}
+        
+        {showBonusMessage && (
+          <div className="bonus-message">{bonusMessage}</div>
+        )}
+        
+        {showStreakReward && (
+          <div className="streak-reward">
+            <div className="streak-milestone">🏆 {currentStreak} STREAK MILESTONE!</div>
+            <div className="streak-reward-text">Reward: {streakReward}</div>
+          </div>
+        )}
+        
         {feedback.show && (
           <div className={`feedback-message ${feedback.isCorrect ? 'correct' : 'incorrect'}`}>
             {feedback.message}
           </div>
         )}
         
-        <div className="question-container">
-          <h3 className="question-text">What port number is used for:</h3>
-          <div className="protocol-name">{currentQuestion.protocol}</div>
-          <div className="protocol-description">{currentQuestion.description}</div>
-          
-          {(DIFFICULTY_LEVELS[difficulty].showHints || currentQuestion.showCategory) && (
-            <div className="hint">
-              <span className="hint-label">Category:</span> {currentQuestion.category}
+        {currentQuestion ? (
+          <div className="game-layout">
+            {/* Port Question Card on the left */}
+            <div className="question-container" ref={questionRef}>
+              <div className={`question-text ${answerAnimation}`}>
+                <h3>What is the port number for:</h3>
+                <div className="protocol-name">
+                  {currentQuestion?.protocol}
+                  {currentQuestion?.showCategory && currentQuestion?.correctAnswer && PORT_DATA[currentQuestion.correctAnswer] && (
+                    <span className="protocol-category">
+                      ({PORT_DATA[currentQuestion.correctAnswer].category})
+                    </span>
+                  )}
+                </div>
+                <div className="protocol-description">
+                  {currentQuestion?.correctAnswer && PORT_DATA[currentQuestion.correctAnswer] ? 
+                    PORT_DATA[currentQuestion.correctAnswer].description : ''}
+                </div>
+                
+                {DIFFICULTY_LEVELS[difficulty].showHints && currentQuestion?.hint && (
+                  <div className="hint">
+                    <span className="hint-label">Hint:</span> {currentQuestion.hint}
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-        
-        <form className="answer-form" onSubmit={handleSubmit}>
-          <div className="input-container">
-            <label htmlFor="answer-input">Enter Port Number:</label>
-            <input
-              id="answer-input"
-              type="number"
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              placeholder="e.g. 80"
-              autoFocus
-              required
-            />
+            
+            {/* Input box on the right */}
+            <div className="answer-section">
+              <form className="answer-form" onSubmit={handleSubmit}>
+                <div className="input-container">
+                  <label htmlFor="port-answer">Enter Port Number:</label>
+                  <input
+                    id="port-answer"
+                    type="text"
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder="e.g. 80"
+                    autoComplete="off"
+                    autoFocus
+                  />
+                </div>
+                
+                {/* End game and collect button */}
+                <button 
+                  type="button" 
+                  className="end-game-btn"
+                  onClick={endGame}
+                >
+                  <FiAward size={18} /> End Game & Collect XP
+                </button>
+              </form>
+            </div>
           </div>
-          
-          <button type="submit" className="submit-btn">Submit</button>
-        </form>
+        ) : (
+          <div className="loading-question">
+            <p>Loading question...</p>
+          </div>
+        )}
       </div>
       
-      {/* Add End Game button for practice mode */}
-      {gameMode === GAME_MODES.PRACTICE && (
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <button 
-            className="restart-btn"
-            onClick={() => endGame()}
-          >
-            End Game & Collect XP
-          </button>
+      {/* Particle effects container */}
+      {showParticles && (
+        <div className={`particles-container ${particleType}`} style={{ top: particlePosition.y, left: particlePosition.x }}>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
+          <div className="particles"></div>
         </div>
       )}
     </div>

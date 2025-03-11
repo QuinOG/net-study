@@ -3,6 +3,7 @@ import { FiShare2, FiSmile, FiFrown, FiArrowRight } from 'react-icons/fi';
 import '../../styles/games/NetworkTopologyGame.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeCard from '../ui/GameModeCard';
+import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
 import { useNavigate } from 'react-router-dom';
 
@@ -293,53 +294,21 @@ function NetworkTopologyGame() {
       )}
       
       {gameState === 'results' && (
-        <div className="game-results">
-          <h3>Game Results</h3>
-          
-          <div className="results-summary">
-            <div className="score-display">
-              <div className="score-value">{score}/{questions.length}</div>
-              <div className="score-label">Score</div>
-            </div>
-            
-            <div className="result-icon">
-              {score / questions.length >= 0.7 ? 
-                <FiSmile size={48} className="success-icon" /> : 
-                <FiFrown size={48} className="failure-icon" />
-              }
-            </div>
-            
-            <div className="percentage-display">
-              <div className="percentage-value">{Math.round((score / questions.length) * 100)}%</div>
-              <div className="percentage-label">Correct</div>
-            </div>
-          </div>
-          
-          <div className="results-detail">
-            <h4>Question Summary</h4>
-            {results.map((result, index) => (
-              <div 
-                key={index} 
-                className={`result-item ${result.isCorrect ? 'correct' : 'incorrect'}`}
-              >
-                <div className="result-question">{result.question}</div>
-                <div className="result-answer">
-                  Your answer: {result.userAnswer}
-                  {!result.isCorrect && (
-                    <span className="correct-answer">
-                      Correct answer: {result.correctAnswer}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <button className="restart-btn" onClick={resetGame}>
-            <span>Play Again</span>
-            <FiArrowRight />
-          </button>
-        </div>
+        <GameEndScreen
+          gameTitle="Network Topology Game"
+          score={score}
+          bestScore={questions.length} // Using total questions as best score for now
+          xpEarned={Math.round(score * 2)} // Adjust XP based on game difficulty
+          correctAnswers={score}
+          totalAttempts={questions.length}
+          bestStreak={1} // This game doesn't track streaks, set to 1
+          isNewHighScore={score === questions.length} // Perfect score is new high score
+          onPlayAgain={() => resetGame()}
+          onBackToMenu={() => {
+            setGameState('setup');
+            setSelectedMode(null);
+          }}
+        />
       )}
     </div>
   );

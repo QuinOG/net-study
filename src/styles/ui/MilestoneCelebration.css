@@ -1,0 +1,292 @@
+/* Milestone celebration overlay */
+.milestone-celebration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.milestone-celebration-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.milestone-celebration-container {
+  perspective: 1200px;
+  max-width: 90%;
+  width: 500px;
+}
+
+/* Milestone content */
+.milestone-content {
+  background-color: #f8fafc;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 50px rgba(66, 153, 225, 0.3);
+  text-align: center;
+  transform-style: preserve-3d;
+  transform: scale(0.5) rotateX(-20deg);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Stage animations */
+.milestone-content.stage-1 {
+  transform: scale(1) rotateX(0);
+  opacity: 1;
+}
+
+.milestone-content.stage-2 {
+  transform: scale(1.05) rotateX(0);
+}
+
+.milestone-content.stage-3 {
+  transform: scale(1) rotateX(0);
+}
+
+/* Icon container with rays */
+.milestone-icon-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1.5rem;
+}
+
+.milestone-icon {
+  font-size: 4rem;
+  color: #f6ad55;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 10px rgba(246, 173, 85, 0.7));
+  animation: iconPulse 1.5s infinite alternate ease-in-out;
+}
+
+.milestone-rays {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(246, 173, 85, 0.1) 0%, rgba(246, 173, 85, 0) 70%);
+  border-radius: 50%;
+  animation: raysPulse 2s infinite linear;
+}
+
+.milestone-rays:before,
+.milestone-rays:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid rgba(246, 173, 85, 0.3);
+  animation: raysExpand 3s infinite ease-out;
+}
+
+.milestone-rays:after {
+  animation-delay: 1s;
+}
+
+/* Title styles */
+.milestone-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: #2d3748;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #f6ad55, #ed8936);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease 0.2s;
+}
+
+.milestone-content.stage-1 .milestone-title,
+.milestone-content.stage-2 .milestone-title,
+.milestone-content.stage-3 .milestone-title {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Level badge */
+.level-badge {
+  background: linear-gradient(135deg, #f6ad55, #ed8936);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 5px 15px rgba(237, 137, 54, 0.4);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.5s ease 0.4s;
+}
+
+.milestone-content.stage-2 .level-badge,
+.milestone-content.stage-3 .level-badge {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Message and details */
+.milestone-message,
+.milestone-rewards {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease 0.6s;
+}
+
+.milestone-content.stage-2 .milestone-message,
+.milestone-content.stage-3 .milestone-message,
+.milestone-content.stage-2 .milestone-rewards,
+.milestone-content.stage-3 .milestone-rewards {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.milestone-message {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.milestone-rewards {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed #cbd5e0;
+}
+
+.milestone-rewards h3 {
+  font-size: 1.2rem;
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.milestone-rewards ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.milestone-rewards li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.milestone-rewards li:before {
+  content: '✓';
+  color: #48bb78;
+  font-weight: 700;
+}
+
+/* Animations */
+@keyframes iconPulse {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes raysPulse {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.1) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes raysExpand {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Dark mode support */
+body.dark-mode .milestone-content {
+  background-color: #2d3748;
+}
+
+body.dark-mode .milestone-title {
+  background: linear-gradient(90deg, #f6ad55, #ed8936);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+body.dark-mode .milestone-message {
+  color: #e2e8f0;
+}
+
+body.dark-mode .milestone-rewards h3 {
+  color: #e2e8f0;
+}
+
+body.dark-mode .milestone-rewards li {
+  color: #cbd5e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .milestone-celebration-container {
+    width: 90%;
+  }
+  
+  .milestone-content {
+    padding: 1.5rem;
+  }
+  
+  .milestone-title {
+    font-size: 2rem;
+  }
+  
+  .milestone-icon {
+    font-size: 3rem;
+  }
+  
+  .level-badge {
+    width: 60px;
+    height: 60px;
+    font-size: 1.2rem;
+  }
+} 

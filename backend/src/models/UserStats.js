@@ -83,10 +83,20 @@ const userStatsSchema = new mongoose.Schema(
 
 // Calculate level based on XP
 userStatsSchema.pre('save', function(next) {
-  // Simple level calculation: level = 1 + (totalXP / 1000)
-  // Adjust the formula as needed for your game balance
+  // Calculate level using progressive XP requirements
+  // Level 1 requires 50 XP and each level after increases by a factor of 1.25
   if (this.isModified('totalXP')) {
-    this.level = Math.floor(1 + (this.totalXP / 1000));
+    let totalXP = this.totalXP;
+    let level = 1;
+    let requiredXP = 50; // Base XP for level 1
+    
+    while (totalXP >= requiredXP) {
+      totalXP -= requiredXP;
+      level++;
+      requiredXP = Math.floor(requiredXP * 1.25); // Increase by 25% for next level
+    }
+    
+    this.level = level;
   }
   next();
 });

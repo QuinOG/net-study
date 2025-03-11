@@ -27,10 +27,44 @@ import DailyChallenge from './components/ui/DailyChallenge';
 import Leaderboard from './components/ui/Leaderboard';
 import SoundManager from './utils/SoundManager';
 import { defaultUserStats } from './utils/GuestUser';
+import MilestoneCelebration from './components/ui/MilestoneCelebration';
 
 function AppContent() {
-  const { user, userStats, loading, showReward, rewardXP, handleRewardComplete, startGuestSession } = useContext(UserContext);
+  const { 
+    user, 
+    userStats, 
+    loading, 
+    showReward, 
+    rewardXP, 
+    handleRewardComplete, 
+    startGuestSession, 
+    showMilestone, 
+    setShowMilestone, 
+    milestoneData,
+    setMilestoneData 
+  } = useContext(UserContext);
+  
   const [initializingGuest, setInitializingGuest] = useState(false);
+  
+  // Fixed testMilestone function - using context values from the outer scope
+  const testMilestone = () => {
+    // Create test milestone data
+    const testData = {
+      type: 'level-up',
+      data: {
+        level: userStats?.level + 1 || 5,
+        rewards: [
+          "Access to more difficult questions",
+          "New achievement badges",
+          "Enhanced profile customization"
+        ]
+      }
+    };
+    
+    // Set the milestone data and show the celebration
+    setMilestoneData(testData);
+    setShowMilestone(true);
+  };
   
   // Handle guest mode from URL parameter
   useEffect(() => {
@@ -116,6 +150,37 @@ function AppContent() {
             
             {showReward && (
               <RewardAnimation xp={rewardXP} onComplete={handleRewardComplete} />
+            )}
+            
+            {/* Add Milestone Celebration */}
+            <MilestoneCelebration 
+              show={showMilestone} 
+              type={milestoneData.type} 
+              data={milestoneData.data} 
+              onComplete={() => setShowMilestone(false)} 
+            />
+            
+            {/* Add test button - positioned at the bottom right */}
+            {user && (
+              <button 
+                onClick={testMilestone}
+                style={{
+                  position: 'fixed',
+                  bottom: '20px',
+                  right: '20px',
+                  zIndex: 900,
+                  padding: '10px 15px',
+                  background: 'linear-gradient(135deg, #f6ad55, #ed8936)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Test Level-Up
+              </button>
             )}
           </div>
         ) : (

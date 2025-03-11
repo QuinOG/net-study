@@ -3,6 +3,7 @@ import { FiLock, FiUnlock, FiKey, FiCheck, FiX, FiArrowRight } from 'react-icons
 import '../../styles/games/EncryptionChallengeGame.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeCard from '../ui/GameModeCard';
+import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
 import { useNavigate } from 'react-router-dom';
 
@@ -377,61 +378,21 @@ function EncryptionChallengeGame() {
       )}
       
       {gameState === 'results' && (
-        <div className="game-results">
-          <h3>Game Results</h3>
-          
-          <div className="results-summary">
-            <div className="score-display">
-              <div className="score-value">{score}/{challenges.length}</div>
-              <div className="score-label">Score</div>
-            </div>
-            
-            <div className="result-icon">
-              {score / challenges.length >= 0.7 ? 
-                <FiCheck size={48} className="success-icon" /> : 
-                <FiX size={48} className="failure-icon" />
-              }
-            </div>
-            
-            <div className="percentage-display">
-              <div className="percentage-value">{Math.round((score / challenges.length) * 100)}%</div>
-              <div className="percentage-label">Correct</div>
-            </div>
-          </div>
-          
-          <div className="results-detail">
-            <h4>Challenge Summary</h4>
-            {results.map((result, index) => (
-              <div 
-                key={index} 
-                className={`result-item ${result.isCorrect ? 'correct' : 'incorrect'}`}
-              >
-                <div className="result-challenge">
-                  Challenge {index + 1}: {selectedMode === 'decrypt' ? 'Decrypt message' : 'Identify algorithm'}
-                </div>
-                <div className="result-answer">
-                  <div>Your answer: <strong>{result.userAnswer}</strong></div>
-                  {!result.isCorrect && (
-                    <div className="correct-answer">
-                      Correct answer: <strong>{result.correctAnswer}</strong>
-                    </div>
-                  )}
-                </div>
-                {!result.isCorrect && (
-                  <div className="challenge-details">
-                    <div>Algorithm: {result.challenge.algorithm}</div>
-                    <div>Key: {result.challenge.key}</div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          
-          <button className="restart-btn" onClick={resetGame}>
-            <span>Play Again</span>
-            <FiArrowRight />
-          </button>
-        </div>
+        <GameEndScreen
+          gameTitle="Encryption Challenge"
+          score={score}
+          bestScore={challenges.length} // Using challenge length as the best score for now
+          xpEarned={Math.round(score * 2)} // Adjust XP based on game difficulty
+          correctAnswers={score}
+          totalAttempts={challenges.length}
+          bestStreak={1} // This game doesn't track streaks, set to 1
+          isNewHighScore={score === challenges.length} // Perfect score is new high score
+          onPlayAgain={() => resetGame()}
+          onBackToMenu={() => {
+            setGameState('setup');
+            setSelectedMode(null);
+          }}
+        />
       )}
     </div>
   );

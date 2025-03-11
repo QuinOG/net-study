@@ -29,16 +29,14 @@ const Leaderboard = ({ minimized = false }) => {
   
   // Calculate user level based on XP
   const calculateLevel = (xp) => {
-    const thresholds = [0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700, 
-      3250, 3850, 4500, 5200, 6000, 6900, 7900, 9000, 10200];
+    let totalXP = xp;
+    let level = 1;
+    let requiredXP = 50; // Base XP for level 1
     
-    let level = 0;
-    for (let i = 0; i < thresholds.length; i++) {
-      if (xp >= thresholds[i]) {
-        level = i;
-      } else {
-        break;
-      }
+    while (totalXP >= requiredXP) {
+      totalXP -= requiredXP;
+      level++;
+      requiredXP = Math.floor(requiredXP * 1.25); // Increase by 25% for next level
     }
     
     return level;

@@ -2,12 +2,6 @@ import React from 'react';
 import { FiAward, FiStar, FiUnlock } from 'react-icons/fi';
 import '../../styles/ui/LevelProgress.css';
 
-// Experience required for each level
-const levelThresholds = [
-  0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700, 
-  3250, 3850, 4500, 5200, 6000, 6900, 7900, 9000, 10200, 11500
-];
-
 // Level titles
 const levelTitles = [
   "Network Novice", "Cable Connector", "Protocol Pupil", "Subnet Student",
@@ -17,12 +11,25 @@ const levelTitles = [
   "Protocol Professor", "Encryption Expert", "System Sage", "Network Maestro"
 ];
 
+// Helper function to calculate level based on total XP
+const calculateLevel = (totalXP) => {
+  let xpRemaining = totalXP;
+  let level = 1;
+  let requiredXP = 50; // Base XP for level 1
+  
+  while (xpRemaining >= requiredXP) {
+    xpRemaining -= requiredXP;
+    level++;
+    requiredXP = Math.floor(requiredXP * 1.25); // Increase by 25% for next level
+  }
+  
+  return { level, currentLevelXP: xpRemaining, nextLevelXP: requiredXP };
+};
+
 function LevelProgress({ userXP = 0 }) {
-  // Calculate level and progress
-  const xpPerLevel = 1000;
-  const currentLevel = Math.floor(userXP / xpPerLevel);
-  const currentLevelXP = userXP % xpPerLevel;
-  const progressPercent = (currentLevelXP / xpPerLevel) * 100;
+  // Calculate level and progress using the progressive system
+  const { level, currentLevelXP, nextLevelXP } = calculateLevel(userXP);
+  const progressPercent = (currentLevelXP / nextLevelXP) * 100;
   
   // Calculate milestones
   const milestones = [
@@ -33,8 +40,8 @@ function LevelProgress({ userXP = 0 }) {
 
   // Get next milestone
   const nextMilestone = {
-    title: levelTitles[Math.min(currentLevel + 1, levelTitles.length - 1)],
-    description: `${xpPerLevel - currentLevelXP} XP until next level`,
+    title: levelTitles[Math.min(level, levelTitles.length - 1)],
+    description: `${nextLevelXP - currentLevelXP} XP until next level`,
     icon: <FiAward size={24} />
   };
 
@@ -42,10 +49,10 @@ function LevelProgress({ userXP = 0 }) {
     <div className="progress-section">
       <div className="level-info">
         <div className="current-level">
-          <div className="level-number">{currentLevel}</div>
+          <div className="level-number">{level}</div>
           <div className="level-label">
             <span>Current Level</span>
-            <span>{levelTitles[currentLevel]}</span>
+            <span>{levelTitles[Math.min(level - 1, levelTitles.length - 1)]}</span>
           </div>
         </div>
         <FiStar size={24} color="#4299e1" />
@@ -65,7 +72,7 @@ function LevelProgress({ userXP = 0 }) {
 
       <div className="xp-info">
         <span className="xp-current">{currentLevelXP} XP</span>
-        <span>{xpPerLevel} XP needed</span>
+        <span>{nextLevelXP} XP needed</span>
       </div>
 
       <div className="next-milestone">

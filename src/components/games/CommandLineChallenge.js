@@ -4,6 +4,7 @@ import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import RewardAnimation from '../ui/RewardAnimation';
+import GameEndScreen from '../ui/GameEndScreen';
 import '../../styles/games/CommandLineChallenge.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -974,52 +975,24 @@ function CommandLineChallenge() {
   // Rendering game over screen
   if (showGameOver) {
     const isNewHighScore = score > gameStats.bestScore;
-    
     return (
-      <div className="command-line-game">
-        {showReward && <RewardAnimation text={rewardText} onComplete={() => setShowReward(false)} />}
-        <div className="game-over-stats">
-          <h2>{isNewHighScore ? '🏆 New High Score! 🏆' : 'Game Over'}</h2>
-          
-          <div className="final-stats">
-            <div className="stat-item">
-              <span className="stat-label">Score</span>
-              <span className={`stat-value ${isNewHighScore ? 'highlight' : ''}`}>{score}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Correct Answers</span>
-              <span className="stat-value">{correctAnswers}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Best Streak</span>
-              <span className="stat-value">{Math.max(currentStreak, gameStats.bestStreak)}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">XP Earned</span>
-              <span className="stat-value">{Math.round(score * 0.15)}</span>
-            </div>
-          </div>
-          
-          <div className="game-over-buttons">
-            <button 
-              className="restart-btn"
-              onClick={() => initializeGame(gameMode, difficulty)}
-            >
-              Play Again
-            </button>
-            <button 
-              className="home-btn"
-              onClick={() => {
-                setShowGameOver(false);
-                setGameStarted(false);
-                scrollToTop();
-              }}
-            >
-              Back to Menu
-            </button>
-          </div>
-        </div>
-      </div>
+      <GameEndScreen
+        gameTitle="Command Line Challenge"
+        score={score}
+        bestScore={gameStats.bestScore}
+        xpEarned={Math.round(score / 10)}
+        correctAnswers={correctAnswers}
+        totalAttempts={correctAnswers + totalAttempts - correctAnswers}
+        bestStreak={Math.max(currentStreak, gameStats.bestStreak)}
+        isNewHighScore={isNewHighScore}
+        onPlayAgain={() => initializeGame(gameMode, difficulty)}
+        onBackToMenu={() => {
+          setShowGameOver(false);
+          setGameMode(null);
+          setShowDifficultySelect(false);
+          scrollToTop();
+        }}
+      />
     );
   }
   
