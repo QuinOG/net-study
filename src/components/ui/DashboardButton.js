@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiHome } from 'react-icons/fi';
-import '../../styles/games/GameModeCards.css';
 
 /**
  * A button component for navigating back to the dashboard
