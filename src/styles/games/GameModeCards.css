@@ -81,84 +81,7 @@
   color: #4299e1;
 }
 
-/* Difficulty selection */
-.difficulty-select {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 2rem auto;
-  max-width: 900px;
-}
-
-.difficulty-card {
-  background-color: rgba(45, 55, 72, 0.7);
-  border-radius: 12px;
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-}
-
-.difficulty-card[data-difficulty="EASY"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
-  background-color: rgba(72, 187, 120, 0.2);
-}
-
-.difficulty-card[data-difficulty="MEDIUM"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
-  background-color: rgba(237, 137, 54, 0.2);
-}
-
-.difficulty-card[data-difficulty="HARD"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(245, 101, 101, 0.4);
-  background-color: rgba(245, 101, 101, 0.2);
-}
-
-.difficulty-card h4 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #f7fafc;
-}
-
-.difficulty-card ul {
-  list-style-type: none;
-  padding-left: 1rem;
-}
-
-.acronym-game .difficulty-card li {
-  margin-bottom: 0.5rem;
-  color: #a0aec0;
-  position: relative;
-}
-
-.acronym-game .difficulty-card li::before {
-  content: "•";
-  position: absolute;
-  left: -1rem;
-  color: #4299e1;
-}
-
-.back-btn {
-  display: block;
-  margin: 0 auto;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  border: none;
-  background-color: rgba(45, 55, 72, 0.5);
-  color: #a0aec0;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  max-width: fit-content;
-}
-
-.back-btn:hover {
-  background-color: rgba(45, 55, 72, 0.8);
-  color: #e2e8f0;
-}
+/* Game Mode Selection Screen */
 
 /* Game results */
 .game-results {
@@ -268,14 +191,12 @@
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-  .game-modes,
-  .difficulty-select {
+  .game-modes {
     flex-direction: column;
     align-items: center;
   }
   
-  .game-mode-card,
-  .difficulty-btn {
+  .game-mode-card {
     width: 100%;
     max-width: 100%;
     min-width: unset;
@@ -314,19 +235,6 @@ body.light-mode .game-mode-card h4 {
 
 body.light-mode .game-mode-card p {
   color: #4a5568;
-}
-
-body.light-mode .difficulty-btn {
-  background-color: #f7fafc;
-  color: #2d3748;
-}
-
-body.light-mode .difficulty-btn small {
-  color: #4a5568;
-}
-
-body.light-mode .difficulty-btn:hover {
-  background-color: rgba(66, 153, 225, 0.1);
 }
 
 body.light-mode .back-btn {

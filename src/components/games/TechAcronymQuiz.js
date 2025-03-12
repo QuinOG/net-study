@@ -8,6 +8,7 @@ import GameEndScreen from '../ui/GameEndScreen';
 import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
 import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
+import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/TechAcronymQuiz.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -716,38 +717,21 @@ function TechAcronymQuiz() {
       {/* Difficulty Selection */}
       {showDifficultySelect && !gameStarted && (
         <div className="difficulty-selection">
-          <h2>Select Difficulty</h2>
-          <div className="difficulties">
-            {Object.keys(DIFFICULTY_LEVELS).map(diff => (
-              <div 
-                key={diff}
-                className="difficulty-card"
-                onClick={() => initializeGame(gameMode, diff, selectedCategory)}
-              >
-                <h3>{DIFFICULTY_LEVELS[diff].name}</h3>
-                <ul>
-                  <li>Time Limit: {DIFFICULTY_LEVELS[diff].timeLimit}s per question</li>
-                  <li>Time Penalty: {DIFFICULTY_LEVELS[diff].timePenalty}s for incorrect answers</li>
-                  <li>Score Multiplier: {DIFFICULTY_LEVELS[diff].multiplier}x</li>
-                  {DIFFICULTY_LEVELS[diff].showHints && <li>Hints Available</li>}
-                </ul>
-          </div>
-            ))}
-          </div>
-          
-          <button 
-            className="back-button"
-            onClick={() => {
-              setShowDifficultySelect(false);
-              setShowCategorySelect(true);
+          <h2>Tech Acronym Quiz</h2>
+          <DifficultySelectScreen 
+            difficultyLevels={DIFFICULTY_LEVELS}
+            onSelectDifficulty={(difficulty) => {
+              initializeGame(GAME_MODES.TIME_ATTACK, difficulty);
               scrollToTop();
             }}
-          >
-            Back to Category Selection
-          </button>
-            </div>
-          )}
-          
+            onBackClick={() => {
+              setShowDifficultySelect(false);
+              scrollToTop();
+            }}
+          />
+        </div>
+      )}
+      
       {/* Game Interface */}
       {gameStarted && !showGameOver && currentAcronym && (
         <div className="game-interface">

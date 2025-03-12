@@ -5,6 +5,7 @@ import '../../styles/games/GameModeCards.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeCard from '../ui/GameModeCard';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
+import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
 import { useNavigate } from 'react-router-dom';
@@ -54,6 +55,28 @@ function FirewallRulesGame() {
     { id: 'medium', label: 'Medium', timeLimit: 240, scenarios: 4 },
     { id: 'hard', label: 'Hard', timeLimit: 300, scenarios: 5 }
   ];
+
+  // Convert difficulties array to the format expected by DifficultySelectScreen
+  const difficultyLevels = {
+    EASY: {
+      timeLimit: difficulties[0].timeLimit,
+      timePenalty: 10,
+      multiplier: 1,
+      hints: true
+    },
+    MEDIUM: {
+      timeLimit: difficulties[1].timeLimit,
+      timePenalty: 15,
+      multiplier: 1.5,
+      hints: false
+    },
+    HARD: {
+      timeLimit: difficulties[2].timeLimit,
+      timePenalty: 20,
+      multiplier: 2,
+      hints: false
+    }
+  };
 
   // Select game mode
   const handleModeSelect = (modeId) => {
@@ -227,30 +250,11 @@ function FirewallRulesGame() {
       
       {gameState === 'setup' && selectedMode && (
         <div className="game-setup">
-          <h3>Select Difficulty</h3>
-          <div className="difficulty-select">
-            <div className="difficulty-cards">
-              {difficulties.map(difficulty => (
-                <button 
-                  key={difficulty.id} 
-                  className="difficulty-card"
-                  onClick={() => handleDifficultySelect(difficulty.id)}
-                >
-                  <h4>{difficulty.label}</h4>
-                  <ul>
-                    <li>{difficulty.scenarios} scenarios</li>
-                    <li>{Math.floor(difficulty.timeLimit / 60)}:{(difficulty.timeLimit % 60).toString().padStart(2, '0')} minutes time limit</li>
-                    {difficulty.id === 'easy' && <li>Basic firewall configurations</li>}
-                    {difficulty.id === 'medium' && <li>Intermediate security concepts</li>}
-                    {difficulty.id === 'hard' && <li>Advanced firewall policies</li>}
-                  </ul>
-                </button>
-              ))}
-            </div>
-            <button className="back-btn" onClick={() => setSelectedMode(null)}>
-              ← Back to Modes
-            </button>
-          </div>
+          <DifficultySelectScreen
+            difficultyLevels={difficultyLevels}
+            onSelectDifficulty={(difficulty) => handleDifficultySelect(difficulty.toLowerCase())}
+            onBackClick={() => setSelectedMode(null)}
+          />
         </div>
       )}
       

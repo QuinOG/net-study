@@ -7,6 +7,7 @@ import RewardAnimation from '../ui/RewardAnimation';
 import GameEndScreen from '../ui/GameEndScreen';
 import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
+import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/CommandLineChallenge.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -822,89 +823,43 @@ function CommandLineChallenge() {
   if (showDifficultySelect) {
     return (
       <div className="command-line-game">
-        <h2 className="game-title">Select Difficulty</h2>
+        <h2 className="game-title">Command Line Challenge</h2>
         
-        <div className="difficulty-select">
-          <div className="difficulty-cards">
-            <div 
-              className="difficulty-card"
-              data-difficulty="EASY"
-              onClick={() => handleDifficultySelect('EASY')}
-            >
-              <h4>Easy</h4>
-              <ul>
-                <li>60 second time limit</li>
-                <li>Category hints available</li>
-                <li>Small time penalty</li>
-                <li>1x score multiplier</li>
-              </ul>
-            </div>
-            
-            <div 
-              className="difficulty-card"
-              data-difficulty="MEDIUM"
-              onClick={() => handleDifficultySelect('MEDIUM')}
-            >
-              <h4>Medium</h4>
-              <ul>
-                <li>45 second time limit</li>
-                <li>No hints</li>
-                <li>Moderate time penalty</li>
-                <li>1.5x score multiplier</li>
-              </ul>
-            </div>
-            
-            <div 
-              className="difficulty-card"
-              data-difficulty="HARD"
-              onClick={() => handleDifficultySelect('HARD')}
-            >
-              <h4>Hard</h4>
-              <ul>
-                <li>30 second time limit</li>
-                <li>No hints</li>
-                <li>Severe time penalty</li>
-                <li>2x score multiplier</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="os-filter">
-            <h3>Filter by OS (Optional)</h3>
-            <div className="os-buttons">
-              <button 
-                className={`os-button ${osFilter === null ? 'active' : ''}`}
-                onClick={() => handleOsFilter(null)}
-              >
-                All OS
-              </button>
-              <button 
-                className={`os-button ${osFilter === 'Linux/Unix' ? 'active' : ''}`}
-                onClick={() => handleOsFilter('Linux/Unix')}
-              >
-                Linux/Unix
-              </button>
-              <button 
-                className={`os-button ${osFilter === 'Windows' ? 'active' : ''}`}
-                onClick={() => handleOsFilter('Windows')}
-              >
-                Windows
-              </button>
-              <button 
-                className={`os-button ${osFilter === 'macOS' ? 'active' : ''}`}
-                onClick={() => handleOsFilter('macOS')}
-              >
-                macOS
-              </button>
-            </div>
-          </div>
-          
-          <div className="nav-buttons">
+        <DifficultySelectScreen
+          difficultyLevels={DIFFICULTY_LEVELS}
+          onSelectDifficulty={handleDifficultySelect}
+          onBackClick={() => {
+            setShowDifficultySelect(false);
+            scrollToTop();
+          }}
+        />
+        
+        <div className="os-filter">
+          <h3>Filter by OS (Optional)</h3>
+          <div className="os-buttons">
             <button 
-              className="back-btn"
-              onClick={() => setShowDifficultySelect(false)}
+              className={`os-button ${osFilter === null ? 'active' : ''}`}
+              onClick={() => handleOsFilter(null)}
             >
-              ← Back to Mode Selection
+              All OS
+            </button>
+            <button 
+              className={`os-button ${osFilter === 'Linux/Unix' ? 'active' : ''}`}
+              onClick={() => handleOsFilter('Linux/Unix')}
+            >
+              Linux/Unix
+            </button>
+            <button 
+              className={`os-button ${osFilter === 'Windows' ? 'active' : ''}`}
+              onClick={() => handleOsFilter('Windows')}
+            >
+              Windows
+            </button>
+            <button 
+              className={`os-button ${osFilter === 'macOS' ? 'active' : ''}`}
+              onClick={() => handleOsFilter('macOS')}
+            >
+              macOS
             </button>
           </div>
         </div>

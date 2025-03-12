@@ -82,79 +82,10 @@
   color: #a0aec0;
 }
 
-/* Difficulty Selection */
-.command-line-game .difficulty-select {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
-
-.command-line-game .difficulty-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1000px;
-}
-
-.command-line-game .difficulty-card {
-  background-color: rgba(45, 55, 72, 0.7);
-  border-radius: 12px;
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-}
-
-.command-line-game .difficulty-card[data-difficulty="EASY"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
-  background-color: rgba(72, 187, 120, 0.2);
-}
-
-.command-line-game .difficulty-card[data-difficulty="MEDIUM"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
-  background-color: rgba(237, 137, 54, 0.2);
-}
-
-.command-line-game .difficulty-card[data-difficulty="HARD"]:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(245, 101, 101, 0.4);
-  background-color: rgba(245, 101, 101, 0.2);
-}
-
-.command-line-game .difficulty-card h4 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #f7fafc;
-}
-
-.command-line-game .difficulty-card ul {
-  list-style-type: none;
-  padding-left: 1rem;
-}
-
-.command-line-game .difficulty-card li {
-  margin-bottom: 0.5rem;
-  color: #a0aec0;
-  position: relative;
-}
-
-.command-line-game .difficulty-card li::before {
-  content: "•";
-  position: absolute;
-  left: -1rem;
-  color: #4299e1;
-}
-
 /* OS Filter */
 .command-line-game .os-filter {
-  width: 100%;
-  max-width: 800px;
+  margin-top: 2rem;
   text-align: center;
-  margin-bottom: 2rem;
 }
 
 .command-line-game .os-filter h3 {

@@ -11,6 +11,7 @@ import { getAllGames, submitGameResults } from '../../services/api';
 import scrollToTop from '../../utils/ScrollHelper';
 import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
+import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 
 // Use the exact same port dictionary as in PortGame.js
 const PORT_DATA = {
@@ -437,41 +438,19 @@ function ProtocolGame() {
     if (showDifficultySelect) {
       return (
         <div className="protocol-game">
-          <h2 className="game-title">Select Difficulty</h2>
+          <h2 className="game-title">Protocol Challenge</h2>
           
-          <div className="difficulty-select">
-            <div className="difficulty-cards">
-              {Object.entries(DIFFICULTY_LEVELS).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="difficulty-card"
-                  data-difficulty={key}
-                  onClick={() => {
-                    initializeGame(GAME_MODES.TIME_ATTACK, key);
-                    scrollToTop();
-                  }}
-                >
-                  <h4>{value.name}</h4>
-                  <ul>
-                    <li>Time Limit: {value.timeLimit} seconds</li>
-                    <li>Time Penalty: -{value.timePenalty} seconds</li>
-                    <li>Score Multiplier: {value.multiplier}x</li>
-                    <li>Hints: {value.showHints ? 'Available' : 'Not Available'}</li>
-                  </ul>
-                </div>
-              ))}
-            </div>
-            
-            <button 
-              className="back-btn"
-              onClick={() => {
-                setShowDifficultySelect(false);
-                scrollToTop();
-              }}
-            >
-              ← Back to Game Modes
-            </button>
-          </div>
+          <DifficultySelectScreen 
+            difficultyLevels={DIFFICULTY_LEVELS}
+            onSelectDifficulty={(difficulty) => {
+              initializeGame(GAME_MODES.TIME_ATTACK, difficulty);
+              scrollToTop();
+            }}
+            onBackClick={() => {
+              setShowDifficultySelect(false);
+              scrollToTop();
+            }}
+          />
         </div>
       );
     }

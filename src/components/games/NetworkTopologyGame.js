@@ -7,6 +7,7 @@ import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
 import { useNavigate } from 'react-router-dom';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
+import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/GameModeCards.css';
 
 function NetworkTopologyGame() {
@@ -54,6 +55,28 @@ function NetworkTopologyGame() {
     { id: 'medium', label: 'Medium', timeLimit: 45, questions: 8 },
     { id: 'hard', label: 'Hard', timeLimit: 30, questions: 10 }
   ];
+
+  // Convert difficulties array to the format expected by DifficultySelectScreen
+  const difficultyLevels = {
+    EASY: {
+      timeLimit: 60,
+      timePenalty: 5,
+      multiplier: 1,
+      hints: true
+    },
+    MEDIUM: {
+      timeLimit: 45,
+      timePenalty: 10,
+      multiplier: 1.5,
+      hints: false
+    },
+    HARD: {
+      timeLimit: 30,
+      timePenalty: 15,
+      multiplier: 2,
+      hints: false
+    }
+  };
 
   // Select game mode
   const handleModeSelect = (modeId) => {
@@ -203,30 +226,11 @@ function NetworkTopologyGame() {
       
       {gameState === 'setup' && selectedMode && (
         <div className="game-setup">
-          <h3>Select Difficulty</h3>
-          <div className="difficulty-select">
-            <div className="difficulty-cards">
-              {difficulties.map(difficulty => (
-                <button 
-                  key={difficulty.id} 
-                  className="difficulty-card"
-                  onClick={() => handleDifficultySelect(difficulty.id)}
-                >
-                  <h4>{difficulty.label}</h4>
-                  <ul>
-                    <li>{difficulty.questions} questions</li>
-                    <li>{difficulty.timeLimit} seconds time limit</li>
-                    {difficulty.id === 'easy' && <li>Detailed explanations</li>}
-                    {difficulty.id === 'medium' && <li>Moderate complexity</li>}
-                    {difficulty.id === 'hard' && <li>Advanced network concepts</li>}
-                  </ul>
-                </button>
-              ))}
-            </div>
-            <button className="back-btn" onClick={() => setSelectedMode(null)}>
-              ← Back to Modes
-            </button>
-          </div>
+          <DifficultySelectScreen
+            difficultyLevels={difficultyLevels}
+            onSelectDifficulty={handleDifficultySelect}
+            onBackClick={() => setSelectedMode(null)}
+          />
         </div>
       )}
       

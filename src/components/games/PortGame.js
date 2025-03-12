@@ -8,6 +8,7 @@ import GameEndScreen from '../ui/GameEndScreen';
 import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
 import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar, FiGift, FiActivity } from 'react-icons/fi';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
+import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/PortGame.css';
 import '../../styles/games/GameModeCards.css';
 
@@ -921,41 +922,22 @@ function PortGame() {
     if (showDifficultySelect) {
       return (
         <div className="port-game">
-          <h2 className="game-title">Select Difficulty</h2>
+          <h2 className="game-title">Port Number Challenge</h2>
+          <p className="game-description">
+            Test your knowledge of common network port numbers and protocols!
+          </p>
           
-          <div className="difficulty-select">
-            <div className="difficulty-cards">
-              {Object.entries(DIFFICULTY_LEVELS).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="difficulty-card"
-                  data-difficulty={key}
-                  onClick={() => {
-                    initializeGame(GAME_MODES.TIME_ATTACK, key);
-                    scrollToTop();
-                  }}
-                >
-                  <h4>{value.name}</h4>
-                  <ul>
-                    <li>Time Limit: {value.timeLimit} seconds</li>
-                    <li>Time Penalty: -{value.timePenalty} seconds</li>
-                    <li>Score Multiplier: {value.multiplier}x</li>
-                    <li>Hints: {value.showHints ? 'Available' : 'Not Available'}</li>
-                  </ul>
-                </div>
-              ))}
-            </div>
-            
-            <button 
-              className="back-btn"
-              onClick={() => {
-                setShowDifficultySelect(false);
-                scrollToTop();
-              }}
-            >
-              ← Back to Game Modes
-            </button>
-          </div>
+          <DifficultySelectScreen 
+            difficultyLevels={DIFFICULTY_LEVELS}
+            onSelectDifficulty={(difficulty) => {
+              initializeGame(GAME_MODES.TIME_ATTACK, difficulty);
+              scrollToTop();
+            }}
+            onBackClick={() => {
+              setShowDifficultySelect(false);
+              scrollToTop();
+            }}
+          />
         </div>
       );
     }
