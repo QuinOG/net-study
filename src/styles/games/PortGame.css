@@ -9,6 +9,7 @@
   box-shadow: none;
   backdrop-filter: none;
   animation: fadeIn 0.5s ease-out;
+  position: relative;
 }
 
 /* Add the dark box only when the game is started */
@@ -209,6 +210,7 @@
   flex-direction: column;
   gap: 2rem;
   animation: fadeIn 0.5s ease-out;
+  position: relative;
 }
 
 .feedback-message {
@@ -744,4 +746,61 @@
   to {
     opacity: 1;
   }
+}
+
+/* Add a subtle tech-themed overlay to the entire game when active */
+.port-game.game-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(0deg, rgba(26, 32, 44, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 32, 44, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: center center;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.3;
+  border-radius: 16px;
+}
+
+/* Add a subtle scan line effect for immersion */
+.port-game.game-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.01) 50%,
+    rgba(0, 0, 0, 0.02) 51%,
+    rgba(0, 0, 0, 0.04) 100%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.5;
+  border-radius: 16px;
+  animation: scanlines 8s linear infinite;
+}
+
+@keyframes scanlines {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+/* Make sure all content is above the background effects */
+.port-game > * {
+  position: relative;
+  z-index: 5;
 }

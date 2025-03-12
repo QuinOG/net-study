@@ -7,11 +7,12 @@ const ActiveBonus = ({ bonusType, timeRemaining }) => {
 
   // Map bonus types to display text
   const getBonusLabel = (type) => {
+    // Use shorter text for the HUD-style display
     const bonusLabels = {
-      'doublePoints': 'DOUBLE POINTS ACTIVE',
-      'extraTime': 'TIME BONUS ACTIVE',
-      'powerUp': 'POWER-UP BONUS ACTIVE',
-      'instantPoints': 'POINT BONUS ACTIVE',
+      'doublePoints': 'DOUBLE POINTS',
+      'extraTime': 'TIME BONUS',
+      'powerUp': 'POWER-UP BONUS',
+      'instantPoints': 'POINT BONUS',
       // Add more bonus types as needed
     };
     

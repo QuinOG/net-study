@@ -1,0 +1,313 @@
+/* Main HUD overlay container - covers the entire game area */
+.game-hud-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allow clicks to pass through to game elements */
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* Shared styles for all HUD elements */
+.hud-feedback, 
+.hud-speed-bonus, 
+.hud-combo, 
+.hud-bonus-message, 
+.hud-streak-milestone,
+.hud-bonus-status {
+  position: absolute;
+  background: rgba(26, 32, 44, 0.85);
+  border-radius: 8px;
+  padding: 12px 16px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Feedback message - positioned in the center */
+.hud-feedback {
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  min-width: 200px;
+  max-width: 500px;
+  padding: 14px 20px;
+  font-size: 1.1rem;
+  z-index: 110;
+  animation: feedbackPop 0.4s forwards;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes feedbackPop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Color-specific feedback styles */
+.hud-feedback.correct {
+  background: linear-gradient(135deg, rgba(56, 161, 105, 0.85), rgba(72, 187, 120, 0.75));
+  border: 1px solid rgba(72, 187, 120, 0.4);
+}
+
+.hud-feedback.incorrect {
+  background: linear-gradient(135deg, rgba(197, 48, 48, 0.85), rgba(229, 62, 62, 0.75));
+  border: 1px solid rgba(229, 62, 62, 0.4);
+}
+
+/* Speed bonus - appears near score counter */
+.hud-speed-bonus {
+  top: 70px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.85), rgba(49, 130, 206, 0.75));
+  border: 1px solid rgba(66, 153, 225, 0.4);
+  font-size: 0.95rem;
+  animation: speedBonusSlide 0.4s forwards;
+}
+
+@keyframes speedBonusSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Combo message - appears above question */
+.hud-combo {
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.85), rgba(49, 130, 206, 0.75));
+  border: 1px solid rgba(66, 153, 225, 0.4);
+  font-size: 1.1rem;
+  animation: comboSlideDown 0.4s forwards;
+}
+
+@keyframes comboSlideDown {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Bonus message - appears at the top center */
+.hud-bonus-message {
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(237, 137, 54, 0.85), rgba(221, 107, 32, 0.75));
+  border: 1px solid rgba(237, 137, 54, 0.4);
+  font-size: 1.2rem;
+  animation: bonusMessagePop 0.5s forwards;
+}
+
+@keyframes bonusMessagePop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Streak milestone - appears on the right side */
+.hud-streak-milestone {
+  top: 20%;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(213, 63, 140, 0.85), rgba(184, 50, 128, 0.75));
+  border: 1px solid rgba(213, 63, 140, 0.4);
+  padding: 12px 16px;
+  animation: streakSlideIn 0.5s forwards;
+}
+
+.hud-streak-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.milestone-count {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.milestone-reward {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+@keyframes streakSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Active bonus status - appears at the top */
+.hud-bonus-status {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  animation: bonusStatusPop 0.4s forwards;
+}
+
+.hud-bonus-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hud-bonus-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.hud-bonus-timer {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Color variants for different bonus types */
+.hud-bonus-status.doublePoints {
+  background: linear-gradient(135deg, rgba(72, 187, 120, 0.85), rgba(56, 161, 105, 0.75));
+  border: 1px solid rgba(72, 187, 120, 0.4);
+}
+
+.hud-bonus-status.extraTime {
+  background: linear-gradient(135deg, rgba(144, 205, 244, 0.85), rgba(90, 162, 203, 0.75));
+  border: 1px solid rgba(144, 205, 244, 0.4);
+}
+
+.hud-bonus-status.powerUp {
+  background: linear-gradient(135deg, rgba(159, 122, 234, 0.85), rgba(128, 90, 213, 0.75));
+  border: 1px solid rgba(159, 122, 234, 0.4);
+}
+
+.hud-bonus-status.instantPoints {
+  background: linear-gradient(135deg, rgba(237, 137, 54, 0.85), rgba(221, 107, 32, 0.75));
+  border: 1px solid rgba(237, 137, 54, 0.4);
+}
+
+@keyframes bonusStatusPop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Icons styling */
+.hud-icon {
+  font-size: 1.3rem;
+}
+
+.hud-icon.award {
+  color: #fbd38d;
+}
+
+.hud-icon.double-points {
+  color: #9ae6b4;
+}
+
+.hud-icon.extra-time {
+  color: #90cdf4;
+}
+
+.hud-icon.power-up {
+  color: #d6bcfa;
+}
+
+.hud-icon.instant-points {
+  color: #fbd38d;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .hud-feedback {
+    width: 90%;
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+  
+  .hud-streak-milestone {
+    right: 10px;
+    padding: 8px 12px;
+  }
+  
+  .milestone-count {
+    font-size: 0.9rem;
+  }
+  
+  .milestone-reward {
+    font-size: 0.8rem;
+  }
+  
+  .hud-speed-bonus,
+  .hud-bonus-status {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+  
+  .hud-combo,
+  .hud-bonus-message {
+    font-size: 1rem;
+    padding: 8px 12px;
+  }
+} 

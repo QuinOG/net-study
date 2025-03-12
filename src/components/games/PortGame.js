@@ -14,11 +14,8 @@ import CollectXpButton from '../ui/CollectXpButton';
 import GameStatsRow from '../ui/GameStatsRow';
 import PowerUpBar from '../ui/PowerUpBar';
 import GameModeDisplay from '../ui/GameModeDisplay';
-import FeedbackMessage from '../ui/FeedbackMessage';
-import ActiveBonus from '../ui/ActiveBonus';
-import ComboMessage from '../ui/ComboMessage';
 import QuestionCard from '../ui/QuestionCard';
-import NotificationArea from '../ui/NotificationArea';
+import GameHUD from '../ui/GameHUD';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {
@@ -1003,7 +1000,37 @@ function PortGame() {
   // Main game interface
   return (
     <div className={`port-game ${gameStarted ? 'game-active' : ''}`}>
-      
+
+      {/* Immersive Game HUD Overlay - positioned absolutely over the game content */}
+      <GameHUD 
+          // Active bonus props
+          activeBonus={activeBonus}
+          bonusTimeRemaining={bonusTimeRemaining}
+          
+          // Feedback message props  
+          feedbackShow={feedback.show}
+          feedbackMessage={feedback.message}
+          feedbackIsCorrect={feedback.isCorrect}
+          onFeedbackHide={() => setFeedback({ show: false, isCorrect: false, message: '' })}
+          
+          // Combo/streak message props
+          showCombo={showComboMessage}
+          comboMessage={comboMessage}
+          showBonus={showBonusMessage}
+          bonusMessage={bonusMessage}
+          showStreak={showStreakReward}
+          streakReward={streakReward}
+          currentStreak={currentStreak}
+          
+          // Speed bonus props
+          showSpeedBonus={showSpeedBonus}
+          speedBonus={speedBonus}
+          
+          // Context information for position-aware notifications
+          score={score}
+          combo={combo}
+        />
+        
       {/* Game screen header */}
       <GameModeDisplay 
         gameMode={gameMode}
@@ -1011,28 +1038,6 @@ function PortGame() {
         difficultyLevels={DIFFICULTY_LEVELS}
       />
       
-      {/* Notifications Area - Contains all game notifications in a fixed-height container */}
-      <NotificationArea 
-        // Feedback message props
-        feedbackShow={feedback.show}
-        feedbackMessage={feedback.message}
-        feedbackIsCorrect={feedback.isCorrect}
-        onFeedbackHide={() => setFeedback({ show: false, isCorrect: false, message: '' })}
-        
-        // Combo message props
-        showCombo={showComboMessage}
-        comboMessage={comboMessage}
-        showBonus={showBonusMessage}
-        bonusMessage={bonusMessage}
-        showStreak={showStreakReward}
-        streakReward={streakReward}
-        currentStreak={currentStreak}
-        
-        // Active bonus props
-        bonusType={activeBonus}
-        bonusTimeRemaining={bonusTimeRemaining}
-      />
-
       {/* User Game Stats Row */}
       <GameStatsRow 
         score={score}
@@ -1049,13 +1054,15 @@ function PortGame() {
         streakAnimation={streakAnimation}
       />
       
-      {/* Power-ups Bar */}
+      {/* Power-ups bar for timed game mode*/}
       <PowerUpBar 
         powerUps={powerUps}
         onPowerUpUse={handlePowerUp}
         isTimeAttack={gameMode === GAME_MODES.TIME_ATTACK}
         currentQuestion={currentQuestion}
       />
+
+      
       
       <div className="game-content">
         {currentQuestion ? (
