@@ -7,7 +7,6 @@ import {
 import { UserContext } from '../../context/UserContext';
 import LevelProgress from '../ui/LevelProgress';
 import StreakCounter from '../ui/StreakCounter';
-import DailyChallenge from '../ui/DailyChallenge';
 
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -118,87 +117,16 @@ function Sidebar() {
       ) : (
         <div className="sidebar-progress">
           {/* Level Progress */}
-          <div className="sidebar-section progress-section">
-            <div className="section-header">
-              <div className="icon">
-                <FiBarChart2 size={18} />
-              </div>
-              <h4>Level Progress</h4>
-            </div>
-            <LevelProgress userXP={hasValidStats ? (userStats.totalXP || 0) : 0} />
-          </div>
+
+          <LevelProgress userXP={hasValidStats ? (userStats.totalXP || 0) : 0} />
           
           {/* Streak Section */}
-          <div className="sidebar-section streak-section">
-            <div className="section-header">
-              <div className="icon">
-                <FiTrendingUp size={18} />
-              </div>
-              <h4>Daily Streak</h4>
-            </div>
-            <StreakCounter streakDays={hasValidStats ? (userStats.currentStreak || 0) : 0} />
-          </div>
-          
-          {/* Daily Challenge */}
-          <div className="sidebar-section challenge-section">
-            <div className="section-header">
-              <div className="icon">
-                <FiTarget size={18} />
-              </div>
-              <h4>Daily Challenge</h4>
-            </div>
-            <DailyChallenge userStats={hasValidStats ? userStats : {}} />
-          </div>
+
+          <StreakCounter streakDays={hasValidStats ? (userStats.currentStreak || 0) : 0} />
           
           {/* Recent Achievements Preview */}
-          {hasValidStats && userStats.completedAchievements && userStats.completedAchievements.length > 0 && (
-            <div className="sidebar-section achievements-section">
-              <div className="section-header">
-                <div className="icon">
-                  <FiAward size={18} />
-                </div>
-                <h4>Recent Achievements</h4>
-              </div>
-              <div className="recent-achievements-preview">
-                {userStats.completedAchievements.slice(-2).map(achievement => (
-                  <div key={achievement.id} className="mini-achievement">
-                    <span className="achievement-icon">{achievement.icon}</span>
-                    <span className="achievement-name">{achievement.name}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="view-all-link" onClick={navigateTo('/dashboard/achievements')}>
-                <span>View All Achievements</span>
-                <FiArrowRight size={16} />
-              </div>
-            </div>
-          )}
-          
+          {/* Daily Challenge */}
           {/* Goals Section */}
-          {(!hasValidStats || !userStats.completedAchievements || userStats.completedAchievements.length === 0) && (
-            <div className="sidebar-section goals-section">
-              <div className="section-header">
-                <div className="icon">
-                  <FiFlag size={18} />
-                </div>
-                <h4>Daily Goals</h4>
-              </div>
-              <ul>
-                <li>
-                  <span className="goal-icon">
-                    <FiPlay size={16} />
-                  </span>
-                  <span className="goal-text">Play 2 rounds of Protocol Game</span>
-                </li>
-                <li>
-                  <span className="goal-icon">
-                    <FiTarget size={16} />
-                  </span>
-                  <span className="goal-text">Score at least 80% in Port Game</span>
-                </li>
-              </ul>
-            </div>
-          )}
         </div>
       )}
     </aside>

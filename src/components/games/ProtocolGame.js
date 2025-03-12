@@ -1,49 +1,18 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiClock, FiCheckCircle, FiZap, FiShield, FiSkipForward, FiShuffle } from 'react-icons/fi';
 import { UserContext } from '../../context/UserContext';
-import GameModeCard from '../ui/GameModeCard';
-import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
 import '../../styles/games/ProtocolGame.css';
 import '../../styles/games/GameModeCards.css';
 import { getAllGames, submitGameResults } from '../../services/api';
 import scrollToTop from '../../utils/ScrollHelper';
-import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
+import GameEndScreen from '../ui/GameEndScreen';
 
 // Use the exact same port dictionary as in PortGame.js
 const PORT_DATA = {
   20: { protocol: "FTP", category: "File Transfer" },
-  21: { protocol: "FTP", category: "File Transfer" },
-  22: { protocol: "SSH", category: "Remote Access" },
-  23: { protocol: "Telnet", category: "Remote Access" },
-  25: { protocol: "SMTP", category: "Email" },
-  53: { protocol: "DNS", category: "Name Resolution" },
-  67: { protocol: "DHCP", category: "Network Management" },
-  68: { protocol: "DHCP", category: "Network Management" },
-  69: { protocol: "TFTP", category: "File Transfer" },
-  80: { protocol: "HTTP", category: "Web" },
-  110: { protocol: "POP3", category: "Email" },
-  119: { protocol: "NNTP", category: "News" },
-  123: { protocol: "NTP", category: "Time Sync" },
-  137: { protocol: "NetBIOS", category: "File Sharing" },
-  138: { protocol: "NetBIOS", category: "File Sharing" },
-  139: { protocol: "NetBIOS", category: "File Sharing" },
-  143: { protocol: "IMAP", category: "Email" },
-  161: { protocol: "SNMP", category: "Network Management" },
-  162: { protocol: "SNMP", category: "Network Management" },
-  389: { protocol: "LDAP", category: "Directory Services" },
-  443: { protocol: "HTTPS", category: "Web" },
-  445: { protocol: "SMB", category: "File Sharing" },
-  465: { protocol: "SMTPS", category: "Email" },
-  587: { protocol: "SMTP", category: "Email" },
-  993: { protocol: "IMAPS", category: "Email" },
-  995: { protocol: "POP3S", category: "Email" },
-  3306: { protocol: "MySQL", category: "Database" },
-  3389: { protocol: "RDP", category: "Remote Access" },
-  8080: { protocol: "HTTP-Alt", category: "Web" }
 };
 
 // Game modes exactly like PortGame.js
