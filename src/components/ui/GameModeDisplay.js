@@ -11,7 +11,7 @@ const GameModeDisplay = ({ gameMode, difficulty, difficultyLevels }) => {
         ) : (
           <><FiTarget size={18} /> Practice Mode</>
         )}
-        <span className="difficulty-badge">{difficultyLevels[difficulty].name}</span>
+        <span className={`difficulty-badge ${difficulty.toLowerCase()}`}>{difficultyLevels[difficulty].name}</span>
       </div>
     </div>
   );

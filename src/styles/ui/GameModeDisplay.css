@@ -27,6 +27,24 @@
   color: #63b3ed;
 }
 
+.difficulty-badge.easy {
+    background-color: rgba(66, 225, 132, 0.2);
+    color: #fff;
+    border: 1px solid rgba(66, 225, 132, 0.4);
+}
+
+.difficulty-badge.medium {
+    background-color: rgba(225, 204, 66, 0.2);  
+    color: #fff;
+    border: 1px solid rgba(225, 204, 66, 0.4);
+}
+
+.difficulty-badge.hard {
+    background-color: rgba(225, 66, 66, 0.2);
+    color: #fff;
+    border: 1px solid rgba(225, 66, 66, 0.4);
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .game-mode-display {

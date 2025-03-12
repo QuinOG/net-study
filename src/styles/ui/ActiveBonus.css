@@ -1,0 +1,152 @@
+.active-bonus {
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.15), rgba(49, 130, 206, 0.25));
+  border-radius: 10px;
+  padding: 0.6rem 1.2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(66, 153, 225, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(66, 153, 225, 0.2);
+  animation: pulsate 1.5s infinite alternate;
+  backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+}
+
+.active-bonus::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(66, 153, 225, 0.05) 0%, 
+    rgba(66, 153, 225, 0.1) 50%,
+    rgba(66, 153, 225, 0.05) 100%);
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulsate {
+  from {
+    box-shadow: 0 0 10px rgba(66, 153, 225, 0.3);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(66, 153, 225, 0.6);
+  }
+}
+
+.bonus-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #4299e1;
+  text-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.5px;
+}
+
+.bonus-timer {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.9), rgba(49, 130, 206, 0.9));
+  padding: 0.2rem 0.9rem;
+  border-radius: 20px;
+  animation: timerPulse 1s infinite alternate;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Create a colored variant for each bonus type */
+.active-bonus.doublePoints {
+  background: linear-gradient(135deg, rgba(72, 187, 120, 0.15), rgba(56, 161, 105, 0.25));
+  border-color: rgba(72, 187, 120, 0.3);
+}
+
+.active-bonus.doublePoints .bonus-label {
+  color: #48bb78;
+  text-shadow: 0 0 10px rgba(72, 187, 120, 0.5);
+}
+
+.active-bonus.doublePoints .bonus-timer {
+  background: linear-gradient(135deg, rgba(72, 187, 120, 0.9), rgba(56, 161, 105, 0.9));
+}
+
+.active-bonus.instantPoints {
+  background: linear-gradient(135deg, rgba(237, 137, 54, 0.15), rgba(221, 107, 32, 0.25));
+  border-color: rgba(237, 137, 54, 0.3);
+}
+
+.active-bonus.instantPoints .bonus-label {
+  color: #ed8936;
+  text-shadow: 0 0 10px rgba(237, 137, 54, 0.5);
+}
+
+.active-bonus.instantPoints .bonus-timer {
+  background: linear-gradient(135deg, rgba(237, 137, 54, 0.9), rgba(221, 107, 32, 0.9));
+}
+
+.active-bonus.extraTime {
+  background: linear-gradient(135deg, rgba(144, 205, 244, 0.15), rgba(90, 162, 203, 0.25));
+  border-color: rgba(144, 205, 244, 0.3);
+}
+
+.active-bonus.extraTime .bonus-label {
+  color: #90cdf4;
+  text-shadow: 0 0 10px rgba(144, 205, 244, 0.5);
+}
+
+.active-bonus.extraTime .bonus-timer {
+  background: linear-gradient(135deg, rgba(144, 205, 244, 0.9), rgba(90, 162, 203, 0.9));
+}
+
+.active-bonus.powerUp {
+  background: linear-gradient(135deg, rgba(159, 122, 234, 0.15), rgba(128, 90, 213, 0.25));
+  border-color: rgba(159, 122, 234, 0.3);
+}
+
+.active-bonus.powerUp .bonus-label {
+  color: #9f7aea;
+  text-shadow: 0 0 10px rgba(159, 122, 234, 0.5);
+}
+
+.active-bonus.powerUp .bonus-timer {
+  background: linear-gradient(135deg, rgba(159, 122, 234, 0.9), rgba(128, 90, 213, 0.9));
+}
+
+@keyframes timerPulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .active-bonus {
+    padding: 0.5rem 1rem;
+  }
+  
+  .bonus-label {
+    font-size: 1rem;
+  }
+  
+  .bonus-timer {
+    font-size: 1rem;
+    padding: 0.15rem 0.5rem;
+  }
+} 

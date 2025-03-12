@@ -735,3 +735,13 @@
   font-weight: 600;
   color: #63b3ed;
 }
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -14,6 +14,11 @@ import CollectXpButton from '../ui/CollectXpButton';
 import GameStatsRow from '../ui/GameStatsRow';
 import PowerUpBar from '../ui/PowerUpBar';
 import GameModeDisplay from '../ui/GameModeDisplay';
+import FeedbackMessage from '../ui/FeedbackMessage';
+import ActiveBonus from '../ui/ActiveBonus';
+import ComboMessage from '../ui/ComboMessage';
+import QuestionCard from '../ui/QuestionCard';
+import NotificationArea from '../ui/NotificationArea';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {
@@ -999,14 +1004,36 @@ function PortGame() {
   return (
     <div className={`port-game ${gameStarted ? 'game-active' : ''}`}>
       
-      {/* Replace the old game mode display with the new component */}
+      {/* Game screen header */}
       <GameModeDisplay 
         gameMode={gameMode}
         difficulty={difficulty}
         difficultyLevels={DIFFICULTY_LEVELS}
       />
       
-      {/* Game Stats Row */}
+      {/* Notifications Area - Contains all game notifications in a fixed-height container */}
+      <NotificationArea 
+        // Feedback message props
+        feedbackShow={feedback.show}
+        feedbackMessage={feedback.message}
+        feedbackIsCorrect={feedback.isCorrect}
+        onFeedbackHide={() => setFeedback({ show: false, isCorrect: false, message: '' })}
+        
+        // Combo message props
+        showCombo={showComboMessage}
+        comboMessage={comboMessage}
+        showBonus={showBonusMessage}
+        bonusMessage={bonusMessage}
+        showStreak={showStreakReward}
+        streakReward={streakReward}
+        currentStreak={currentStreak}
+        
+        // Active bonus props
+        bonusType={activeBonus}
+        bonusTimeRemaining={bonusTimeRemaining}
+      />
+
+      {/* User Game Stats Row */}
       <GameStatsRow 
         score={score}
         streak={currentStreak}
@@ -1022,22 +1049,7 @@ function PortGame() {
         streakAnimation={streakAnimation}
       />
       
-      {/* Active Bonus */}
-      {activeBonus && (
-        <div className="active-bonus">
-          <div className="bonus-label">
-            {activeBonus === BONUS_TYPES.DOUBLE_POINTS && "DOUBLE POINTS"}
-            {activeBonus === BONUS_TYPES.EXTRA_TIME && "TIME BONUS"}
-            {activeBonus === BONUS_TYPES.POWER_UP && "POWER-UP BONUS"}
-            {activeBonus === BONUS_TYPES.INSTANT_POINTS && "POINT BONUS"}
-          </div>
-          {bonusTimeRemaining > 0 && (
-            <div className="bonus-timer">{bonusTimeRemaining}s</div>
-          )}
-        </div>
-      )}
-      
-      {/* Replace the old power-ups section with the new PowerUpBar component */}
+      {/* Power-ups Bar */}
       <PowerUpBar 
         powerUps={powerUps}
         onPowerUpUse={handlePowerUp}
@@ -1046,55 +1058,27 @@ function PortGame() {
       />
       
       <div className="game-content">
-        {showComboMessage && (
-          <div className="combo-message">{comboMessage}</div>
-        )}
-        
-        {showBonusMessage && (
-          <div className="bonus-message">{bonusMessage}</div>
-        )}
-        
-        {showStreakReward && (
-          <div className="streak-reward">
-            <div className="streak-milestone">🏆 {currentStreak} STREAK MILESTONE!</div>
-            <div className="streak-reward-text">Reward: {streakReward}</div>
-          </div>
-        )}
-        
-        {feedback.show && (
-          <div className={`feedback-message ${feedback.isCorrect ? 'correct' : 'incorrect'}`}>
-            {feedback.message}
-          </div>
-        )}
-        
         {currentQuestion ? (
           <div className="game-layout">
-            {/* Port Question Card on the left */}
-            <div className="question-container" ref={questionRef}>
-              <div className={`question-text ${answerAnimation}`}>
-                <h3>What is the port number for:</h3>
-                <div className="protocol-name">
-                  {currentQuestion?.protocol}
-                  {currentQuestion?.showCategory && currentQuestion?.correctAnswer && PORT_DATA[currentQuestion.correctAnswer] && (
-                    <span className="protocol-category">
-                      ({PORT_DATA[currentQuestion.correctAnswer].category})
-                    </span>
-                  )}
-                </div>
-                <div className="protocol-description">
-                  {currentQuestion?.correctAnswer && PORT_DATA[currentQuestion.correctAnswer] ? 
-                    PORT_DATA[currentQuestion.correctAnswer].description : ''}
-                </div>
-                
-                {DIFFICULTY_LEVELS[difficulty].showHints && currentQuestion?.hint && (
-                  <div className="hint">
-                    <span className="hint-label">Hint:</span> {currentQuestion.hint}
-                  </div>
-                )}
-              </div>
-            </div>
+            {/* Port Question Card */}
+            <QuestionCard
+              ref={questionRef}
+              title="What is the port number for:"
+              subtitle={currentQuestion?.protocol}
+              description={currentQuestion?.correctAnswer && PORT_DATA[currentQuestion.correctAnswer] ? 
+                PORT_DATA[currentQuestion.correctAnswer].description : ''}
+              showHint={DIFFICULTY_LEVELS[difficulty].showHints}
+              hint={currentQuestion?.hint}
+              animationClass={answerAnimation}
+            >
+              {currentQuestion?.showCategory && currentQuestion?.correctAnswer && PORT_DATA[currentQuestion.correctAnswer] && (
+                <span className="protocol-category">
+                  ({PORT_DATA[currentQuestion.correctAnswer].category})
+                </span>
+              )}
+            </QuestionCard>
             
-            {/* Input box on the right */}
+            {/* Input box */}
             <div className="answer-section">
               <form className="answer-form" onSubmit={handleSubmit}>
                 <div className="input-container">

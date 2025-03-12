@@ -1,0 +1,137 @@
+.question-container {
+  padding: 2rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(203, 213, 224, 0.1);
+  animation: fadeIn 0.5s ease-out;
+  background: linear-gradient(135deg, rgba(45, 55, 72, 0.9), rgba(26, 32, 44, 0.9));
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.question-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent 30%, rgba(66, 153, 225, 0.05) 100%);
+  pointer-events: none;
+}
+
+.question-text {
+  font-size: 1.2rem;
+  color: #a0aec0;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  text-align: center;
+}
+
+.question-text h3 {
+  font-size: 1.2rem;
+  color: #a0aec0;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.protocol-name {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #4299e1;
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.protocol-name::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: #4299e1;
+  border-radius: 2px;
+}
+
+.protocol-description {
+  font-size: 1.2rem;
+  color: #e2e8f0;
+  text-align: center;
+  max-width: 80%;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.hint {
+  margin-top: 1.2rem;
+  padding: 0.8rem 1.2rem;
+  background: rgba(66, 153, 225, 0.1);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #a0aec0;
+  display: inline-block;
+  animation: fadeIn 0.5s ease-out;
+  border: 1px solid rgba(66, 153, 225, 0.2);
+}
+
+.hint-label {
+  font-weight: 600;
+  color: #4299e1;
+  margin-right: 0.5rem;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Correct/incorrect animation class */
+.incorrect-animation {
+  animation: shake 0.6s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-10px);
+  }
+  40%, 80% {
+    transform: translateX(10px);
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .question-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .protocol-name {
+    font-size: 1.8rem;
+  }
+  
+  .protocol-description {
+    font-size: 1rem;
+    max-width: 95%;
+  }
+  
+  .hint {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+} 
