@@ -8,6 +8,7 @@ import scrollToTop from '../../utils/ScrollHelper';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import GameEndScreen from '../ui/GameEndScreen';
+import CollectXpButton from '../ui/CollectXpButton';
 
 // Use the exact same port dictionary as in PortGame.js
 const PORT_DATA = {
@@ -542,19 +543,13 @@ function ProtocolGame() {
               required
             />
           </div>
-          <button type="submit" className="submit-btn">Submit</button>
+          <CollectXpButton className="collect-xp-btn" onClick={endGame} />
         </form>
       </div>
       
       {/* Add End Game button for practice mode */}
       {gameMode === GAME_MODES.PRACTICE && (
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <button 
-            className="restart-btn"
-            onClick={() => endGame()}
-          >
-            End Game & Collect XP
-          </button>
         </div>
       )}
     </div>

@@ -5,10 +5,10 @@ import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import RewardAnimation from '../ui/RewardAnimation';
 import GameEndScreen from '../ui/GameEndScreen';
-import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/CommandLineChallenge.css';
+import CollectXpButton from '../ui/CollectXpButton';
 
 // Command line commands and their descriptions for different operating systems
 const COMMAND_DATA = {
@@ -1015,12 +1015,7 @@ function CommandLineChallenge() {
       {/* Back to menu and End Game buttons */}
       <div style={{ marginTop: '2rem', textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
         {gameMode === GAME_MODES.PRACTICE ? (
-          <button 
-            className="restart-btn"
-            onClick={() => endGame()}
-          >
-            End Game & Collect XP
-          </button>
+          <CollectXpButton className="collect-xp-btn" onClick={endGame} />
         ) : (
           <button 
             className="back-btn"

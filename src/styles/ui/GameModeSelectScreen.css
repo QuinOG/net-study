@@ -1,3 +1,49 @@
+/* dashboard button */
+.dashboard-btn {
+  position: relative;
+  padding: 0.8rem 1.5rem;
+  background: rgba(45, 55, 72, 0.5);
+  color: #a0aec0;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.dashboard-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.dashboard-btn:hover {
+  background: rgba(45, 55, 72, 0.8);
+  color: #e2e8f0;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-btn:hover::before {
+  transform: translateX(100%);
+}
+
+.dashboard-btn:active {
+  transform: translateY(0);
+}
+
+/* main game mode select screen */
 .game-mode-select-screen {
   display: flex;
   flex-direction: column;

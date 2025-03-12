@@ -10,6 +10,8 @@ import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import GameEndScreen from '../ui/GameEndScreen';
 import '../../styles/games/PortGame.css';
+import CollectXpButton from '../ui/CollectXpButton';
+import GameStatsRow from '../ui/GameStatsRow';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {
@@ -1031,36 +1033,21 @@ function PortGame() {
         </div>
       </div>
       
-      {/* Score, Streak, Combo, Multiplier row */}
-      <div className="game-stats-row">
-        <div className={`score-display ${scoreAnimation ? 'score-bump' : ''}`}>
-          <FiStar size={16} /> Score: <span>{score}</span>
-          {showXpPreview && (
-            <div className="xp-preview">+{xpEarnedPreview} XP potential</div>
-          )}
-          {showSpeedBonus && (
-            <div className="speed-bonus">+{speedBonus} SPEED BONUS!</div>
-          )}
-        </div>
-        
-        <div className={`streak-display ${streakAnimation ? 'streak-bump' : ''}`}>
-          <FiZap size={16} /> Streak: <span>{currentStreak}</span>
-        </div>
-        
-        <div className="combo-display">
-          <FiZap size={16} /> Combo: <span className={combo >= 6 ? 'high-combo' : combo >= 3 ? 'medium-combo' : ''}>{combo}x</span>
-        </div>
-        
-        <div className="multiplier-display">
-          <FiActivity size={16} /> Multiplier: <span className={comboMultiplier > 1.5 ? 'high-multiplier' : comboMultiplier > 1 ? 'medium-multiplier' : ''}>{comboMultiplier}x</span>
-        </div>
-        
-        {gameMode === GAME_MODES.TIME_ATTACK && (
-          <div className={`time-display ${timeRemaining < 10 ? 'urgent' : ''}`}>
-            <FiClock size={16} /> Time: <span>{timeRemaining}s</span>
-          </div>
-        )}
-      </div>
+      {/* Replace the old game-stats-row with the new component */}
+      <GameStatsRow 
+        score={score}
+        streak={currentStreak}
+        combo={combo}
+        comboMultiplier={comboMultiplier}
+        timeRemaining={timeRemaining}
+        showXpPreview={showXpPreview}
+        xpEarnedPreview={xpEarnedPreview}
+        showSpeedBonus={showSpeedBonus}
+        speedBonus={speedBonus}
+        isTimeAttack={gameMode === GAME_MODES.TIME_ATTACK}
+        scoreAnimation={scoreAnimation}
+        streakAnimation={streakAnimation}
+      />
       
       {/* Active Bonus */}
       {activeBonus && (
@@ -1175,13 +1162,7 @@ function PortGame() {
                 </div>
                 
                 {/* End game and collect button */}
-                <button 
-                  type="button" 
-                  className="end-game-btn"
-                  onClick={endGame}
-                >
-                  <FiAward size={18} /> End Game & Collect XP
-                </button>
+                <CollectXpButton className="collect-xp-btn" onClick={endGame} />
               </form>
             </div>
           </div>

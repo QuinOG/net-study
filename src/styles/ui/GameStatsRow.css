@@ -1,0 +1,183 @@
+/* Game Stats Row Component */
+.game-stats-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(to right, rgba(45, 55, 72, 0.8), rgba(45, 55, 72, 0.6));
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  flex-wrap: nowrap;
+}
+
+.score-display,
+.streak-display,
+.combo-display,
+.multiplier-display,
+.time-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  position: relative;
+  padding: 0.5rem 1rem;
+  background-color: rgba(26, 32, 44, 0.5);
+  border-radius: 8px;
+  min-width: 120px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.score-display:hover,
+.streak-display:hover,
+.combo-display:hover,
+.multiplier-display:hover,
+.time-display:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.score-display span,
+.streak-display span,
+.combo-display span,
+.multiplier-display span,
+.time-display span {
+  font-weight: 700;
+}
+
+.combo-display span.high-combo,
+.multiplier-display span.high-multiplier {
+  color: #f6ad55;
+  animation: pulsateText 1.5s infinite;
+}
+
+.combo-display span.medium-combo,
+.multiplier-display span.medium-multiplier {
+  color: #f6e05e;
+}
+
+.time-display.urgent {
+  animation: pulse 1s infinite;
+}
+
+.time-display.urgent span {
+  color: #f56565;
+}
+
+/* XP Preview and Speed Bonus */
+.xp-preview,
+.speed-bonus {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(72, 187, 120, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #68d391;
+  white-space: nowrap;
+  animation: fadeInDown 0.3s ease-out;
+}
+
+.speed-bonus {
+  background: rgba(246, 173, 85, 0.2);
+  color: #f6ad55;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulsateText {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -30px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Score and Streak Animations */
+.score-bump {
+  animation: bump 0.3s ease;
+}
+
+.streak-bump {
+  animation: bump 0.3s ease;
+}
+
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .game-stats-row {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .score-display,
+  .streak-display,
+  .combo-display,
+  .multiplier-display,
+  .time-display {
+    min-width: 100px;
+    padding: 0.4rem 0.8rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-stats-row {
+    padding: 0.8rem;
+    gap: 0.8rem;
+  }
+  
+  .score-display,
+  .streak-display,
+  .combo-display,
+  .multiplier-display,
+  .time-display {
+    min-width: 80px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+  }
+} 
