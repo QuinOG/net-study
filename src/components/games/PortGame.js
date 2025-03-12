@@ -12,6 +12,7 @@ import GameEndScreen from '../ui/GameEndScreen';
 import '../../styles/games/PortGame.css';
 import CollectXpButton from '../ui/CollectXpButton';
 import GameStatsRow from '../ui/GameStatsRow';
+import PowerUpBar from '../ui/PowerUpBar';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {
@@ -1064,37 +1065,13 @@ function PortGame() {
         </div>
       )}
       
-      {/* Powerups (only in timed mode) */}
-      {gameMode === GAME_MODES.TIME_ATTACK && (
-        <div className="power-ups">
-          <button 
-            className={`power-up-btn ${powerUps.timeFreeze > 0 ? '' : 'disabled'}`}
-            onClick={() => handlePowerUp('timeFreeze')}
-            disabled={powerUps.timeFreeze <= 0}
-            title="Freeze the timer for 10 seconds"
-          >
-            <FiClock size={16} /> Freeze ({powerUps.timeFreeze})
-          </button>
-          
-          <button 
-            className={`power-up-btn ${powerUps.categoryReveal > 0 ? '' : 'disabled'}`}
-            onClick={() => handlePowerUp('categoryReveal')}
-            disabled={powerUps.categoryReveal <= 0 || currentQuestion.showCategory}
-            title="Reveal the protocol category"
-          >
-            <FiTarget size={16} /> Category ({powerUps.categoryReveal})
-          </button>
-          
-          <button 
-            className={`power-up-btn ${powerUps.skipQuestion > 0 ? '' : 'disabled'}`}
-            onClick={() => handlePowerUp('skipQuestion')}
-            disabled={powerUps.skipQuestion <= 0}
-            title="Skip this question without penalty"
-          >
-            <FiSkipForward size={16} /> Skip ({powerUps.skipQuestion})
-          </button>
-        </div>
-      )}
+      {/* Replace the old power-ups section with the new PowerUpBar component */}
+      <PowerUpBar 
+        powerUps={powerUps}
+        onPowerUpUse={handlePowerUp}
+        isTimeAttack={gameMode === GAME_MODES.TIME_ATTACK}
+        currentQuestion={currentQuestion}
+      />
       
       <div className="game-content">
         {showComboMessage && (

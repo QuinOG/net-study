@@ -648,15 +648,9 @@ const GameEndScreen = ({
           </button>
           <button 
             className="menu-btn"
-            onClick={onBackToMenu}
-          >
-            <FiHome /> Menu
-          </button>
-          <button 
-            className="dashboard-btn"
             onClick={() => navigate('/dashboard')}
           >
-            <FiLayout /> Dashboard
+            <FiHome /> Home
           </button>
         </div>
         

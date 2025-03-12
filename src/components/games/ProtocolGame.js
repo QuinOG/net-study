@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
@@ -9,6 +9,8 @@ import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import GameEndScreen from '../ui/GameEndScreen';
 import CollectXpButton from '../ui/CollectXpButton';
+import GameStatsRow from '../ui/GameStatsRow';
+import { FiClock, FiTarget, FiZap, FiSkipForward } from 'react-icons/fi';
 
 // Use the exact same port dictionary as in PortGame.js
 const PORT_DATA = {
@@ -45,6 +47,9 @@ const DIFFICULTY_LEVELS = {
     showHints: false
   }
 };
+
+// Memoized GameStatsRow component - will be used in the render
+const MemoizedGameStatsRow = React.memo(GameStatsRow);
 
 function ProtocolGame() {
   const navigate = useNavigate();
@@ -98,6 +103,19 @@ function ProtocolGame() {
   
   const [gameId, setGameId] = useState(null);
 
+  // Add visual feedback state to match PortGame
+  const [scoreAnimation, setScoreAnimation] = useState(false);
+  const [streakAnimation, setStreakAnimation] = useState(false);
+  const [xpEarnedPreview, setXpEarnedPreview] = useState(0);
+  const [showXpPreview, setShowXpPreview] = useState(false);
+  const [speedBonus, setSpeedBonus] = useState(0);
+  const [showSpeedBonus, setShowSpeedBonus] = useState(false);
+  
+  // Add combo system to match PortGame
+  const [combo, setCombo] = useState(0);
+  const [comboMultiplier, setComboMultiplier] = useState(1);
+  const [answerStartTime, setAnswerStartTime] = useState(null);
+  
   // Update gameStats in localStorage when user changes
   useEffect(() => {
     if (user) {
@@ -173,11 +191,14 @@ function ProtocolGame() {
     return portList[randomIndex];
   };
 
-  // Generate a new question
+  // Generate a new question and set answer start time
   const generateQuestion = () => {
+    // Set the start time for this question
+    setAnswerStartTime(Date.now());
+    
     const port = getRandomPort();
     const protocol = PORT_DATA[port].protocol;
-    const description = PORT_DATA[port].description;
+    const description = PORT_DATA[port].description || '';
     const category = PORT_DATA[port].category;
     return {
       port,
@@ -202,6 +223,10 @@ function ProtocolGame() {
     setCorrectAnswers(0);
     setIncorrectAnswers(0);
     setCurrentStreak(0);
+    
+    // Reset combo system
+    setCombo(0);
+    setComboMultiplier(1);
     
     // Set initial time based on difficulty
     setTimeRemaining(DIFFICULTY_LEVELS[diff].timeLimit);
@@ -263,7 +288,8 @@ function ProtocolGame() {
           
           if (result.levelUp) {
             console.log("User leveled up!");
-            // TODO: Add level up celebration
+            // Celebrate level up with sound
+            SoundManager.play('levelUp');
           }
         }
       } catch (error) {
@@ -278,37 +304,110 @@ function ProtocolGame() {
     SoundManager.play('gameOver');
   };
 
-  // Handle correct answer
+  // Handle correct answer with enhanced feedback
   const handleCorrectAnswer = () => {
     SoundManager.play('correct');
+    
+    // Calculate time taken to answer
+    const endTime = Date.now();
+    const timeTaken = endTime - (answerStartTime || endTime);
+    
+    // Calculate speed bonus (max 50 points for answering in less than 2 seconds)
+    const calculatedSpeedBonus = timeTaken < 2000 ? Math.round((2000 - timeTaken) / 40) : 0;
+    setSpeedBonus(calculatedSpeedBonus);
+    
+    if (calculatedSpeedBonus > 0) {
+      setShowSpeedBonus(true);
+      setTimeout(() => setShowSpeedBonus(false), 1500);
+    }
+    
+    // Update streak and set animation
     const newStreak = currentStreak + 1;
     setCurrentStreak(newStreak);
-    const pointsEarned = 100 * DIFFICULTY_LEVELS[difficulty].multiplier;
-    setScore(score + pointsEarned);
-    setCorrectAnswers(prev => prev + 1);
-    if (gameMode === GAME_MODES.TIME_ATTACK) {
-      setTimeRemaining(prev => prev + 5);
+    setStreakAnimation(true);
+    setTimeout(() => setStreakAnimation(false), 1000);
+    
+    // Update combo and combo multiplier
+    const newCombo = combo + 1;
+    setCombo(newCombo);
+    
+    // Update combo multiplier (increases every 3 combos)
+    let newMultiplier = 1;
+    if (newCombo >= 9) newMultiplier = 2.5;
+    else if (newCombo >= 6) newMultiplier = 2;
+    else if (newCombo >= 3) newMultiplier = 1.5;
+    
+    setComboMultiplier(newMultiplier);
+    
+    // Check if we should play combo sound
+    if (newCombo === 3 || newCombo === 6 || newCombo === 9) {
+      SoundManager.play('combo');
     }
-    setFeedback({
-      show: true,
-      message: `Correct! +${pointsEarned} points`,
-      isCorrect: true
-    });
+    
+    // Calculate score increase with multiplier
+    const basePoints = 100;
+    const difficultyMultiplier = DIFFICULTY_LEVELS[difficulty].multiplier;
+    const totalMultiplier = difficultyMultiplier * newMultiplier;
+    
+    const scoreIncrease = Math.round(basePoints * totalMultiplier) + calculatedSpeedBonus;
+    const newScore = score + scoreIncrease;
+    
+    // Show score animation
+    setScore(newScore);
+    setScoreAnimation(true);
+    setTimeout(() => setScoreAnimation(false), 1000);
+    
+    // Show potential XP preview
+    const potentialXp = Math.max(10, Math.floor(newScore / 10));
+    setXpEarnedPreview(potentialXp);
+    setShowXpPreview(true);
+    setTimeout(() => setShowXpPreview(false), 2000);
+    
+    // Add time for time attack mode
+    if (gameMode === GAME_MODES.TIME_ATTACK) {
+      const bonusTime = 5 + Math.floor((newCombo / 5)); // Extra time for combos
+      setTimeRemaining(prevTime => prevTime + bonusTime);
+      setFeedback({
+        show: true,
+        isCorrect: true,
+        message: `Correct! +${scoreIncrease} points (${totalMultiplier.toFixed(1)}x)${calculatedSpeedBonus > 0 ? `, +${calculatedSpeedBonus} speed bonus` : ''}, +${bonusTime}s`
+      });
+    } else {
+      setFeedback({
+        show: true,
+        isCorrect: true,
+        message: `Correct! +${scoreIncrease} points (${totalMultiplier.toFixed(1)}x)${calculatedSpeedBonus > 0 ? `, +${calculatedSpeedBonus} speed bonus` : ''}`
+      });
+    }
+    
+    // Hide feedback after delay and generate new question
     setTimeout(() => {
-      setFeedback({ show: false, message: '', isCorrect: false });
+      setFeedback({ show: false, isCorrect: true, message: '' });
+      setUserAnswer('');
+      setCurrentQuestion(generateQuestion()); // Generate new question
     }, 1500);
+    
+    // Update stats
+    setCorrectAnswers(prev => prev + 1);
   };
 
   // Handle incorrect answer
   const handleIncorrectAnswer = () => {
-    const correctProtocol = currentQuestion.protocol;
+    SoundManager.play('incorrect');
+    
+    // Reset streak and combo
     setCurrentStreak(0);
+    setCombo(0);
+    setComboMultiplier(1);
+    
+    const correctProtocol = currentQuestion.protocol;
     setIncorrectAnswers(prev => prev + 1);
     
     // Apply time penalty in time attack mode
     if (gameMode === GAME_MODES.TIME_ATTACK) {
       // Calculate new time after penalty
-      const newTime = Math.max(0, timeRemaining - DIFFICULTY_LEVELS[difficulty].timePenalty);
+      const timePenalty = DIFFICULTY_LEVELS[difficulty].timePenalty;
+      const newTime = Math.max(0, timeRemaining - timePenalty);
       setTimeRemaining(newTime);
       
       // If time is now zero, end the game immediately
@@ -317,9 +416,8 @@ function ProtocolGame() {
         setFeedback({
           show: true,
           isCorrect: false,
-          message: `Incorrect. The correct answer is "${correctProtocol}"`
+          message: `Incorrect. The correct answer is "${correctProtocol}". -${timePenalty}s time penalty`
         });
-        SoundManager.play('wrong');
         
         // Short delay before ending game
         setTimeout(() => {
@@ -327,19 +425,26 @@ function ProtocolGame() {
         }, 1000);
         return;
       }
+      
+      setFeedback({
+        show: true,
+        isCorrect: false,
+        message: `Incorrect. The correct answer is "${correctProtocol}". -${timePenalty}s time penalty`
+      });
+    } else {
+      setFeedback({
+        show: true,
+        isCorrect: false,
+        message: `Incorrect. The correct answer is "${correctProtocol}"`
+      });
     }
     
-    setFeedback({
-      show: true,
-      isCorrect: false,
-      message: `Incorrect. The correct answer is "${correctProtocol}"`
-    });
-    SoundManager.play('wrong');
-    
-    // Hide feedback after 2 seconds
+    // Hide feedback after delay and generate new question
     setTimeout(() => {
       setFeedback({ show: false, isCorrect: false, message: '' });
-    }, 2000);
+      setUserAnswer('');
+      setCurrentQuestion(generateQuestion()); // Generate new question
+    }, 1500);
   };
 
   // Handle power-up usage
@@ -401,6 +506,35 @@ function ProtocolGame() {
     setUserAnswer('');
     setCurrentQuestion(generateQuestion());
   };
+
+  // Memoize game stats row props to prevent unnecessary re-renders
+  const gameStatsProps = useMemo(() => ({
+    score,
+    streak: currentStreak,
+    combo,
+    comboMultiplier,
+    timeRemaining,
+    showXpPreview,
+    xpEarnedPreview,
+    showSpeedBonus,
+    speedBonus,
+    isTimeAttack: gameMode === GAME_MODES.TIME_ATTACK,
+    scoreAnimation,
+    streakAnimation
+  }), [
+    score, 
+    currentStreak, 
+    combo, 
+    comboMultiplier, 
+    timeRemaining, 
+    showXpPreview, 
+    xpEarnedPreview, 
+    showSpeedBonus, 
+    speedBonus, 
+    gameMode, 
+    scoreAnimation, 
+    streakAnimation
+  ]);
 
   // Game mode selection and rendering
   if (!gameStarted) {
@@ -472,48 +606,53 @@ function ProtocolGame() {
   // Main game interface
   return (
     <div className="protocol-game">
-      <div className="game-header">
-        <div className="game-info">
-          <div className="mode-indicator">
-            {gameMode === GAME_MODES.TIME_ATTACK ? 'Time Attack' : 'Practice Mode'}
-            <span className="difficulty-badge">{DIFFICULTY_LEVELS[difficulty].name}</span>
-          </div>
-          <div className="score-display">
-            Score: <span>{score}</span>
-          </div>
-          {gameMode === GAME_MODES.TIME_ATTACK && (
-            <div className={`time-display ${timeRemaining < 10 ? 'urgent' : ''}`}>
-              Time: <span>{timeRemaining}s</span>
-            </div>
+      {/* Game Mode Display at the top */}
+      <div className="game-mode-display">
+        <div className="mode-indicator">
+          {gameMode === GAME_MODES.TIME_ATTACK ? (
+            <><FiClock size={18} /> Time Attack</>
+          ) : (
+            <><FiTarget size={18} /> Practice Mode</>
           )}
-          <div className="streak-display">
-            Streak: <span>{currentStreak}</span>
-          </div>
+          <span className="difficulty-badge">{DIFFICULTY_LEVELS[difficulty].name}</span>
         </div>
+      </div>
+      
+      {/* Use memoized GameStatsRow component with memoized props */}
+      <MemoizedGameStatsRow {...gameStatsProps} />
+      
+      {/* Powerups (only in timed mode) */}
+      {gameMode === GAME_MODES.TIME_ATTACK && (
         <div className="power-ups">
           <button 
             className={`power-up-btn ${powerUps.timeFreeze > 0 ? '' : 'disabled'}`}
             onClick={() => handlePowerUp('timeFreeze')}
-            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.timeFreeze <= 0}
+            disabled={powerUps.timeFreeze <= 0}
+            title="Freeze the timer for 5 seconds"
           >
-            ⏱️ Freeze ({powerUps.timeFreeze})
+            <FiClock size={16} /> Freeze ({powerUps.timeFreeze})
           </button>
+          
           <button 
             className={`power-up-btn ${powerUps.categoryReveal > 0 ? '' : 'disabled'}`}
             onClick={() => handlePowerUp('categoryReveal')}
-            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.categoryReveal <= 0 || currentQuestion?.showCategory}
+            disabled={powerUps.categoryReveal <= 0 || currentQuestion?.showCategory}
+            title="Reveal the protocol category"
           >
-            🔍 Category ({powerUps.categoryReveal})
+            <FiTarget size={16} /> Category ({powerUps.categoryReveal})
           </button>
+          
           <button 
             className={`power-up-btn ${powerUps.skipQuestion > 0 ? '' : 'disabled'}`}
             onClick={() => handlePowerUp('skipQuestion')}
-            disabled={gameMode === GAME_MODES.PRACTICE || powerUps.skipQuestion <= 0}
+            disabled={powerUps.skipQuestion <= 0}
+            title="Skip this question without penalty"
           >
-            ⏭️ Skip ({powerUps.skipQuestion})
+            <FiSkipForward size={16} /> Skip ({powerUps.skipQuestion})
           </button>
         </div>
-      </div>
+      )}
+      
       <div className="game-content">
         {feedback.show && (
           <div className={`feedback-message ${feedback.isCorrect ? 'correct' : 'incorrect'}`}>
@@ -541,17 +680,12 @@ function ProtocolGame() {
               placeholder="e.g. HTTP"
               autoFocus
               required
+              aria-label="Protocol answer input"
             />
           </div>
           <CollectXpButton className="collect-xp-btn" onClick={endGame} />
         </form>
       </div>
-      
-      {/* Add End Game button for practice mode */}
-      {gameMode === GAME_MODES.PRACTICE && (
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-        </div>
-      )}
     </div>
   );
 }
