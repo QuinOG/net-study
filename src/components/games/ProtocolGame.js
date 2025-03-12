@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import '../../styles/games/ProtocolGame.css';
-import '../../styles/games/GameModeCards.css';
 import { getAllGames, submitGameResults } from '../../services/api';
 import scrollToTop from '../../utils/ScrollHelper';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';

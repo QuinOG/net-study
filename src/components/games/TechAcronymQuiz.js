@@ -10,7 +10,6 @@ import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/TechAcronymQuiz.css';
-import '../../styles/games/GameModeCards.css';
 
 // Organize acronyms by category
 const ACRONYM_CATEGORIES = {

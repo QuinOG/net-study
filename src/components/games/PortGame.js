@@ -10,7 +10,6 @@ import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import GameEndScreen from '../ui/GameEndScreen';
 import '../../styles/games/PortGame.css';
-import '../../styles/games/GameModeCards.css';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {

@@ -9,7 +9,6 @@ import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/CommandLineChallenge.css';
-import '../../styles/games/GameModeCards.css';
 
 // Command line commands and their descriptions for different operating systems
 const COMMAND_DATA = {

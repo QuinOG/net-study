@@ -2,13 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { FiShare2, FiSmile, FiFrown, FiArrowRight, FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import '../../styles/games/NetworkTopologyGame.css';
 import { UserContext } from '../../context/UserContext';
-import GameModeCard from '../ui/GameModeCard';
 import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
 import { useNavigate } from 'react-router-dom';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
-import '../../styles/games/GameModeCards.css';
 
 function NetworkTopologyGame() {
   const { addXP } = useContext(UserContext);

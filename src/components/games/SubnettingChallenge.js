@@ -10,8 +10,6 @@ import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/SubnettingChallenge.css';
-import '../../styles/games/GameModeCards.css';
-import GameModeCard from '../ui/GameModeCard';
 
 // Game modes
 const GAME_MODES = {

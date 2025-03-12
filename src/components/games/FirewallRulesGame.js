@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FiShield, FiCheck, FiX, FiArrowRight, FiClock, FiTarget, FiZap, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import '../../styles/games/FirewallRulesGame.css';
-import '../../styles/games/GameModeCards.css';
 import { UserContext } from '../../context/UserContext';
-import GameModeCard from '../ui/GameModeCard';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import GameEndScreen from '../ui/GameEndScreen';
