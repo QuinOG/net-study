@@ -13,6 +13,7 @@ import '../../styles/games/PortGame.css';
 import CollectXpButton from '../ui/CollectXpButton';
 import GameStatsRow from '../ui/GameStatsRow';
 import PowerUpBar from '../ui/PowerUpBar';
+import GameModeDisplay from '../ui/GameModeDisplay';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {
@@ -997,44 +998,15 @@ function PortGame() {
   // Main game interface
   return (
     <div className={`port-game ${gameStarted ? 'game-active' : ''}`}>
-      {/* Daily Challenge Banner (if available and not completed) */}
-      {dailyChallenge && !dailyChallengeCompleted && gameStarted && (
-        <div className="daily-challenge-banner">
-          <div className="daily-challenge-title">
-            <FiGift size={18} /> Daily Challenge:
-          </div>
-          <div className="daily-challenge-description">
-            {dailyChallenge.description}
-          </div>
-          <div className="daily-challenge-progress">
-            <div className="progress-bar" style={{ width: `${dailyChallengeProgress}%` }}></div>
-          </div>
-        </div>
-      )}
       
-      {/* Show completed message */}
-      {showDailyChallengeComplete && (
-        <div className="daily-challenge-complete">
-          <div className="challenge-complete-title">Daily Challenge Complete!</div>
-          <div className="challenge-complete-rewards">
-            Rewards: +50 XP, +1 All Power-ups
-          </div>
-        </div>
-      )}
+      {/* Replace the old game mode display with the new component */}
+      <GameModeDisplay 
+        gameMode={gameMode}
+        difficulty={difficulty}
+        difficultyLevels={DIFFICULTY_LEVELS}
+      />
       
-      {/* Game Mode Display at the top */}
-      <div className="game-mode-display">
-        <div className="mode-indicator">
-          {gameMode === GAME_MODES.TIME_ATTACK ? (
-            <><FiClock size={18} /> Time Attack</>
-          ) : (
-            <><FiTarget size={18} /> Practice Mode</>
-          )}
-          <span className="difficulty-badge">{DIFFICULTY_LEVELS[difficulty].name}</span>
-        </div>
-      </div>
-      
-      {/* Replace the old game-stats-row with the new component */}
+      {/* Game Stats Row */}
       <GameStatsRow 
         score={score}
         streak={currentStreak}
@@ -1149,24 +1121,6 @@ function PortGame() {
           </div>
         )}
       </div>
-      
-      {/* Particle effects container */}
-      {showParticles && (
-        <div className={`particles-container ${particleType}`} style={{ top: particlePosition.y, left: particlePosition.x }}>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-          <div className="particles"></div>
-        </div>
-      )}
     </div>
   );
 }

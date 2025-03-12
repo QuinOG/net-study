@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiClock, FiTarget, FiSkipForward } from 'react-icons/fi';
-import './PowerUpBar.css';
+import '../../styles/ui/PowerUpBar.css';
 
 const PowerUpBar = ({ powerUps, onPowerUpUse, isTimeAttack, currentQuestion }) => {
   if (!isTimeAttack) return null;
