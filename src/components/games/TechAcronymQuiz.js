@@ -9,6 +9,8 @@ import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgr
 import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
+import GameHUD from '../ui/GameHUD';
+import GameStatsRow from '../ui/GameStatsRow';
 import '../../styles/games/TechAcronymQuiz.css';
 
 // Organize acronyms by category
@@ -306,6 +308,23 @@ function TechAcronymQuiz() {
     return randomAcronym;
   };
 
+  // Add state for enhanced HUD notifications
+  const [showComboMessage, setShowComboMessage] = useState(false);
+  const [comboMessage, setComboMessage] = useState('');
+  const [speedBonus, setSpeedBonus] = useState(0);
+  const [showSpeedBonus, setShowSpeedBonus] = useState(false);
+  const [answerStartTime, setAnswerStartTime] = useState(null);
+  const [showStreakReward, setShowStreakReward] = useState(false);
+  const [streakReward, setStreakReward] = useState('');
+  const [showBonusMessage, setShowBonusMessage] = useState(false);
+  const [bonusMessage, setBonusMessage] = useState('');
+  const [scoreAnimation, setScoreAnimation] = useState(false);
+  const [streakAnimation, setStreakAnimation] = useState(false);
+  
+  // Streak milestones with higher thresholds to reduce spam
+  const streakMilestones = [10, 20, 30, 50, 100];
+  const [achievedMilestones, setAchievedMilestones] = useState([]);
+  
   // Initialize the game
   const initializeGame = (mode, diff, cat = null) => {
     setGameMode(mode);
@@ -336,6 +355,9 @@ function TechAcronymQuiz() {
       categoryReveal: 2,
       skipQuestion: 1
     });
+    
+    // Track answer start time for speed bonuses
+    setAnswerStartTime(Date.now());
     
     // Play start sound
     SoundManager.play('gameStart');
@@ -498,12 +520,26 @@ function TechAcronymQuiz() {
     }, 2000);
   };
 
-  // Handle answer selection
+  // Handle answer selection with enhanced feedback
   const handleAnswerClick = (selectedAnswer) => {
     if (answerCooldown) return;
     
     // Set cooldown to prevent double-clicking
     setAnswerCooldown(true);
+    
+    // Calculate time taken to answer
+    const endTime = Date.now();
+    const timeTaken = endTime - (answerStartTime || endTime);
+    
+    // Calculate speed bonus (only for very fast answers under 1.5 seconds)
+    const calculatedSpeedBonus = timeTaken < 1500 ? Math.round((1500 - timeTaken) / 30) : 0;
+    setSpeedBonus(calculatedSpeedBonus);
+    
+    // Only show speed bonus notification for significant bonuses (>=20)
+    if (calculatedSpeedBonus >= 20) {
+      setShowSpeedBonus(true);
+      setTimeout(() => setShowSpeedBonus(false), 2000);
+    }
     
     // Increment questions answered counter
     setQuestionsAnswered(prev => prev + 1);
@@ -518,13 +554,19 @@ function TechAcronymQuiz() {
       const timeBonusMultiplier = timeRemaining / DIFFICULTY_LEVELS[difficulty].timeLimit;
       const comboMultiplier = combo;
       
-      // Calculate points
-      const earnedPoints = Math.round(basePoints * difficultyMultiplier * timeBonusMultiplier * comboMultiplier);
+      // Calculate points with speed bonus
+      const earnedPoints = Math.round((basePoints * difficultyMultiplier * timeBonusMultiplier * comboMultiplier) + calculatedSpeedBonus);
       
       // Update score and streak
       setScore(prev => prev + earnedPoints);
+      setScoreAnimation(true);
+      setTimeout(() => setScoreAnimation(false), 1000);
+      
       const newStreak = currentStreak + 1;
       setCurrentStreak(newStreak);
+      setStreakAnimation(true);
+      setTimeout(() => setStreakAnimation(false), 1000);
+      
       setCorrectAnswers(prev => prev + 1);
       
       // Update best streak immediately if needed
@@ -540,7 +582,39 @@ function TechAcronymQuiz() {
       }
       
       // Update combo (max 2.0)
-      setCombo(prev => Math.min(prev + 0.1, 2.0));
+      const newCombo = Math.min(combo + 0.1, 2.0);
+      setCombo(newCombo);
+      
+      // Show combo message only at significant milestones
+      if (newStreak === 5 || newStreak === 10 || newStreak % 10 === 0) {
+        setComboMessage(`${newStreak}x Streak! ${newCombo.toFixed(1)}x Points`);
+        setShowComboMessage(true);
+        setTimeout(() => setShowComboMessage(false), 2000);
+      }
+      
+      // Check for streak milestones
+      if (streakMilestones.includes(newStreak) && !achievedMilestones.includes(newStreak)) {
+        // Add to achieved milestones
+        setAchievedMilestones(prev => [...prev, newStreak]);
+        
+        // Generate reward based on streak milestone
+        let reward = '';
+        if (newStreak >= 30) {
+          reward = 'Extra Time for All Questions!';
+          setPowerUps(prev => ({...prev, timeFreeze: prev.timeFreeze + 1}));
+        } else if (newStreak >= 20) {
+          reward = 'Skip Question Power-up';
+          setPowerUps(prev => ({...prev, skipQuestion: prev.skipQuestion + 1}));
+        } else {
+          reward = 'Category Hint Power-up';
+          setPowerUps(prev => ({...prev, categoryReveal: prev.categoryReveal + 1}));
+        }
+        
+        // Show streak reward message
+        setStreakReward(reward);
+        setShowStreakReward(true);
+        setTimeout(() => setShowStreakReward(false), 3000);
+      }
       
       // Add time for correct answer in time attack mode
       if (gameMode === GAME_MODES.TIME_ATTACK) {
@@ -570,8 +644,11 @@ function TechAcronymQuiz() {
       SoundManager.play('incorrect');
     }
     
+    // Set new answer start time for the next question
+    setAnswerStartTime(Date.now() + 1500); // Account for the delay
+    
     // Generate new question after delay
-        setTimeout(() => {
+    setTimeout(() => {
       setCurrentAcronym(generateQuestion());
       setAnswerCooldown(false);
     }, 1500);
@@ -837,6 +914,50 @@ function TechAcronymQuiz() {
             Return to Game Center
           </button>
         </div>
+      )}
+      
+      {/* Game HUD for notifications */}
+      {gameStarted && !showGameOver && (
+        <GameHUD 
+          // Feedback message props  
+          feedbackShow={feedback.show}
+          feedbackMessage={feedback.message}
+          feedbackIsCorrect={feedback.isCorrect}
+          onFeedbackHide={() => setFeedback({ show: false, isCorrect: false, message: '' })}
+          
+          // Combo/streak message props
+          showCombo={showComboMessage}
+          comboMessage={comboMessage}
+          showBonus={showBonusMessage}
+          bonusMessage={bonusMessage}
+          showStreak={showStreakReward}
+          streakReward={streakReward}
+          currentStreak={currentStreak}
+          
+          // Speed bonus props
+          showSpeedBonus={showSpeedBonus}
+          speedBonus={speedBonus}
+          
+          // Context information for position-aware notifications
+          score={score}
+          combo={combo}
+        />
+      )}
+      
+      {/* Add GameStatsRow component */}
+      {gameStarted && !showGameOver && (
+        <GameStatsRow 
+          score={score}
+          streak={currentStreak}
+          combo={combo}
+          comboMultiplier={combo} // Same as combo for this game
+          timeRemaining={timeRemaining}
+          isTimeAttack={gameMode === GAME_MODES.TIME_ATTACK}
+          scoreAnimation={scoreAnimation}
+          streakAnimation={streakAnimation}
+          speedBonus={speedBonus}
+          showSpeedBonus={showSpeedBonus}
+        />
       )}
     </div>
   );

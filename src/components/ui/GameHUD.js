@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FiAward, FiZap, FiClock, FiPlus, FiGift } from 'react-icons/fi';
 import '../../styles/ui/GameHUD.css';
 
@@ -34,6 +34,29 @@ const GameHUD = ({
   const [streakVisible, setStreakVisible] = useState(showStreak);
   const [speedBonusVisible, setSpeedBonusVisible] = useState(showSpeedBonus);
   
+  // Notification queue to prevent overlapping
+  const notificationQueue = useRef([]);
+  const activeNotifications = useRef(new Set());
+  
+  // Function to process notification queue
+  const processQueue = () => {
+    if (notificationQueue.current.length === 0) return;
+    
+    const nextNotification = notificationQueue.current[0];
+    if (!activeNotifications.current.has(nextNotification.type)) {
+      // Activate the notification
+      activeNotifications.current.add(nextNotification.type);
+      nextNotification.activate();
+      
+      // Set up cleanup
+      setTimeout(() => {
+        activeNotifications.current.delete(nextNotification.type);
+        notificationQueue.current.shift();
+        processQueue();
+      }, nextNotification.duration);
+    }
+  };
+  
   // Set appropriate icons for different notifications
   const getBonusIcon = (type) => {
     if (type === 'doublePoints') return <FiZap className="hud-icon double-points" />;
@@ -45,56 +68,60 @@ const GameHUD = ({
   
   // Handle feedback visibility with auto-hide
   useEffect(() => {
-    setFeedbackVisible(feedbackShow);
-    
-    if (feedbackShow) {
-      const timer = setTimeout(() => {
-        setFeedbackVisible(false);
-        onFeedbackHide();
-      }, 1500);
-      
-      return () => clearTimeout(timer);
+    if (feedbackShow && !feedbackVisible) {
+      notificationQueue.current.push({
+        type: 'feedback',
+        activate: () => setFeedbackVisible(true),
+        duration: 2000 // Increased from 1500
+      });
+      processQueue();
+    } else if (!feedbackShow && feedbackVisible) {
+      setFeedbackVisible(false);
+      onFeedbackHide();
     }
-  }, [feedbackShow, onFeedbackHide]);
+  }, [feedbackShow, feedbackVisible, onFeedbackHide]);
   
   // Handle streak reward visibility
   useEffect(() => {
-    setStreakVisible(showStreak);
-    
-    if (showStreak) {
-      const timer = setTimeout(() => {
-        setStreakVisible(false);
-      }, 2500);
-      
-      return () => clearTimeout(timer);
+    if (showStreak && !streakVisible) {
+      notificationQueue.current.push({
+        type: 'streak',
+        activate: () => setStreakVisible(true),
+        duration: 3000 // Increased from 2500
+      });
+      processQueue();
+    } else if (!showStreak && streakVisible) {
+      setStreakVisible(false);
     }
-  }, [showStreak]);
+  }, [showStreak, streakVisible]);
   
   // Handle combo message visibility
   useEffect(() => {
-    setComboVisible(showCombo);
-    
-    if (showCombo) {
-      const timer = setTimeout(() => {
-        setComboVisible(false);
-      }, 1500);
-      
-      return () => clearTimeout(timer);
+    if (showCombo && !comboVisible) {
+      notificationQueue.current.push({
+        type: 'combo',
+        activate: () => setComboVisible(true),
+        duration: 2000 // Increased from 1500
+      });
+      processQueue();
+    } else if (!showCombo && comboVisible) {
+      setComboVisible(false);
     }
-  }, [showCombo]);
+  }, [showCombo, comboVisible]);
   
   // Handle bonus message visibility
   useEffect(() => {
-    setBonusMessageVisible(showBonus);
-    
-    if (showBonus) {
-      const timer = setTimeout(() => {
-        setBonusMessageVisible(false);
-      }, 2500);
-      
-      return () => clearTimeout(timer);
+    if (showBonus && !bonusMessageVisible) {
+      notificationQueue.current.push({
+        type: 'bonus',
+        activate: () => setBonusMessageVisible(true),
+        duration: 3000 // Increased from 2500
+      });
+      processQueue();
+    } else if (!showBonus && bonusMessageVisible) {
+      setBonusMessageVisible(false);
     }
-  }, [showBonus]);
+  }, [showBonus, bonusMessageVisible]);
   
   // Handle bonus state visibility
   useEffect(() => {
@@ -103,16 +130,17 @@ const GameHUD = ({
   
   // Handle speed bonus visibility
   useEffect(() => {
-    setSpeedBonusVisible(showSpeedBonus);
-    
-    if (showSpeedBonus) {
-      const timer = setTimeout(() => {
-        setSpeedBonusVisible(false);
-      }, 1500);
-      
-      return () => clearTimeout(timer);
+    if (showSpeedBonus && !speedBonusVisible && speedBonus >= 20) { // Only show for significant bonuses (>=20)
+      notificationQueue.current.push({
+        type: 'speedBonus',
+        activate: () => setSpeedBonusVisible(true),
+        duration: 2000 // Increased from 1500
+      });
+      processQueue();
+    } else if (!showSpeedBonus && speedBonusVisible) {
+      setSpeedBonusVisible(false);
     }
-  }, [showSpeedBonus]);
+  }, [showSpeedBonus, speedBonusVisible, speedBonus]);
 
   return (
     <>
@@ -143,15 +171,15 @@ const GameHUD = ({
           </div>
         )}
         
-        {/* Speed Bonus Popup */}
-        {speedBonusVisible && speedBonus > 0 && (
+        {/* Speed Bonus Popup - only shown for significant bonuses */}
+        {speedBonusVisible && speedBonus >= 20 && (
           <div className="hud-speed-bonus">
             <FiZap className="hud-icon" />
             <span>+{speedBonus} SPEED BONUS</span>
           </div>
         )}
         
-        {/* Combo Message */}
+        {/* Combo Message - shown less frequently */}
         {comboVisible && (
           <div className="hud-combo">
             <span>🔥 {comboMessage}</span>

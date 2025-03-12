@@ -16,39 +16,22 @@ import PowerUpBar from '../ui/PowerUpBar';
 import GameModeDisplay from '../ui/GameModeDisplay';
 import QuestionCard from '../ui/QuestionCard';
 import GameHUD from '../ui/GameHUD';
+import MultipleChoiceAnswerSection from '../ui/MultipleChoiceAnswerSection';
 
 // Dictionary of common ports and their protocols for the Net+ exam
 const PORT_DATA = {
-  // 20: { protocol: "FTP", description: "File Transfer Protocol (Data)", category: "File Transfer" },
-  //21: { protocol: "FTP", description: "File Transfer Protocol (Control)", category: "File Transfer" },
-  // 22: { protocol: "SSH", description: "Secure Shell", category: "Remote Access" },
-  23: { protocol: "Telnet", description: "Terminal Network", category: "Remote Access" },
-  //25: { protocol: "SMTP", description: "Simple Mail Transfer Protocol", category: "Email" },
-  // 53: { protocol: "DNS", description: "Domain Name System", category: "Name Resolution" },
-  // 67: { protocol: "DHCP", description: "Dynamic Host Configuration Protocol (Server)", category: "Network Management" },
-  // 68: { protocol: "DHCP", description: "Dynamic Host Configuration Protocol (Client)", category: "Network Management" },
-  // 69: { protocol: "TFTP", description: "Trivial File Transfer Protocol", category: "File Transfer" },
-  // 80: { protocol: "HTTP", description: "Hypertext Transfer Protocol", category: "Web" },
-  // 110: { protocol: "POP3", description: "Post Office Protocol v3", category: "Email" },
-  // 119: { protocol: "NNTP", description: "Network News Transfer Protocol", category: "News" },
-  // 123: { protocol: "NTP", description: "Network Time Protocol", category: "Time Sync" },
-  // 143: { protocol: "IMAP", description: "Internet Message Access Protocol", category: "Email" },
-  // 161: { protocol: "SNMP", description: "Simple Network Management Protocol", category: "Network Management" },
-  // 162: { protocol: "SNMP", description: "Simple Network Management Protocol (Trap)", category: "Network Management" },
-  // 389: { protocol: "LDAP", description: "Lightweight Directory Access Protocol", category: "Directory Services" },
-  // 443: { protocol: "HTTPS", description: "HTTP Secure", category: "Web" },
-  // 445: { protocol: "SMB", description: "Server Message Block", category: "File Sharing" },
-  // 500: { protocol: "ISAKMP", description: "Internet Security Association and Key Management Protocol", category: "VPN" },
-  // 587: { protocol: "SMTP", description: "SMTP Submission", category: "Email" },
-  // 636: { protocol: "LDAPS", description: "LDAP over SSL", category: "Directory Services" },
-  // 993: { protocol: "IMAPS", description: "IMAP over SSL", category: "Email" },
-  // 995: { protocol: "POP3S", description: "POP3 over SSL", category: "Email" },
-  // 1433: { protocol: "MS SQL", description: "Microsoft SQL Server", category: "Database" },
-  // 1434: { protocol: "MS SQL", description: "Microsoft SQL Server Browser", category: "Database" },
-  // 3306: { protocol: "MySQL", description: "MySQL Database", category: "Database" },
-  // 3389: { protocol: "RDP", description: "Remote Desktop Protocol", category: "Remote Access" },
-  // 5060: { protocol: "SIP", description: "Session Initiation Protocol", category: "VoIP" },
-  // 5061: { protocol: "SIP", description: "Session Initiation Protocol (TLS)", category: "VoIP" }
+  20: { protocol: "FTP", category: "File Transfer" },
+  22: { protocol: "SSH", category: "Remote Access" },
+  23: { protocol: "Telnet", category: "Remote Access" },
+  25: { protocol: "SMTP", category: "Email" },
+  53: { protocol: "DNS", category: "Name Resolution" },
+  67: { protocol: "DHCP", category: "Network Management" },
+};
+
+// Question types for the combined game
+const QUESTION_TYPES = {
+  PORT: 'port',     // Ask for port number
+  PROTOCOL: 'protocol'  // Ask for protocol name
 };
 
 // Game modes
@@ -174,8 +157,8 @@ function PortGame() {
   const [particleType, setParticleType] = useState('');
   const [particlePosition, setParticlePosition] = useState({ x: 0, y: 0 });
   
-  // Add streak milestones and rewards
-  const streakMilestones = [5, 10, 15, 25, 50, 100];
+  // Add streak milestones and rewards - increased thresholds for less spammy notifications
+  const streakMilestones = [10, 20, 30, 50, 100]; // Increased from [5, 10, 15, 25, 50, 100]
   const [achievedMilestones, setAchievedMilestones] = useState([]);
   const [showStreakReward, setShowStreakReward] = useState(false);
   const [streakReward, setStreakReward] = useState('');
@@ -194,6 +177,16 @@ function PortGame() {
   
   // Add state for bonus XP earned from challenges
   const [bonusXpEarned, setBonusXpEarned] = useState(0);
+  
+  // Add notification cooldown timers to prevent spam
+  const [comboCooldown, setComboCooldown] = useState(false);
+  const [bonusCooldown, setBonusCooldown] = useState(false);
+  const [streakCooldown, setStreakCooldown] = useState(false);
+  const [lastNotificationTime, setLastNotificationTime] = useState(0);
+  
+  // Added state for multiple choice
+  const [options, setOptions] = useState([]);
+  const [answerCooldown, setAnswerCooldown] = useState(false);
   
   // Update gameStats in localStorage when user changes
   useEffect(() => {
@@ -413,8 +406,10 @@ function PortGame() {
   
   // Trigger random bonus (called occasionally during correct answers)
   const triggerRandomBonus = () => {
-    // 10% chance of bonus on correct answer if no active bonus
-    if (activeBonus || Math.random() > 0.1) return;
+    // Don't show if we're in cooldown or if another notification was shown recently
+    const currentTime = Date.now();
+    const timeSinceLastNotification = currentTime - lastNotificationTime;
+    if (bonusCooldown || activeBonus || timeSinceLastNotification < 3000 || Math.random() > 0.05) return;
     
     // Choose a random bonus
     const bonusTypes = Object.values(BONUS_TYPES);
@@ -468,6 +463,12 @@ function PortGame() {
       setShowBonusMessage(false);
     }, 2500);
     
+    // Set cooldown for bonus messages
+    setBonusCooldown(true);
+    setTimeout(() => setBonusCooldown(false), 20000); // 20 second cooldown
+    
+    setLastNotificationTime(currentTime);
+    
     // Trigger special particle effect
     const rect = questionRef.current?.getBoundingClientRect();
     if (rect) {
@@ -491,31 +492,32 @@ function PortGame() {
     return portList[randomIndex];
   };
 
-  // Generate a new question and set answer start time
-  const generateQuestion = () => {
-    // Set the start time for this question
-    setAnswerStartTime(Date.now());
-    
-    // Return the question
-    const port = getRandomPort();
-    const protocol = PORT_DATA[port].protocol;
-    const description = PORT_DATA[port].description;
-    const category = PORT_DATA[port].category;
-    
-    return {
-      port,
-      protocol,
-      description,
-      category,
-      correctAnswer: port,
-      hint: `This protocol is used for ${category.toLowerCase()} purposes`,
-      showCategory: false,
-      options: generateOptions(protocol)
-    };
+  // Get a random protocol from our dictionary
+  const getRandomProtocol = () => {
+    const protocols = [...new Set(Object.values(PORT_DATA).map(data => data.protocol))];
+    const randomIndex = Math.floor(Math.random() * protocols.length);
+    return protocols[randomIndex];
   };
 
-  // Generate multiple choice options including the correct answer
-  const generateOptions = (correctProtocol) => {
+  // Generate port number options
+  const generatePortOptions = (correctPort) => {
+    const options = [correctPort];
+    const portList = Object.keys(PORT_DATA);
+    
+    // Filter out the correct answer and shuffle
+    const filteredPorts = portList
+      .filter(port => port !== correctPort)
+      .sort(() => 0.5 - Math.random());
+    
+    // Take 3 wrong answers and add the correct one
+    options.push(...filteredPorts.slice(0, 3));
+    
+    // Shuffle and return
+    return options.sort(() => 0.5 - Math.random());
+  };
+
+  // Generate protocol name options
+  const generateProtocolOptions = (correctProtocol) => {
     // Get unique protocols
     const uniqueProtocols = [...new Set(Object.values(PORT_DATA).map(data => data.protocol))];
     
@@ -525,33 +527,78 @@ function PortGame() {
       .sort(() => 0.5 - Math.random());
     
     // Take 3 wrong answers and add the correct one
-    const options = filteredProtocols.slice(0, 3);
-    options.push(correctProtocol);
+    const options = [correctProtocol, ...filteredProtocols.slice(0, 3)];
     
     // Shuffle again and return
     return options.sort(() => 0.5 - Math.random());
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // Generate a new question and set answer start time
+  const generateQuestion = () => {
+    // Set the start time for this question
+    setAnswerStartTime(Date.now());
     
-    // Don't process empty submissions
-    if (!userAnswer.trim()) {
-      return;
+    // Randomly select question type
+    const questionType = Math.random() > 0.5 ? QUESTION_TYPES.PORT : QUESTION_TYPES.PROTOCOL;
+    
+    if (questionType === QUESTION_TYPES.PORT) {
+      // Create a "what is the port number" question
+      const protocol = getRandomProtocol();
+      
+      // Find all ports that use this protocol
+      const matchingPorts = Object.entries(PORT_DATA)
+        .filter(([_, data]) => data.protocol === protocol)
+        .map(([port, _]) => port);
+      
+      // Randomly select one of the ports if there are multiple
+      const correctPort = matchingPorts[Math.floor(Math.random() * matchingPorts.length)];
+      const portOptions = generatePortOptions(correctPort);
+      
+      setOptions(portOptions);
+      
+      return {
+        type: QUESTION_TYPES.PORT,
+        protocol: protocol,
+        correctAnswer: correctPort,
+        category: PORT_DATA[correctPort].category,
+        hint: `This protocol is used for ${PORT_DATA[correctPort].category.toLowerCase()} purposes`,
+        showCategory: false
+      };
+    } else {
+      // Create a "what is the protocol name" question
+      const port = getRandomPort();
+      const protocol = PORT_DATA[port].protocol;
+      const protocolOptions = generateProtocolOptions(protocol);
+      
+      setOptions(protocolOptions);
+      
+      return {
+        type: QUESTION_TYPES.PROTOCOL,
+        port: port,
+        correctAnswer: protocol,
+        category: PORT_DATA[port].category,
+        hint: `This port is used for ${PORT_DATA[port].category.toLowerCase()} purposes`,
+        showCategory: false
+      };
     }
+  };
+
+  // Handle answer selection for multiple choice
+  const handleAnswerClick = (selectedAnswer) => {
+    // Prevent multiple submissions
+    if (answerCooldown) return;
+    
+    setUserAnswer(selectedAnswer);
+    setAnswerCooldown(true);
     
     // Check if the answer is correct
-    const isCorrect = currentQuestion.correctAnswer === userAnswer.trim();
+    const isCorrect = currentQuestion.correctAnswer === selectedAnswer;
     
     if (isCorrect) {
       handleCorrectAnswer();
     } else {
       handleIncorrectAnswer();
     }
-    
-    // Clear the input field
-    setUserAnswer('');
   };
 
   // Handle correct answer with enhanced feedback
@@ -562,13 +609,20 @@ function PortGame() {
     const endTime = Date.now();
     const timeTaken = endTime - (answerStartTime || endTime);
     
+    // Check if we should show a notification based on last notification time
+    const currentTime = Date.now();
+    const timeSinceLastNotification = currentTime - lastNotificationTime;
+    const canShowNotification = timeSinceLastNotification > 2000; // Minimum of 2 seconds between notifications
+    
     // Calculate speed bonus (max 100 points for answering in less than 2 seconds)
     const calculatedSpeedBonus = timeTaken < 2000 ? Math.round((2000 - timeTaken) / 20) : 0;
     setSpeedBonus(calculatedSpeedBonus);
     
-    if (calculatedSpeedBonus > 0) {
+    // Only show speed bonus notification for significant bonuses (>=30) and if not too soon
+    if (calculatedSpeedBonus >= 30 && canShowNotification) {
       setShowSpeedBonus(true);
       setTimeout(() => setShowSpeedBonus(false), 1500);
+      setLastNotificationTime(currentTime);
     }
     
     // Update streak and set animation
@@ -590,11 +644,18 @@ function PortGame() {
     const multiplierChanged = newMultiplier > comboMultiplier;
     setComboMultiplier(newMultiplier);
     
-    // Show combo message if milestone reached or multiplier changed
-    if (multiplierChanged || newCombo === 3 || newCombo === 6 || newCombo === 9 || newCombo % 5 === 0) {
+    // Show combo message if multiplier changed or at significant milestones (reduced frequency)
+    // Also check for cooldown to prevent spam
+    if (!comboCooldown && canShowNotification && (multiplierChanged || newCombo === 5 || newCombo === 10 || newCombo === 15 || newCombo % 10 === 0)) {
       setComboMessage(`${newCombo}x Combo! ${newMultiplier}x Points`);
       setShowComboMessage(true);
       setTimeout(() => setShowComboMessage(false), 1500);
+      
+      // Set cooldown for combo messages
+      setComboCooldown(true);
+      setTimeout(() => setComboCooldown(false), 5000); // 5 second cooldown
+      
+      setLastNotificationTime(currentTime);
       
       // Play special sound for combo milestones
       SoundManager.play('streakMilestone');
@@ -612,17 +673,17 @@ function PortGame() {
       }
     }
     
-    // Check for streak milestones
-    if (streakMilestones.includes(newStreak) && !achievedMilestones.includes(newStreak)) {
+    // Check for streak milestones - also check for cooldown
+    if (!streakCooldown && streakMilestones.includes(newStreak) && !achievedMilestones.includes(newStreak) && canShowNotification) {
       // Add to achieved milestones
       setAchievedMilestones(prev => [...prev, newStreak]);
       
       // Generate reward based on streak milestone
       let reward = '';
-      if (newStreak >= 25) {
+      if (newStreak >= 30) {
         reward = 'Extra Time Freeze Power-up';
         setPowerUps(prev => ({...prev, timeFreeze: prev.timeFreeze + 1}));
-      } else if (newStreak >= 10) {
+      } else if (newStreak >= 20) {
         reward = 'Extra Skip Power-up';
         setPowerUps(prev => ({...prev, skipQuestion: prev.skipQuestion + 1}));
       } else {
@@ -634,6 +695,12 @@ function PortGame() {
       setStreakReward(reward);
       setShowStreakReward(true);
       setTimeout(() => setShowStreakReward(false), 2500);
+      
+      // Set cooldown for streak messages
+      setStreakCooldown(true);
+      setTimeout(() => setStreakCooldown(false), 10000); // 10 second cooldown
+      
+      setLastNotificationTime(currentTime);
       
       // Play achievement sound
       SoundManager.play('achievement');
@@ -685,28 +752,51 @@ function PortGame() {
     if (gameMode === GAME_MODES.TIME_ATTACK) {
       const bonusTime = 5 + Math.floor((newCombo / 5)); // Extra time for combos
       setTimeRemaining(prevTime => prevTime + bonusTime);
-      setFeedback({
-        show: true,
-        isCorrect: true,
-        message: `Correct! +${scoreIncrease} points (${totalMultiplier.toFixed(1)}x)${calculatedSpeedBonus > 0 ? `, +${calculatedSpeedBonus} speed bonus` : ''}, +${bonusTime}s`
-      });
+      
+      // Customize feedback based on question type
+      if (currentQuestion.type === QUESTION_TYPES.PORT) {
+        setFeedback({
+          show: true,
+          isCorrect: true,
+          message: `Correct! Port ${currentQuestion.correctAnswer} is used for ${currentQuestion.protocol}. +${scoreIncrease} points, +${bonusTime}s`
+        });
+      } else {
+        setFeedback({
+          show: true,
+          isCorrect: true,
+          message: `Correct! Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}. +${scoreIncrease} points, +${bonusTime}s`
+        });
+      }
     } else {
-      setFeedback({
-        show: true,
-        isCorrect: true,
-        message: `Correct! +${scoreIncrease} points (${totalMultiplier.toFixed(1)}x)${calculatedSpeedBonus > 0 ? `, +${calculatedSpeedBonus} speed bonus` : ''}`
-      });
+      // Customize feedback based on question type
+      if (currentQuestion.type === QUESTION_TYPES.PORT) {
+        setFeedback({
+          show: true,
+          isCorrect: true,
+          message: `Correct! Port ${currentQuestion.correctAnswer} is used for ${currentQuestion.protocol}. +${scoreIncrease} points`
+        });
+      } else {
+        setFeedback({
+          show: true,
+          isCorrect: true,
+          message: `Correct! Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}. +${scoreIncrease} points`
+        });
+      }
     }
     
     // Hide feedback after delay and generate new question
     setTimeout(() => {
       setFeedback({ show: false, isCorrect: true, message: '' });
       setUserAnswer('');
+      setAnswerCooldown(false);
       setCurrentQuestion(generateQuestion()); // Generate new question
-    }, 1500);
+    }, 500);
     
     // Update stats
     setCorrectAnswers(prev => prev + 1);
+    
+    // Random bonuses
+    triggerRandomBonus();
   };
 
   // Enhance incorrect answer feedback
@@ -726,23 +816,43 @@ function PortGame() {
     if (gameMode === GAME_MODES.TIME_ATTACK) {
       const timePenalty = DIFFICULTY_LEVELS[difficulty].timePenalty;
       setTimeRemaining(prevTime => Math.max(0, prevTime - timePenalty));
-      setFeedback({
-        show: true,
-        isCorrect: false,
-        message: `Incorrect! Port ${currentQuestion.port} is used for ${currentQuestion.protocol}. -${timePenalty}s time penalty`
-      });
+      
+      // Customize feedback based on question type
+      if (currentQuestion.type === QUESTION_TYPES.PORT) {
+        setFeedback({
+          show: true,
+          isCorrect: false,
+          message: `Incorrect! ${currentQuestion.protocol} uses port ${currentQuestion.correctAnswer}. -${timePenalty}s time penalty`
+        });
+      } else {
+        setFeedback({
+          show: true,
+          isCorrect: false,
+          message: `Incorrect! Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}. -${timePenalty}s time penalty`
+        });
+      }
     } else {
-      setFeedback({
-        show: true,
-        isCorrect: false,
-        message: `Incorrect! Port ${currentQuestion.port} is used for ${currentQuestion.protocol}`
-      });
+      // Customize feedback based on question type
+      if (currentQuestion.type === QUESTION_TYPES.PORT) {
+        setFeedback({
+          show: true,
+          isCorrect: false,
+          message: `Incorrect! ${currentQuestion.protocol} uses port ${currentQuestion.correctAnswer}`
+        });
+      } else {
+        setFeedback({
+          show: true,
+          isCorrect: false,
+          message: `Incorrect! Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}`
+        });
+      }
     }
     
     // Hide feedback after delay and generate new question
     setTimeout(() => {
       setFeedback({ show: false, isCorrect: false, message: '' });
       setUserAnswer('');
+      setAnswerCooldown(false);
       setCurrentQuestion(generateQuestion()); // Generate new question
     }, 1500);
     
@@ -927,9 +1037,9 @@ function PortGame() {
     if (showDifficultySelect) {
       return (
         <div className="port-game">
-          <h2 className="game-title">Port Number Challenge</h2>
+          <h2 className="game-title">Network Protocol Challenge</h2>
           <p className="game-description">
-            Test your knowledge of common network port numbers and protocols!
+            Test your knowledge of common network protocols and port numbers!
           </p>
           
           <DifficultySelectScreen 
@@ -949,9 +1059,9 @@ function PortGame() {
     
     return (
       <div className="port-game">
-        <h2 className="game-title">Port Number Challenge</h2>
+        <h2 className="game-title">Network Protocol Challenge</h2>
         <p className="game-description">
-          Test your knowledge of common network port numbers and protocols!
+          Test your knowledge of common network protocols and port numbers!
         </p>
         
         <GameModeSelectScreen 
@@ -974,7 +1084,7 @@ function PortGame() {
     return (
       <div className="port-game">
         <GameEndScreen
-          gameTitle="Port Master"
+          gameTitle="Network Protocol Master"
           score={score}
           bestScore={gameStats.bestScore}
           xpEarned={score > 0 ? Math.max(10, Math.floor(score / 10)) : 0}
@@ -1067,44 +1177,35 @@ function PortGame() {
       <div className="game-content">
         {currentQuestion ? (
           <div className="game-layout">
-            {/* Port Question Card */}
+            {/* Question Card */}
             <QuestionCard
               ref={questionRef}
-              title="What is the port number for:"
-              subtitle={currentQuestion?.protocol}
-              description={currentQuestion?.correctAnswer && PORT_DATA[currentQuestion.correctAnswer] ? 
-                PORT_DATA[currentQuestion.correctAnswer].description : ''}
+              title={currentQuestion.type === QUESTION_TYPES.PORT 
+                ? "What is the port number for:" 
+                : "What protocol uses port:"}
+              subtitle={currentQuestion.type === QUESTION_TYPES.PORT 
+                ? currentQuestion.protocol 
+                : currentQuestion.port}
               showHint={DIFFICULTY_LEVELS[difficulty].showHints}
-              hint={currentQuestion?.hint}
+              hint={currentQuestion.hint}
               animationClass={answerAnimation}
             >
-              {currentQuestion?.showCategory && currentQuestion?.correctAnswer && PORT_DATA[currentQuestion.correctAnswer] && (
+              {currentQuestion.showCategory && (
                 <span className="protocol-category">
-                  ({PORT_DATA[currentQuestion.correctAnswer].category})
+                  ({currentQuestion.category})
                 </span>
               )}
             </QuestionCard>
             
-            {/* Input box */}
-            <div className="answer-section">
-              <form className="answer-form" onSubmit={handleSubmit}>
-                <div className="input-container">
-                  <label htmlFor="port-answer">Enter Port Number:</label>
-                  <input
-                    id="port-answer"
-                    type="text"
-                    value={userAnswer}
-                    onChange={(e) => setUserAnswer(e.target.value)}
-                    placeholder="e.g. 80"
-                    autoComplete="off"
-                    autoFocus
-                  />
-                </div>
-                
-                {/* End game and collect button */}
-                <CollectXpButton className="collect-xp-btn" onClick={endGame} />
-              </form>
-            </div>
+            {/* Multiple Choice Answers */}
+            <MultipleChoiceAnswerSection
+              options={options}
+              userAnswer={userAnswer}
+              correctAnswer={currentQuestion.correctAnswer}
+              onAnswerClick={handleAnswerClick}
+              answerCooldown={answerCooldown}
+              onCollectClick={endGame}
+            />
           </div>
         ) : (
           <div className="loading-question">

@@ -18,15 +18,15 @@
 .hud-streak-milestone,
 .hud-bonus-status {
   position: absolute;
-  background: rgba(26, 32, 44, 0.85);
+  background: rgba(26, 32, 44, 0.75);
   border-radius: 8px;
   padding: 12px 16px;
   backdrop-filter: blur(6px);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   pointer-events: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: #e2e8f0;
   text-align: center;
   font-weight: 600;
@@ -42,7 +42,7 @@
   padding: 14px 20px;
   font-size: 1.1rem;
   z-index: 110;
-  animation: feedbackPop 0.4s forwards;
+  animation: feedbackPop 0.5s forwards;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -63,13 +63,13 @@
 
 /* Color-specific feedback styles */
 .hud-feedback.correct {
-  background: linear-gradient(135deg, rgba(56, 161, 105, 0.85), rgba(72, 187, 120, 0.75));
-  border: 1px solid rgba(72, 187, 120, 0.4);
+  background: linear-gradient(135deg, rgba(56, 161, 105, 0.75), rgba(72, 187, 120, 0.65));
+  border: 1px solid rgba(72, 187, 120, 0.3);
 }
 
 .hud-feedback.incorrect {
-  background: linear-gradient(135deg, rgba(197, 48, 48, 0.85), rgba(229, 62, 62, 0.75));
-  border: 1px solid rgba(229, 62, 62, 0.4);
+  background: linear-gradient(135deg, rgba(197, 48, 48, 0.75), rgba(229, 62, 62, 0.65));
+  border: 1px solid rgba(229, 62, 62, 0.3);
 }
 
 /* Speed bonus - appears near score counter */
@@ -80,10 +80,10 @@
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  background: linear-gradient(135deg, rgba(66, 153, 225, 0.85), rgba(49, 130, 206, 0.75));
-  border: 1px solid rgba(66, 153, 225, 0.4);
-  font-size: 0.95rem;
-  animation: speedBonusSlide 0.4s forwards;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.75), rgba(49, 130, 206, 0.65));
+  border: 1px solid rgba(66, 153, 225, 0.3);
+  font-size: 0.9rem;
+  animation: speedBonusSlide 0.5s forwards;
 }
 
 @keyframes speedBonusSlide {
@@ -92,7 +92,7 @@
     transform: translateX(40px);
   }
   100% {
-    opacity: 1;
+    opacity: 0.9; /* More subtle */
     transform: translateX(0);
   }
 }
@@ -103,10 +103,10 @@
   left: 50%;
   transform: translate(-50%, -50%) scale(0.95);
   padding: 10px 16px;
-  background: linear-gradient(135deg, rgba(66, 153, 225, 0.85), rgba(49, 130, 206, 0.75));
-  border: 1px solid rgba(66, 153, 225, 0.4);
-  font-size: 1.1rem;
-  animation: comboSlideDown 0.4s forwards;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.75), rgba(49, 130, 206, 0.65));
+  border: 1px solid rgba(66, 153, 225, 0.3);
+  font-size: 1rem;
+  animation: comboSlideDown 0.5s forwards;
 }
 
 @keyframes comboSlideDown {
@@ -115,7 +115,7 @@
     transform: translate(-50%, -100%) scale(0.9);
   }
   100% {
-    opacity: 1;
+    opacity: 0.9; /* More subtle */
     transform: translate(-50%, -50%) scale(1);
   }
 }
@@ -126,10 +126,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 12px 20px;
-  background: linear-gradient(135deg, rgba(237, 137, 54, 0.85), rgba(221, 107, 32, 0.75));
-  border: 1px solid rgba(237, 137, 54, 0.4);
-  font-size: 1.2rem;
-  animation: bonusMessagePop 0.5s forwards;
+  background: linear-gradient(135deg, rgba(237, 137, 54, 0.75), rgba(221, 107, 32, 0.65));
+  border: 1px solid rgba(237, 137, 54, 0.3);
+  font-size: 1.1rem;
+  animation: bonusMessagePop 0.6s forwards;
 }
 
 @keyframes bonusMessagePop {
@@ -142,7 +142,7 @@
     transform: translate(-50%, -50%) scale(1.1);
   }
   100% {
-    opacity: 1;
+    opacity: 0.9; /* More subtle */
     transform: translate(-50%, -50%) scale(1);
   }
 }
@@ -154,10 +154,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, rgba(213, 63, 140, 0.85), rgba(184, 50, 128, 0.75));
-  border: 1px solid rgba(213, 63, 140, 0.4);
+  background: linear-gradient(135deg, rgba(213, 63, 140, 0.75), rgba(184, 50, 128, 0.65));
+  border: 1px solid rgba(213, 63, 140, 0.3);
   padding: 12px 16px;
-  animation: streakSlideIn 0.5s forwards;
+  animation: streakSlideIn 0.6s forwards;
 }
 
 .hud-streak-content {
@@ -187,7 +187,7 @@
     transform: translateX(-10px);
   }
   100% {
-    opacity: 1;
+    opacity: 0.9; /* More subtle */
     transform: translateX(0);
   }
 }
@@ -201,7 +201,7 @@
   align-items: center;
   gap: 10px;
   padding: 8px 14px;
-  animation: bonusStatusPop 0.4s forwards;
+  animation: bonusStatusPop 0.5s forwards;
 }
 
 .hud-bonus-content {
@@ -223,23 +223,23 @@
 
 /* Color variants for different bonus types */
 .hud-bonus-status.doublePoints {
-  background: linear-gradient(135deg, rgba(72, 187, 120, 0.85), rgba(56, 161, 105, 0.75));
-  border: 1px solid rgba(72, 187, 120, 0.4);
+  background: linear-gradient(135deg, rgba(72, 187, 120, 0.75), rgba(56, 161, 105, 0.65));
+  border: 1px solid rgba(72, 187, 120, 0.3);
 }
 
 .hud-bonus-status.extraTime {
-  background: linear-gradient(135deg, rgba(144, 205, 244, 0.85), rgba(90, 162, 203, 0.75));
-  border: 1px solid rgba(144, 205, 244, 0.4);
+  background: linear-gradient(135deg, rgba(144, 205, 244, 0.75), rgba(90, 162, 203, 0.65));
+  border: 1px solid rgba(144, 205, 244, 0.3);
 }
 
 .hud-bonus-status.powerUp {
-  background: linear-gradient(135deg, rgba(159, 122, 234, 0.85), rgba(128, 90, 213, 0.75));
-  border: 1px solid rgba(159, 122, 234, 0.4);
+  background: linear-gradient(135deg, rgba(159, 122, 234, 0.75), rgba(128, 90, 213, 0.65));
+  border: 1px solid rgba(159, 122, 234, 0.3);
 }
 
 .hud-bonus-status.instantPoints {
-  background: linear-gradient(135deg, rgba(237, 137, 54, 0.85), rgba(221, 107, 32, 0.75));
-  border: 1px solid rgba(237, 137, 54, 0.4);
+  background: linear-gradient(135deg, rgba(237, 137, 54, 0.75), rgba(221, 107, 32, 0.65));
+  border: 1px solid rgba(237, 137, 54, 0.3);
 }
 
 @keyframes bonusStatusPop {
@@ -248,8 +248,28 @@
     transform: translateX(-50%) translateY(-20px);
   }
   100% {
-    opacity: 1;
+    opacity: 0.95;
     transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Animation for elements as they leave the screen */
+.hud-feedback.hide,
+.hud-speed-bonus.hide,
+.hud-combo.hide,
+.hud-bonus-message.hide,
+.hud-streak-milestone.hide,
+.hud-bonus-status.hide {
+  animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 }
 

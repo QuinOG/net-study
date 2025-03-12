@@ -306,33 +306,6 @@
   border-radius: 2px;
 }
 
-.protocol-description {
-  font-size: 1.2rem;
-  color: #e2e8f0;
-  text-align: center;
-  max-width: 80%;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-.hint {
-  margin-top: 1.2rem;
-  padding: 0.8rem 1.2rem;
-  background: rgba(66, 153, 225, 0.1);
-  border-radius: 8px;
-  font-size: 1rem;
-  color: #a0aec0;
-  display: inline-block;
-  animation: fadeIn 0.5s ease-out;
-  border: 1px solid rgba(66, 153, 225, 0.2);
-}
-
-.hint-label {
-  font-weight: 600;
-  color: #4299e1;
-  margin-right: 0.5rem;
-}
-
 .answer-form {
   display: flex;
   flex-direction: column;
@@ -804,3 +777,5 @@
   position: relative;
   z-index: 5;
 }
+
+/* Remove the multiple choice answer section styles as they're now in MultipleChoiceAnswerSection.css */
