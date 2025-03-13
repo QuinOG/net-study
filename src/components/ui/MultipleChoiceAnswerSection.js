@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import CollectXpButton from './CollectXpButton';
 import '../../styles/ui/MultipleChoiceAnswerSection.css';
 
@@ -22,9 +22,30 @@ function MultipleChoiceAnswerSection({
   answerCooldown,
   onCollectClick
 }) {
+  const optionsRef = useRef(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const buttons = optionsRef.current?.querySelectorAll('.answer-option');
+      if (!buttons) return;
+
+      buttons.forEach(button => {
+        const rect = button.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        button.style.setProperty('--mouse-x', `${x}%`);
+        button.style.setProperty('--mouse-y', `${y}%`);
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <div className="answer-section">
-      <div className="answer-options">
+      <div className="answer-options" ref={optionsRef}>
         {options.map((option, index) => (
           <button 
             key={index}

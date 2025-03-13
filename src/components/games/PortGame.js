@@ -4,83 +4,17 @@ import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
-import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
-import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar, FiGift, FiActivity } from 'react-icons/fi';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import GameEndScreen from '../ui/GameEndScreen';
 import '../../styles/games/PortGame.css';
-import CollectXpButton from '../ui/CollectXpButton';
 import GameStatsRow from '../ui/GameStatsRow';
 import PowerUpBar from '../ui/PowerUpBar';
 import GameModeDisplay from '../ui/GameModeDisplay';
 import QuestionCard from '../ui/QuestionCard';
 import GameHUD from '../ui/GameHUD';
 import MultipleChoiceAnswerSection from '../ui/MultipleChoiceAnswerSection';
-
-// Dictionary of common ports and their protocols for the Net+ exam
-const PORT_DATA = {
-  20: { protocol: "FTP", category: "File Transfer" },
-  22: { protocol: "SSH", category: "Remote Access" },
-  23: { protocol: "Telnet", category: "Remote Access" },
-  25: { protocol: "SMTP", category: "Email" },
-  53: { protocol: "DNS", category: "Name Resolution" },
-  67: { protocol: "DHCP", category: "Network Management" },
-};
-
-// Question types for the combined game
-const QUESTION_TYPES = {
-  PORT: 'port',     // Ask for port number
-  PROTOCOL: 'protocol'  // Ask for protocol name
-};
-
-// Game modes
-const GAME_MODES = {
-  TIME_ATTACK: 'TIME_ATTACK',
-  PRACTICE: 'PRACTICE'
-};
-
-// Default statistics for new users
-const DEFAULT_STATS = {
-  bestScore: 0,
-  bestStreak: 0,
-  gamesPlayed: 0,
-  totalAttempts: 0,
-  correctAnswers: 0
-};
-
-// Difficulty levels with their settings
-const DIFFICULTY_LEVELS = {
-  EASY: {
-    name: 'Easy',
-    timeLimit: 60,
-    timePenalty: 3,
-    multiplier: 1,
-    showHints: true
-  },
-  MEDIUM: {
-    name: 'Medium',
-    timeLimit: 45,
-    timePenalty: 5,
-    multiplier: 1.5,
-    showHints: false
-  },
-  HARD: {
-    name: 'Hard',
-    timeLimit: 30,
-    timePenalty: 7,
-    multiplier: 2,
-    showHints: false
-  }
-};
-
-// Special bonus types for random events
-const BONUS_TYPES = {
-  DOUBLE_POINTS: 'doublePoints',
-  EXTRA_TIME: 'extraTime',
-  POWER_UP: 'powerUp',
-  INSTANT_POINTS: 'instantPoints'
-};
+import { PORT_DATA, QUESTION_TYPES, GAME_MODES, DEFAULT_STATS, DIFFICULTY_LEVELS, BONUS_TYPES } from '../../constants/gameConstants';
 
 function PortGame() {
   const navigate = useNavigate();
@@ -110,13 +44,7 @@ function PortGame() {
   const [gameStats, setGameStats] = useState(() => {
     const userKey = getUserKey();
     const savedStats = localStorage.getItem(`portGameStats_${userKey}`);
-    return savedStats ? JSON.parse(savedStats) : {
-      bestScore: 0,
-      bestStreak: 0,
-      gamesPlayed: 0,
-      totalAttempts: 0,
-      correctAnswers: 0
-    };
+    return savedStats ? JSON.parse(savedStats) : DEFAULT_STATS;
   });
   
   const [showDifficultySelect, setShowDifficultySelect] = useState(false);
@@ -131,7 +59,6 @@ function PortGame() {
     isCorrect: false
   });
   const [gameId, setGameId] = useState(null);
-  const [topicsProgress, setTopicsProgress] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentCategory, setCurrentCategory] = useState(null);
 
@@ -264,10 +191,6 @@ function PortGame() {
         if (portGame) {
           setGameId(portGame.id);
         }
-        
-        // Initialize topics progress
-        const initialTopicsProgress = getGameTopicsProgress('portGame', userKey);
-        setTopicsProgress(initialTopicsProgress);
         
         setLoading(false);
       } catch (error) {
@@ -510,7 +433,7 @@ function PortGame() {
       .sort(() => 0.5 - Math.random());
     
     // Take 3 wrong answers and add the correct one
-    options.push(...filteredPorts.slice(0, 3));
+    options.push(...filteredPorts.slice(0, 1));
     
     // Shuffle and return
     return options.sort(() => 0.5 - Math.random());
@@ -527,7 +450,7 @@ function PortGame() {
       .sort(() => 0.5 - Math.random());
     
     // Take 3 wrong answers and add the correct one
-    const options = [correctProtocol, ...filteredProtocols.slice(0, 3)];
+    const options = [correctProtocol, ...filteredProtocols.slice(0, 1)];
     
     // Shuffle again and return
     return options.sort(() => 0.5 - Math.random());
@@ -561,7 +484,7 @@ function PortGame() {
         protocol: protocol,
         correctAnswer: correctPort,
         category: PORT_DATA[correctPort].category,
-        hint: `This protocol is used for ${PORT_DATA[correctPort].category.toLowerCase()} purposes`,
+        hint: `Used for ${PORT_DATA[correctPort].category.toLowerCase()}`,
         showCategory: false
       };
     } else {
@@ -577,7 +500,7 @@ function PortGame() {
         port: port,
         correctAnswer: protocol,
         category: PORT_DATA[port].category,
-        hint: `This port is used for ${PORT_DATA[port].category.toLowerCase()} purposes`,
+        hint: `Used for ${PORT_DATA[port].category.toLowerCase()}`,
         showCategory: false
       };
     }
@@ -987,17 +910,6 @@ function PortGame() {
     // Calculate XP earned
     const xpEarned = score > 0 ? Math.max(10, Math.floor(score / 10)) : 0;
     
-    // Update learning progress tracking
-    const gameResults = {
-      totalQuestions: correctAnswers + incorrectAnswers,
-      correctAnswers: correctAnswers
-    };
-    
-    // Use the current category if available, otherwise pass null
-    const categoryForProgress = currentCategory || null;
-    const { topicsProgress } = updateProgress('portGame', userKey, gameResults, categoryForProgress);
-    setTopicsProgress(topicsProgress);
-    
     // Award XP (minimum 10 XP if score > 0, otherwise score-based)
     if (score > 0) {
       try {
@@ -1092,7 +1004,6 @@ function PortGame() {
           totalAttempts={correctAnswers + incorrectAnswers}
           bestStreak={Math.max(currentStreak, gameStats.bestStreak)}
           isNewHighScore={score > gameStats.bestScore}
-          topicsProgress={topicsProgress}
           onPlayAgain={() => {
             setShowGameOver(false);
             initializeGame(gameMode, difficulty);

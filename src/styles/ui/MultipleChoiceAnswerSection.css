@@ -10,77 +10,136 @@
 .answer-options {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 1.2rem;
   width: 100%;
   max-width: 600px;
   margin-bottom: 2rem;
 }
 
 .answer-option {
-  padding: 1rem 1.5rem;
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(45, 55, 72, 0.8), rgba(26, 32, 44, 0.8));
-  border: 2px solid rgba(66, 153, 225, 0.3);
-  color: #f7fafc;
+  position: relative;
+  padding: 1.2rem 1.8rem;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 2px solid rgba(148, 163, 184, 0.1);
+  color: #e2e8f0;
   font-size: 1.2rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
   text-align: center;
-  position: relative;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .answer-option::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, transparent, rgba(66, 153, 225, 0.1));
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(148, 163, 184, 0.15) 0%,
+    transparent 50%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
-.answer-option:hover:not(:disabled)::before {
+.answer-option::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(148, 163, 184, 0.2),
+    transparent 50%,
+    rgba(148, 163, 184, 0.1)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.answer-option:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(148, 163, 184, 0.3);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(148, 163, 184, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.answer-option:hover::before,
+.answer-option:hover::after {
   opacity: 1;
 }
 
-.answer-option:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(66, 153, 225, 0.2);
-  border-color: rgba(66, 153, 225, 0.6);
+.answer-option:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .answer-option:disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.5;
+  transform: none;
 }
 
 .answer-option.correct {
-  background: linear-gradient(135deg, rgba(72, 187, 120, 0.3), rgba(56, 161, 105, 0.3));
-  border-color: rgba(72, 187, 120, 0.8);
-  color: #9ae6b4;
-  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05));
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #86efac;
+  box-shadow: 
+    0 0 30px rgba(34, 197, 94, 0.2),
+    inset 0 0 0 1px rgba(34, 197, 94, 0.2);
+  animation: correctPulse 2s infinite;
 }
 
 .answer-option.incorrect {
-  background: linear-gradient(135deg, rgba(245, 101, 101, 0.3), rgba(229, 62, 62, 0.3));
-  border-color: rgba(245, 101, 101, 0.8);
-  color: #feb2b2;
-  box-shadow: 0 4px 12px rgba(245, 101, 101, 0.2);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05));
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  box-shadow: 
+    0 0 30px rgba(239, 68, 68, 0.2),
+    inset 0 0 0 1px rgba(239, 68, 68, 0.2);
 }
 
-/* Responsive adjustment for answer options */
-@media (max-width: 600px) {
-  .answer-options {
-    grid-template-columns: 1fr;
+@keyframes correctPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 30px rgba(34, 197, 94, 0.2),
+      inset 0 0 0 1px rgba(34, 197, 94, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 40px rgba(34, 197, 94, 0.3),
+      inset 0 0 0 1px rgba(34, 197, 94, 0.3);
   }
 }
 
 /* Collect XP button styling */
 .collect-xp-btn {
   margin-top: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .answer-options {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    gap: 1rem;
+  }
+
+  .answer-option {
+    min-height: 60px;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+  }
 } 

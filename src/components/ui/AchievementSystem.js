@@ -23,9 +23,9 @@ const achievements = [
   
   // Streak Achievements
   { id: 'streak_beginner', name: 'Habit Forming', description: 'Maintain a 3-day streak', requirement: 3, category: 'streak', icon: '🔥' },
-  { id: 'streak_novice', name: 'Commitment', description: 'Maintain a 7-day streak', requirement: 7, category: 'streak', icon: '🔥🔥' },
-  { id: 'streak_expert', name: 'Dedication', description: 'Maintain a 14-day streak', requirement: 14, category: 'streak', icon: '🔥🔥🔥' },
-  { id: 'streak_master', name: 'Unstoppable', description: 'Maintain a 30-day streak', requirement: 30, category: 'streak', icon: '🔥🔥🔥🔥' },
+  { id: 'streak_novice', name: 'Commitment', description: 'Maintain a 7-day streak', requirement: 7, category: 'streak', icon: '🔥' },
+  { id: 'streak_expert', name: 'Dedication', description: 'Maintain a 14-day streak', requirement: 14, category: 'streak', icon: '🔥' },
+  { id: 'streak_master', name: 'Unstoppable', description: 'Maintain a 30-day streak', requirement: 30, category: 'streak', icon: '🔥' },
 ];
 
 const AchievementSystem = ({ userStats }) => {

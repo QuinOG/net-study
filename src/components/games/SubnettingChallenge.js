@@ -5,8 +5,6 @@ import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
 import GameEndScreen from '../ui/GameEndScreen';
-import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
-import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/SubnettingChallenge.css';

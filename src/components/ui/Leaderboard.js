@@ -373,8 +373,8 @@ const Leaderboard = ({ minimized = false }) => {
                   </div>
                 )}
                 {activeTab === 'level' && (
-                  <div className="level-badge-container">
-                    <span className="level-badge">Lvl {user.level}</span>
+                  <div className="score-cell">
+                    {user.level}
                   </div>
                 )}
               </div>
@@ -569,14 +569,8 @@ const Leaderboard = ({ minimized = false }) => {
                   </div>
                 )}
                 {activeTab === 'level' && (
-                  <div className="level-badge-container">
-                    <span className="level-badge">Lvl {user.level}</span>
-                    <div className="level-progress-bar">
-                      <div 
-                        className="level-progress" 
-                        style={{ width: `${calculateLevelProgress(user.xp, user.level)}%` }}
-                      ></div>
-                    </div>
+                  <div className="score-cell">
+                    {user.level}
                   </div>
                 )}
               </div>

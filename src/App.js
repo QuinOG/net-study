@@ -3,7 +3,6 @@ import './styles/layout/App.css';
 import logo from './assets/images/netquest.png';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode, FiChevronRight, FiTrendingUp, FiTarget, FiAward, FiFlag, FiArrowRight, FiMenu, FiShare2, FiShield, FiLock } from 'react-icons/fi';
-import { FaTrophy } from 'react-icons/fa';
 import PortGame from './components/games/PortGame';
 import ProtocolGame from './components/games/ProtocolGame';
 import SubnettingChallenge from './components/games/SubnettingChallenge';
@@ -19,11 +18,8 @@ import LandingPage from './components/ui/LandingPage';
 
 // New Gamification components
 import { UserProvider, UserContext } from './context/UserContext';
-import StreakCounter from './components/ui/StreakCounter';
 import AchievementSystem from './components/ui/AchievementSystem';
-import LevelProgress from './components/ui/LevelProgress';
 import RewardAnimation from './components/ui/RewardAnimation';
-import DailyChallenge from './components/ui/DailyChallenge';
 import Leaderboard from './components/ui/Leaderboard';
 import SoundManager from './utils/SoundManager';
 import { defaultUserStats } from './utils/GuestUser';

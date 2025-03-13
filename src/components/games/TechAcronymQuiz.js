@@ -5,7 +5,6 @@ import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
 import GameEndScreen from '../ui/GameEndScreen';
-import { updateProgress, getGameTopicsProgress } from '../../utils/LearningProgressTracker';
 import { FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
@@ -247,10 +246,6 @@ function TechAcronymQuiz() {
           setGameId(techAcronymGame.id);
         }
         
-        // Initialize topics progress
-        const initialTopicsProgress = getGameTopicsProgress('techAcronymQuiz', userKey);
-        setTopicsProgress(initialTopicsProgress);
-        
         setLoading(false);
       } catch (error) {
         console.error('Error loading game data:', error);
@@ -446,15 +441,6 @@ function TechAcronymQuiz() {
     
     // Calculate XP earned
     const xpEarned = score > 0 ? Math.max(10, Math.floor(score / 10)) : 0;
-    
-    // Update learning progress tracking
-    const gameResults = {
-      totalQuestions: correctAnswers + incorrectAnswers,
-      correctAnswers: correctAnswers
-    };
-    
-    const { topicsProgress } = updateProgress('techAcronymQuiz', userKey, gameResults, selectedCategory);
-    setTopicsProgress(topicsProgress);
     
     // Award XP (minimum 10 XP if score > 0, otherwise score-based)
     if (score > 0) {
