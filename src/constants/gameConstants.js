@@ -60,4 +60,45 @@ export const BONUS_TYPES = {
   EXTRA_TIME: 'extraTime',
   POWER_UP: 'powerUp',
   INSTANT_POINTS: 'instantPoints'
-}; 
+};
+
+// Port Game specific settings
+export const PORT_GAME_SETTINGS = {
+  // Initial power-ups
+  INITIAL_POWER_UPS: {
+    timeFreeze: 1,
+    categoryReveal: 1,
+    skipQuestion: 1
+  },
+  
+  // Streak milestones and rewards
+  STREAK_MILESTONES: [5, 10, 15],
+  STREAK_REWARDS: {
+    15: { type: 'timeFreeze', amount: 1 },
+    10: { type: 'skipQuestion', amount: 1 },
+    5: { type: 'categoryReveal', amount: 1 }
+  },
+  
+  // Scoring settings
+  BASE_POINTS: 100,
+  BONUS_TIME: 5,
+  
+  // Challenge types
+  CHALLENGE_TYPES: [
+    { type: 'streak', target: 10, description: 'Get a streak of 10 correct answers' },
+    { type: 'accuracy', target: 90, description: 'Maintain 90% accuracy with at least 20 answers' },
+    { type: 'score', target: 1500, description: 'Score 1500+ points in Time Attack mode' },
+    { type: 'time', target: 120, description: 'Survive for 120 seconds in Time Attack Hard mode' },
+    { type: 'combo', target: 8, description: 'Reach an 8x combo' }
+  ],
+  
+  // Power-up effects
+  POWER_UP_EFFECTS: {
+    timeFreeze: { duration: 5, type: 'time' },
+    categoryReveal: { type: 'reveal' },
+    skipQuestion: { type: 'skip' }
+  },
+  
+  // Daily challenge reward
+  DAILY_CHALLENGE_XP_REWARD: 500
+};

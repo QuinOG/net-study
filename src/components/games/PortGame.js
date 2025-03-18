@@ -14,7 +14,15 @@ import GameModeDisplay from '../ui/GameModeDisplay';
 import QuestionCard from '../ui/QuestionCard';
 import GameHUD from '../ui/GameHUD';
 import MultipleChoiceAnswerSection from '../ui/MultipleChoiceAnswerSection';
-import { PORT_DATA, QUESTION_TYPES, GAME_MODES, DEFAULT_STATS, DIFFICULTY_LEVELS, BONUS_TYPES } from '../../constants/gameConstants';
+import { 
+  PORT_DATA, 
+  QUESTION_TYPES, 
+  GAME_MODES, 
+  DEFAULT_STATS, 
+  DIFFICULTY_LEVELS, 
+  BONUS_TYPES,
+  PORT_GAME_SETTINGS
+} from '../../constants/gameConstants';
 
 function PortGame() {
   const navigate = useNavigate();
@@ -48,11 +56,7 @@ function PortGame() {
   });
   
   const [showDifficultySelect, setShowDifficultySelect] = useState(false);
-  const [powerUps, setPowerUps] = useState({
-    timeFreeze: 2,
-    categoryReveal: 2,
-    skipQuestion: 1
-  });
+  const [powerUps, setPowerUps] = useState(PORT_GAME_SETTINGS.INITIAL_POWER_UPS);
   const [feedback, setFeedback] = useState({
     show: false,
     message: '',
@@ -85,7 +89,7 @@ function PortGame() {
   const [particlePosition, setParticlePosition] = useState({ x: 0, y: 0 });
   
   // Add streak milestones and rewards - increased thresholds for less spammy notifications
-  const streakMilestones = [10, 20, 30, 50, 100]; // Increased from [5, 10, 15, 25, 50, 100]
+  const streakMilestones = PORT_GAME_SETTINGS.STREAK_MILESTONES;
   const [achievedMilestones, setAchievedMilestones] = useState([]);
   const [showStreakReward, setShowStreakReward] = useState(false);
   const [streakReward, setStreakReward] = useState('');
@@ -307,14 +311,10 @@ function PortGame() {
     }, 3000);
     
     // Award bonus XP (will be applied when game ends)
-    setBonusXpEarned(prev => prev + 50);
+    setBonusXpEarned(prev => prev + PORT_GAME_SETTINGS.DAILY_CHALLENGE_XP_REWARD);
     
     // Add bonus power-ups
-    setPowerUps(prev => ({
-      timeFreeze: prev.timeFreeze + 1,
-      categoryReveal: prev.categoryReveal + 1,
-      skipQuestion: prev.skipQuestion + 1
-    }));
+    setPowerUps(prev => ({...prev, ...PORT_GAME_SETTINGS.INITIAL_POWER_UPS}));
     
     // Play achievement sound
     SoundManager.play('achievement');
@@ -603,10 +603,10 @@ function PortGame() {
       
       // Generate reward based on streak milestone
       let reward = '';
-      if (newStreak >= 30) {
+      if (newStreak >= 15) {
         reward = 'Extra Time Freeze Power-up';
         setPowerUps(prev => ({...prev, timeFreeze: prev.timeFreeze + 1}));
-      } else if (newStreak >= 20) {
+      } else if (newStreak >= 10) {
         reward = 'Extra Skip Power-up';
         setPowerUps(prev => ({...prev, skipQuestion: prev.skipQuestion + 1}));
       } else {
@@ -648,7 +648,7 @@ function PortGame() {
     updateDailyChallenge({ timeElapsed: timeRemaining });
     
     // Calculate score increase with multiplier and any active bonuses
-    const basePoints = 100;
+    const basePoints = PORT_GAME_SETTINGS.BASE_POINTS;
     const difficultyMultiplier = DIFFICULTY_LEVELS[difficulty].multiplier;
     let totalMultiplier = difficultyMultiplier * comboMultiplier;
     
@@ -673,7 +673,7 @@ function PortGame() {
     
     // Add time for time attack mode
     if (gameMode === GAME_MODES.TIME_ATTACK) {
-      const bonusTime = 5 + Math.floor((newCombo / 5)); // Extra time for combos
+      const bonusTime = PORT_GAME_SETTINGS.BONUS_TIME + Math.floor((newCombo / 5)); // Extra time for combos
       setTimeRemaining(prevTime => prevTime + bonusTime);
       
       // Customize feedback based on question type
@@ -797,20 +797,19 @@ function PortGame() {
     SoundManager.play('powerup');
     
     // Apply power-up effect
+    const effect = PORT_GAME_SETTINGS.POWER_UP_EFFECTS[type];
+    
     switch (type) {
       case 'timeFreeze':
-        // Pause the timer for 5 seconds
-        const originalTimeRemaining = timeRemaining;
+        setTimeRemaining(prev => prev + effect.duration);
         setFeedback({
           show: true,
-          message: 'Time Freeze: +5 seconds',
+          message: `Time Freeze: +${effect.duration} seconds`,
           isCorrect: true
         });
-        setTimeRemaining(prev => prev + 5);
         break;
         
       case 'categoryReveal':
-        // Reveal the category
         setCurrentQuestion(prev => ({
           ...prev,
           showCategory: true
@@ -823,7 +822,6 @@ function PortGame() {
         break;
         
       case 'skipQuestion':
-        // Skip to next question
         setCurrentQuestion(generateQuestion());
         setFeedback({
           show: true,
@@ -871,11 +869,7 @@ function PortGame() {
     setStartTime(Date.now());
     
     // Reset power-ups
-    setPowerUps({
-      timeFreeze: 2,
-      categoryReveal: 2,
-      skipQuestion: 1
-    });
+    setPowerUps(PORT_GAME_SETTINGS.INITIAL_POWER_UPS);
     
     // Play start game sound
     SoundManager.play('gameStart');
@@ -1129,3 +1123,5 @@ function PortGame() {
 }
 
 export default PortGame;
+
+
