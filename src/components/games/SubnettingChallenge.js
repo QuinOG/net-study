@@ -695,19 +695,10 @@ function SubnettingChallenge() {
             End Game & Collect XP
           </button>
         )}
-        
-        <button 
-          className="back-btn"
-          onClick={() => {
-            setGameStarted(false);
-            scrollToTop();
-          }}
-        >
-          Back to Menu
-        </button>
       </div>
     </div>
   );
 }
 
 export default SubnettingChallenge;
+
