@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
+import { useStreak } from '../../hooks/useStreak';
 import SoundManager from '../../utils/SoundManager';
 import scrollToTop from '../../utils/ScrollHelper';
 import { getAllGames, submitGameResults } from '../../services/api';
@@ -15,13 +16,8 @@ import QuestionCard from '../ui/QuestionCard';
 import GameHUD from '../ui/GameHUD';
 import MultipleChoiceAnswerSection from '../ui/MultipleChoiceAnswerSection';
 import { 
-  PORT_DATA, 
-  QUESTION_TYPES, 
-  GAME_MODES, 
-  DEFAULT_STATS, 
-  DIFFICULTY_LEVELS, 
-  BONUS_TYPES,
-  PORT_GAME_SETTINGS
+  PORT_DATA, QUESTION_TYPES, GAME_MODES, DEFAULT_STATS, 
+  DIFFICULTY_LEVELS, BONUS_TYPES,PORT_GAME_SETTINGS
 } from '../../constants/gameConstants';
 
 function PortGame() {
@@ -42,7 +38,7 @@ function PortGame() {
   const [userAnswer, setUserAnswer] = useState('');
   const [score, setScore] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+  const [incorrectAnswers, setCumulativeIncorrectAnswers] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [startTime, setStartTime] = useState(null);
@@ -93,12 +89,6 @@ function PortGame() {
   const [achievedMilestones, setAchievedMilestones] = useState([]);
   const [showStreakReward, setShowStreakReward] = useState(false);
   const [streakReward, setStreakReward] = useState('');
-
-  // Add daily challenge state
-  const [dailyChallenge, setDailyChallenge] = useState(null);
-  const [dailyChallengeProgress, setDailyChallengeProgress] = useState(0);
-  const [dailyChallengeCompleted, setDailyChallengeCompleted] = useState(false);
-  const [showDailyChallengeComplete, setShowDailyChallengeComplete] = useState(false);
   
   // Add surprise bonuses
   const [activeBonus, setActiveBonus] = useState(null);
@@ -205,11 +195,6 @@ function PortGame() {
     
     loadGameData();
   }, []);
-
-  // Generate daily challenge on mount
-  useEffect(() => {
-    generateDailyChallenge();
-  }, []);
   
   // Monitor bonus time
   useEffect(() => {
@@ -225,100 +210,6 @@ function PortGame() {
       SoundManager.play('click');
     }
   }, [bonusTimeRemaining, gameStarted]);
-  
-  // Generate a daily challenge
-  const generateDailyChallenge = () => {
-    // Get today's date as a seed
-    const today = new Date().toISOString().split('T')[0];
-    
-    // Check if user already completed today's challenge
-    const completedKey = `portGame_dailyChallenge_${today}_${getUserKey()}`;
-    const isCompleted = localStorage.getItem(completedKey) === 'completed';
-    
-    if (isCompleted) {
-      setDailyChallengeCompleted(true);
-    }
-    
-    // Choose a random challenge type
-    const challengeTypes = [
-      { type: 'streak', target: 10, description: 'Get a streak of 10 correct answers' },
-      { type: 'accuracy', target: 90, description: 'Maintain 90% accuracy with at least 20 answers' },
-      { type: 'score', target: 1500, description: 'Score 1500+ points in Time Attack mode' },
-      { type: 'time', target: 120, description: 'Survive for 120 seconds in Time Attack Hard mode' },
-      { type: 'combo', target: 8, description: 'Reach an 8x combo' }
-    ];
-    
-    // Use date as seed for consistent daily challenge
-    const seed = parseInt(today.replace(/-/g, ''));
-    const selectedChallenge = challengeTypes[seed % challengeTypes.length];
-    
-    setDailyChallenge(selectedChallenge);
-  };
-  
-  // Update daily challenge progress
-  const updateDailyChallenge = (stats) => {
-    if (!dailyChallenge || dailyChallengeCompleted) return;
-    
-    let progress = 0;
-    
-    switch (dailyChallenge.type) {
-      case 'streak':
-        progress = Math.min(100, (currentStreak / dailyChallenge.target) * 100);
-        break;
-      case 'accuracy':
-        if (correctAnswers + incorrectAnswers >= 20) {
-          const accuracy = (correctAnswers / (correctAnswers + incorrectAnswers)) * 100;
-          progress = Math.min(100, (accuracy / dailyChallenge.target) * 100);
-        } else {
-          progress = Math.min(100, ((correctAnswers / 20) * 90 / dailyChallenge.target) * 100);
-        }
-        break;
-      case 'score':
-        progress = Math.min(100, (score / dailyChallenge.target) * 100);
-        break;
-      case 'time':
-        if (gameMode === GAME_MODES.TIME_ATTACK && difficulty === 'HARD') {
-          progress = Math.min(100, ((stats.timeElapsed || 0) / dailyChallenge.target) * 100);
-        }
-        break;
-      case 'combo':
-        progress = Math.min(100, (combo / dailyChallenge.target) * 100);
-        break;
-    }
-    
-    setDailyChallengeProgress(progress);
-    
-    // Check if challenge completed
-    if (progress >= 100 && !dailyChallengeCompleted) {
-      completeDailyChallenge();
-    }
-  };
-  
-  // Complete daily challenge
-  const completeDailyChallenge = () => {
-    // Mark as completed
-    setDailyChallengeCompleted(true);
-    
-    // Store completion in localStorage
-    const today = new Date().toISOString().split('T')[0];
-    const completedKey = `portGame_dailyChallenge_${today}_${getUserKey()}`;
-    localStorage.setItem(completedKey, 'completed');
-    
-    // Show completion message and give bonus
-    setShowDailyChallengeComplete(true);
-    setTimeout(() => {
-      setShowDailyChallengeComplete(false);
-    }, 3000);
-    
-    // Award bonus XP (will be applied when game ends)
-    setBonusXpEarned(prev => prev + PORT_GAME_SETTINGS.DAILY_CHALLENGE_XP_REWARD);
-    
-    // Add bonus power-ups
-    setPowerUps(prev => ({...prev, ...PORT_GAME_SETTINGS.INITIAL_POWER_UPS}));
-    
-    // Play achievement sound
-    SoundManager.play('achievement');
-  };
   
   // Generate particles for effects
   const generateParticles = () => {
@@ -524,7 +415,10 @@ function PortGame() {
     }
   };
 
-  // Handle correct answer with enhanced feedback
+    /////////////////////////
+  // Handle Correct Answer //
+  /////////////////////////
+
   const handleCorrectAnswer = () => {
     SoundManager.play('correct');
     
@@ -535,16 +429,16 @@ function PortGame() {
     // Check if we should show a notification based on last notification time
     const currentTime = Date.now();
     const timeSinceLastNotification = currentTime - lastNotificationTime;
-    const canShowNotification = timeSinceLastNotification > 2000; // Minimum of 2 seconds between notifications
+    const canShowNotification = timeSinceLastNotification > 1000; // Minimum of 1 seconds between notifications
     
-    // Calculate speed bonus (max 100 points for answering in less than 2 seconds)
-    const calculatedSpeedBonus = timeTaken < 2000 ? Math.round((2000 - timeTaken) / 20) : 0;
+    // Calculate speed bonus (max 100 points for answering in less than 2 second)
+    const calculatedSpeedBonus = timeTaken < 2000 ? Math.round((1000 - timeTaken) / 20) : 0;
     setSpeedBonus(calculatedSpeedBonus);
     
-    // Only show speed bonus notification for significant bonuses (>=30) and if not too soon
-    if (calculatedSpeedBonus >= 30 && canShowNotification) {
+    // Only show speed bonus notification for significant bonuses (>=20) and if not too soon
+    if (calculatedSpeedBonus >= 20 && canShowNotification) {
       setShowSpeedBonus(true);
-      setTimeout(() => setShowSpeedBonus(false), 1500);
+      setTimeout(() => setShowSpeedBonus(false), 1000);
       setLastNotificationTime(currentTime);
     }
     
@@ -572,11 +466,11 @@ function PortGame() {
     if (!comboCooldown && canShowNotification && (multiplierChanged || newCombo === 5 || newCombo === 10 || newCombo === 15 || newCombo % 10 === 0)) {
       setComboMessage(`${newCombo}x Combo! ${newMultiplier}x Points`);
       setShowComboMessage(true);
-      setTimeout(() => setShowComboMessage(false), 1500);
+      setTimeout(() => setShowComboMessage(false), 2000);
       
       // Set cooldown for combo messages
       setComboCooldown(true);
-      setTimeout(() => setComboCooldown(false), 5000); // 5 second cooldown
+      setTimeout(() => setComboCooldown(false), 2000); // 2 second cooldown
       
       setLastNotificationTime(currentTime);
       
@@ -621,7 +515,7 @@ function PortGame() {
       
       // Set cooldown for streak messages
       setStreakCooldown(true);
-      setTimeout(() => setStreakCooldown(false), 10000); // 10 second cooldown
+      setTimeout(() => setStreakCooldown(false), 1000); // 1 second cooldown
       
       setLastNotificationTime(currentTime);
       
@@ -643,9 +537,6 @@ function PortGame() {
     
     // Possibly trigger a random bonus
     triggerRandomBonus();
-    
-    // Update daily challenge
-    updateDailyChallenge({ timeElapsed: timeRemaining });
     
     // Calculate score increase with multiplier and any active bonuses
     const basePoints = PORT_GAME_SETTINGS.BASE_POINTS;
@@ -671,41 +562,27 @@ function PortGame() {
     setShowXpPreview(true);
     setTimeout(() => setShowXpPreview(false), 2000);
     
-    // Add time for time attack mode
-    if (gameMode === GAME_MODES.TIME_ATTACK) {
-      const bonusTime = PORT_GAME_SETTINGS.BONUS_TIME + Math.floor((newCombo / 5)); // Extra time for combos
-      setTimeRemaining(prevTime => prevTime + bonusTime);
-      
-      // Customize feedback based on question type
-      if (currentQuestion.type === QUESTION_TYPES.PORT) {
-        setFeedback({
-          show: true,
-          isCorrect: true,
-          message: `Correct! Port ${currentQuestion.correctAnswer} is used for ${currentQuestion.protocol}. +${scoreIncrease} points, +${bonusTime}s`
-        });
-      } else {
-        setFeedback({
-          show: true,
-          isCorrect: true,
-          message: `Correct! Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}. +${scoreIncrease} points, +${bonusTime}s`
-        });
-      }
-    } else {
-      // Customize feedback based on question type
-      if (currentQuestion.type === QUESTION_TYPES.PORT) {
-        setFeedback({
-          show: true,
-          isCorrect: true,
-          message: `Correct! Port ${currentQuestion.correctAnswer} is used for ${currentQuestion.protocol}. +${scoreIncrease} points`
-        });
-      } else {
-        setFeedback({
-          show: true,
-          isCorrect: true,
-          message: `Correct! Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}. +${scoreIncrease} points`
-        });
-      }
-    }
+    // Add time penalty for time attack mode
+  const timePenalty = gameMode === GAME_MODES.TIME_ATTACK 
+    ? DIFFICULTY_LEVELS[difficulty].timePenalty
+    : 0;
+
+  if (timePenalty > 0) {
+    setTimeRemaining(prevTime => Math.max(0, prevTime + timePenalty));
+  }
+
+  // Customize feedback based on question type
+  const feedbackMessage = currentQuestion.type === QUESTION_TYPES.PORT
+    ? `${currentQuestion.protocol} uses port ${currentQuestion.correctAnswer}`
+    : `Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}`;
+
+  const timePenaltyText = timePenalty > 0 ? ` +${timePenalty}s added` : '';
+
+  setFeedback({
+    show: true,
+    isCorrect: true,
+    message: `Correct! ${feedbackMessage}${timePenaltyText}`,
+  });
     
     // Hide feedback after delay and generate new question
     setTimeout(() => {
@@ -722,7 +599,10 @@ function PortGame() {
     triggerRandomBonus();
   };
 
-  // Enhance incorrect answer feedback
+   /////////////////////////////
+  // Handle Incorrect Answer //
+ /////////////////////////////
+
   const handleIncorrectAnswer = () => {
     SoundManager.play('incorrect');
     
@@ -734,42 +614,28 @@ function PortGame() {
     // Prepare visual feedback
     setAnswerAnimation('incorrect-animation');
     setTimeout(() => setAnswerAnimation(''), 1000);
-    
-    // Add time penalty for time attack mode
-    if (gameMode === GAME_MODES.TIME_ATTACK) {
-      const timePenalty = DIFFICULTY_LEVELS[difficulty].timePenalty;
-      setTimeRemaining(prevTime => Math.max(0, prevTime - timePenalty));
-      
-      // Customize feedback based on question type
-      if (currentQuestion.type === QUESTION_TYPES.PORT) {
-        setFeedback({
-          show: true,
-          isCorrect: false,
-          message: `Incorrect! ${currentQuestion.protocol} uses port ${currentQuestion.correctAnswer}. -${timePenalty}s time penalty`
-        });
-      } else {
-        setFeedback({
-          show: true,
-          isCorrect: false,
-          message: `Incorrect! Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}. -${timePenalty}s time penalty`
-        });
-      }
-    } else {
-      // Customize feedback based on question type
-      if (currentQuestion.type === QUESTION_TYPES.PORT) {
-        setFeedback({
-          show: true,
-          isCorrect: false,
-          message: `Incorrect! ${currentQuestion.protocol} uses port ${currentQuestion.correctAnswer}`
-        });
-      } else {
-        setFeedback({
-          show: true,
-          isCorrect: false,
-          message: `Incorrect! Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}`
-        });
-      }
-    }
+
+    // Subtract time penalty for time attack mode
+  const timePenalty = gameMode === GAME_MODES.TIME_ATTACK 
+    ? DIFFICULTY_LEVELS[difficulty].timePenalty 
+    : 0;
+
+  if (timePenalty > 0) {
+    setTimeRemaining(prevTime => Math.max(0, prevTime - timePenalty));
+  }
+
+  // Customize feedback based on question type
+  const feedbackMessage = currentQuestion.type === QUESTION_TYPES.PORT
+    ? `${currentQuestion.protocol} uses port ${currentQuestion.correctAnswer}`
+    : `Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}`;
+
+  const timePenaltyText = timePenalty > 0 ? ` -${timePenalty}s time penalty` : '';
+
+  setFeedback({
+    show: true,
+    isCorrect: false,
+    message: `Incorrect! ${feedbackMessage}${timePenaltyText}`,
+  });
     
     // Hide feedback after delay and generate new question
     setTimeout(() => {
@@ -777,10 +643,10 @@ function PortGame() {
       setUserAnswer('');
       setAnswerCooldown(false);
       setCurrentQuestion(generateQuestion()); // Generate new question
-    }, 1500);
+    }, 2000);
     
     // Update stats
-    setIncorrectAnswers(prev => prev + 1);
+    setCumulativeIncorrectAnswers(prev => prev + 1);
   };
 
   // Handle power-up usage
@@ -861,7 +727,7 @@ function PortGame() {
     setShowGameOver(false);
     setScore(0);
     setCorrectAnswers(0);
-    setIncorrectAnswers(0);
+    setCumulativeIncorrectAnswers(0);
     setCurrentStreak(0);
     
     // Set initial time based on difficulty
@@ -1123,5 +989,3 @@ function PortGame() {
 }
 
 export default PortGame;
-
-

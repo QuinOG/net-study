@@ -14,8 +14,16 @@ import '../../styles/ui/StatsBar.css';
  * @param {number} props.stats.correctAnswers Number of correct answers
  * @returns {JSX.Element} A stats bar component
  */
-function StatsBar({ stats }) {
-  const { bestScore, bestStreak, gamesPlayed, totalAttempts, correctAnswers } = stats;
+function StatsBar({ stats = {} }) {
+  // Provide default values for all required stats
+  const {
+    bestScore = 0,
+    bestStreak = 0,
+    gamesPlayed = 0,
+    totalAttempts = 0,
+    correctAnswers = 0
+  } = stats;
+
   const [animatedStats, setAnimatedStats] = useState({
     bestScore: 0,
     bestStreak: 0,
@@ -23,10 +31,10 @@ function StatsBar({ stats }) {
     accuracy: 0
   });
   
-  // Animate the stats when they change
+  // Calculate accuracy
+  const accuracy = totalAttempts === 0 ? 0 : Math.floor((correctAnswers / totalAttempts) * 100);
+  
   useEffect(() => {
-    const accuracy = totalAttempts === 0 ? 0 : Math.floor((correctAnswers / totalAttempts) * 100);
-    
     // Start with current animated values
     const startValues = { ...animatedStats };
     
@@ -47,13 +55,9 @@ function StatsBar({ stats }) {
       const elapsed = currentTime - startTime;
       
       if (elapsed < duration) {
-        // Calculate progress (0 to 1)
         const progress = elapsed / duration;
-        
-        // Easing function (ease-out)
         const easeProgress = 1 - Math.pow(1 - progress, 3);
         
-        // Update animated values
         setAnimatedStats({
           bestScore: Math.floor(startValues.bestScore + (targetValues.bestScore - startValues.bestScore) * easeProgress),
           bestStreak: Math.floor(startValues.bestStreak + (targetValues.bestStreak - startValues.bestStreak) * easeProgress),
@@ -61,15 +65,12 @@ function StatsBar({ stats }) {
           accuracy: Math.floor(startValues.accuracy + (targetValues.accuracy - startValues.accuracy) * easeProgress)
         });
         
-        // Continue animation
         requestAnimationFrame(animateStats);
       } else {
-        // Ensure final values are exact
         setAnimatedStats(targetValues);
       }
     };
     
-    // Start animation
     requestAnimationFrame(animateStats);
     
   }, [bestScore, bestStreak, gamesPlayed, totalAttempts, correctAnswers]);

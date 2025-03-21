@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  FiHome, FiPlay, FiBarChart2, FiSettings, FiAward, FiChevronLeft,
-  FiTrendingUp, FiTarget, FiFlag, FiArrowRight
-} from 'react-icons/fi';
+import { FiHome, FiBarChart2, FiSettings, FiAward, FiChevronLeft } from 'react-icons/fi';
 import { UserContext } from '../../context/UserContext';
 import LevelProgress from '../ui/LevelProgress';
 import StreakCounter from '../ui/StreakCounter';
@@ -116,17 +113,8 @@ function Sidebar() {
         </nav>
       ) : (
         <div className="sidebar-progress">
-          {/* Level Progress */}
-
           <LevelProgress userXP={hasValidStats ? (userStats.totalXP || 0) : 0} />
-          
-          {/* Streak Section */}
-
           <StreakCounter streakDays={hasValidStats ? (userStats.currentStreak || 0) : 0} />
-          
-          {/* Recent Achievements Preview */}
-          {/* Daily Challenge */}
-          {/* Goals Section */}
         </div>
       )}
     </aside>
