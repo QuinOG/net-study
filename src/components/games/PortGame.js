@@ -24,13 +24,24 @@ function PortGame() {
   const { userStats, addXP, user } = useContext(UserContext);
   const timerIdRef = useRef(null);
   const questionRef = useRef(null);
-  
+  const answerTimeoutRef = useRef(null);
+
+  // --- State Setup ---
   const getUserKey = () => user?.id || user?.guestId || 'guest';
-  
-  // Game state
+
   const [gameStarted, setGameStarted] = useState(false);
   const [gameMode, setGameMode] = useState(null);
   const [difficulty, setDifficulty] = useState('EASY');
+  const [showDifficultySelect, setShowDifficultySelect] = useState(false);
+  const [showGameOver, setShowGameOver] = useState(false);
+  const [gameStats, setGameStats] = useState(() => {
+    const userKey = getUserKey();
+    const savedStats = localStorage.getItem(`portGameStats_${userKey}`);
+    return savedStats ? JSON.parse(savedStats) : DEFAULT_STATS;
+  });
+  const [gameId, setGameId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [userAnswer, setUserAnswer] = useState('');
   const [score, setScore] = useState(0);
@@ -40,82 +51,31 @@ function PortGame() {
   const [multiplier, setMultiplier] = useState(1);
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [startTime, setStartTime] = useState(null);
-  const [showGameOver, setShowGameOver] = useState(false);
-  
-  const [gameStats, setGameStats] = useState(() => {
-    const userKey = getUserKey();
-    const savedStats = localStorage.getItem(`portGameStats_${userKey}`);
-    return savedStats ? JSON.parse(savedStats) : DEFAULT_STATS;
-  });
-  
-  const [showDifficultySelect, setShowDifficultySelect] = useState(false);
   const [powerUps, setPowerUps] = useState(PORT_GAME_SETTINGS.INITIAL_POWER_UPS);
   const [feedback, setFeedback] = useState({ show: false, message: '', isCorrect: false });
-  const [gameId, setGameId] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [answerCooldown, setAnswerCooldown] = useState(false);
+  const [options, setOptions] = useState([]);
 
   const [answerAnimation, setAnswerAnimation] = useState('');
   const [scoreAnimation, setScoreAnimation] = useState(false);
   const [streakAnimation, setStreakAnimation] = useState(false);
   const [xpEarnedPreview, setXpEarnedPreview] = useState(0);
   const [showXpPreview, setShowXpPreview] = useState(false);
-  
   const [speedBonus, setSpeedBonus] = useState(0);
   const [showSpeedBonus, setShowSpeedBonus] = useState(false);
   const [answerStartTime, setAnswerStartTime] = useState(null);
-  
   const [showParticles, setShowParticles] = useState(false);
-  const [particleType, setParticleType] = useState('');
   const [particlePosition, setParticlePosition] = useState({ x: 0, y: 0 });
-  
   const streakMilestones = PORT_GAME_SETTINGS.STREAK_MILESTONES;
   const [achievedMilestones, setAchievedMilestones] = useState([]);
   const [showStreakReward, setShowStreakReward] = useState(false);
   const [streakReward, setStreakReward] = useState('');
-  
   const [activeBonus, setActiveBonus] = useState(null);
   const [showBonusMessage, setShowBonusMessage] = useState(false);
   const [bonusMessage, setBonusMessage] = useState('');
   const [bonusTimeRemaining, setBonusTimeRemaining] = useState(0);
-  
-  const [options, setOptions] = useState([]);
-  const [answerCooldown, setAnswerCooldown] = useState(false);
-  
-  useEffect(() => {
-    if (user) {
-      const userKey = getUserKey();
-      const savedStats = localStorage.getItem(`portGameStats_${userKey}`);
-      setGameStats(savedStats ? JSON.parse(savedStats) : {
-        bestScore: 0,
-        bestStreak: 0,
-        gamesPlayed: 0,
-        totalAttempts: 0,
-        correctAnswers: 0
-      });
-    }
-  }, [user]);
 
-  useEffect(() => {
-    if (gameStats) localStorage.setItem(`portGameStats_${getUserKey()}`, JSON.stringify(gameStats));
-  }, [gameStats]);
-
-  useEffect(() => {
-    let timerId;
-    if (gameStarted && gameMode === GAME_MODES.TIME_ATTACK && timeRemaining > 0) {
-      timerId = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
-            clearInterval(timerId);
-            endGame();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timerId);
-  }, [gameStarted, gameMode, timeRemaining]);
-
+  // --- Initial Data Loading ---
   useEffect(() => {
     const loadGameData = async () => {
       try {
@@ -135,69 +95,73 @@ function PortGame() {
   }, []);
 
   useEffect(() => {
+    if (user) {
+      const userKey = getUserKey();
+      const savedStats = localStorage.getItem(`portGameStats_${userKey}`);
+      setGameStats(savedStats ? JSON.parse(savedStats) : {
+        bestScore: 0,
+        bestStreak: 0,
+        gamesPlayed: 0,
+        totalAttempts: 0,
+        correctAnswers: 0
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (gameStats) localStorage.setItem(`portGameStats_${getUserKey()}`, JSON.stringify(gameStats));
+  }, [gameStats]);
+
+  // --- Game Mode Selection Logic ---
+  const initializeGame = (mode, diff) => {
+    scrollToTop();
+    setGameMode(mode);
+    setDifficulty(diff);
+    setGameStarted(true);
+    setCurrentQuestion(generateQuestion());
+    setShowGameOver(false);
+    setScore(0);
+    setCorrectAnswers(0);
+    setCumulativeIncorrectAnswers(0);
+    setCurrentStreak(0);
+    setMultiplier(1);
+    setTimeRemaining(DIFFICULTY_LEVELS[diff].timeLimit);
+    setStartTime(Date.now());
+    setPowerUps(PORT_GAME_SETTINGS.INITIAL_POWER_UPS);
+    setActiveBonus(null);
+    setBonusTimeRemaining(0);
+    setAchievedMilestones([]);
+    SoundManager.play('gameStart');
+  };
+
+  // --- Gameplay Logic ---
+  useEffect(() => {
+    let timerId;
+    if (gameStarted && gameMode === GAME_MODES.TIME_ATTACK && timeRemaining > 0) {
+      timerId = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            clearInterval(timerId);
+            endGame();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timerId);
+  }, [gameStarted, gameMode, timeRemaining]);
+
+  useEffect(() => {
     if (bonusTimeRemaining > 0 && gameStarted) {
       const timer = setTimeout(() => setBonusTimeRemaining(prev => prev - 1), 1000);
       return () => clearTimeout(timer);
     } else if (bonusTimeRemaining === 0 && activeBonus) {
       setActiveBonus(null);
+      setShowBonusMessage(false); // Explicitly hide bonus message when timer ends
       SoundManager.play('click');
     }
   }, [bonusTimeRemaining, gameStarted]);
-
-  const generateParticles = () => {
-    return Array.from({ length: 20 }, (_, i) => (
-      <div key={i} className="particles" style={{ '--delay': `${i * 0.05}s` }}></div>
-    ));
-  };
-
-  const triggerRandomBonus = () => {
-    // Removed bonusCooldown, timeSinceLastNotification checks
-    const bonusTypes = Object.values(BONUS_TYPES);
-    const randomBonus = bonusTypes[Math.floor(Math.random() * bonusTypes.length)];
-    setActiveBonus(randomBonus);
-    
-    switch (randomBonus) {
-      case BONUS_TYPES.DOUBLE_POINTS:
-        setBonusMessage('🔥 DOUBLE POINTS! 🔥');
-        setBonusTimeRemaining(15);
-        break;
-      case BONUS_TYPES.EXTRA_TIME:
-        if (gameMode === GAME_MODES.TIME_ATTACK) {
-          const extraTime = 30;
-          setTimeRemaining(prev => prev + extraTime);
-          setBonusMessage(`⏱️ +${extraTime} SECONDS! ⏱️`);
-        } else {
-          setPowerUps(prev => ({...prev, skipQuestion: prev.skipQuestion + 1}));
-          setBonusMessage('🎁 FREE SKIP POWER-UP! 🎁');
-        }
-        setBonusTimeRemaining(3);
-        break;
-      case BONUS_TYPES.POWER_UP:
-        setPowerUps(prev => ({
-          timeFreeze: prev.timeFreeze + 1,
-          categoryReveal: prev.categoryReveal + 1,
-          skipQuestion: prev.skipQuestion + 1
-        }));
-        setBonusMessage('🎁 ALL POWER-UPS +1! 🎁');
-        setBonusTimeRemaining(3);
-        break;
-      case BONUS_TYPES.INSTANT_POINTS:
-        const bonusPoints = 250;
-        setScore(prev => prev + bonusPoints);
-        setBonusMessage(`💰 +${bonusPoints} BONUS POINTS! 💰`);
-        setBonusTimeRemaining(3);
-        break;
-    }
-    
-    setShowBonusMessage(true); // No timeout to hide
-    const rect = questionRef.current?.getBoundingClientRect();
-    if (rect) {
-      setParticlePosition({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
-      setParticleType('bonus');
-      setShowParticles(true); // No timeout to hide
-    }
-    SoundManager.play('achievement');
-  };
 
   const getRandomPort = () => {
     const portList = Object.keys(PORT_DATA);
@@ -240,7 +204,7 @@ function PortGame() {
         protocol,
         correctAnswer: correctPort,
         category: PORT_DATA[correctPort].category,
-        hint: `Used for ${PORT_DATA[correctPort].category.toLowerCase()}`,
+        hint: `${PORT_DATA[correctPort].category.toLowerCase()}`,
         showCategory: false
       };
     } else {
@@ -252,14 +216,26 @@ function PortGame() {
         port,
         correctAnswer: protocol,
         category: PORT_DATA[port].category,
-        hint: `Used for ${PORT_DATA[port].category.toLowerCase()}`,
+        hint: `${PORT_DATA[port].category.toLowerCase()}`,
         showCategory: false
       };
     }
   };
 
+  const resetPopups = () => {
+    setShowSpeedBonus(false);
+    setShowStreakReward(false);
+    setShowBonusMessage(false);
+    setShowXpPreview(false);
+    setShowParticles(false);
+    setScoreAnimation(false);
+    setStreakAnimation(false);
+  };
+
   const handleAnswerClick = (selectedAnswer) => {
     if (answerCooldown) return;
+    if (answerTimeoutRef.current) clearTimeout(answerTimeoutRef.current);
+    resetPopups();
     setUserAnswer(selectedAnswer);
     setAnswerCooldown(true);
     currentQuestion.correctAnswer === selectedAnswer ? handleCorrectAnswer() : handleIncorrectAnswer();
@@ -274,12 +250,12 @@ function PortGame() {
     const calculatedSpeedBonus = timeTaken < 2000 ? Math.round((1000 - timeTaken) / 20) : 0;
     setSpeedBonus(calculatedSpeedBonus);
     if (calculatedSpeedBonus >= 20) {
-      setShowSpeedBonus(true); // No timeout to hide
+      setShowSpeedBonus(true);
     }
     
     const newStreak = currentStreak + 1;
     setCurrentStreak(newStreak);
-    setStreakAnimation(true); // No timeout to hide
+    setStreakAnimation(true);
     
     let newMultiplier = 1;
     if (newStreak >= 9) newMultiplier = 2.5;
@@ -301,17 +277,16 @@ function PortGame() {
         setPowerUps(prev => ({...prev, categoryReveal: prev.categoryReveal + 1}));
       }
       setStreakReward(reward);
-      setShowStreakReward(true); // No timeout to hide
+      setShowStreakReward(true);
       SoundManager.play('achievement');
       const rect = questionRef.current?.getBoundingClientRect();
       if (rect) {
         setParticlePosition({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
-        setParticleType('milestone');
-        setShowParticles(true); // No timeout to hide
+        setShowParticles(true);
       }
     }
     
-    triggerRandomBonus();
+    if (Math.random() < 0.1) triggerRandomBonus();
     
     const basePoints = PORT_GAME_SETTINGS.BASE_POINTS;
     const difficultyMultiplier = DIFFICULTY_LEVELS[difficulty].multiplier;
@@ -321,35 +296,25 @@ function PortGame() {
     const scoreIncrease = Math.round(basePoints * totalMultiplier) + calculatedSpeedBonus;
     const newScore = score + scoreIncrease;
     setScore(newScore);
-    setScoreAnimation(true); // No timeout to hide
+    setScoreAnimation(true);
     
     const potentialXp = Math.max(10, Math.floor(newScore / 10));
     setXpEarnedPreview(potentialXp);
-    setShowXpPreview(true); // No timeout to hide
+    setShowXpPreview(true);
     
     const timePenalty = gameMode === GAME_MODES.TIME_ATTACK ? DIFFICULTY_LEVELS[difficulty].timePenalty : 0;
     if (timePenalty > 0) setTimeRemaining(prevTime => Math.max(0, prevTime + timePenalty));
 
-    const feedbackMessage = currentQuestion.type === QUESTION_TYPES.PORT
-      ? `${currentQuestion.protocol} uses port ${currentQuestion.correctAnswer}`
-      : `Port ${currentQuestion.port} uses ${currentQuestion.correctAnswer}`;
     const timePenaltyText = timePenalty > 0 ? ` +${timePenalty}s added` : '';
-    setFeedback({ show: true, isCorrect: true, message: `Correct! ${feedbackMessage}${timePenaltyText}` });
+    setFeedback({ show: true, isCorrect: true, message: `Correct! +${scoreIncrease} points! ${timePenaltyText}` });
     
-    setTimeout(() => {
+    answerTimeoutRef.current = setTimeout(() => {
       setFeedback({ show: false, isCorrect: true, message: '' });
       setUserAnswer('');
       setAnswerCooldown(false);
+      resetPopups();
       setCurrentQuestion(generateQuestion());
-      // Reset popups for next answer
-      setShowSpeedBonus(false);
-      setShowStreakReward(false);
-      setShowBonusMessage(false);
-      setShowXpPreview(false);
-      setShowParticles(false);
-      setScoreAnimation(false);
-      setStreakAnimation(false);
-    }, 2000);
+    }, 1000); // Increased to 1500ms for consistency
     
     setCorrectAnswers(prev => prev + 1);
   };
@@ -370,13 +335,14 @@ function PortGame() {
     const timePenaltyText = timePenalty > 0 ? ` -${timePenalty}s time penalty` : '';
     setFeedback({ show: true, isCorrect: false, message: `Incorrect! ${feedbackMessage}${timePenaltyText}` });
     
-    setTimeout(() => {
+    answerTimeoutRef.current = setTimeout(() => {
       setFeedback({ show: false, isCorrect: false, message: '' });
       setUserAnswer('');
       setAnswerCooldown(false);
+      setAnswerAnimation('');
+      resetPopups();
       setCurrentQuestion(generateQuestion());
-      setAnswerAnimation(''); // Reset animation after delay
-    }, 2000);
+    }, 1500);
     
     setCumulativeIncorrectAnswers(prev => prev + 1);
   };
@@ -401,30 +367,63 @@ function PortGame() {
         setFeedback({ show: true, message: 'Question skipped!', isCorrect: true });
         break;
     }
-    setTimeout(() => setFeedback({ show: false, message: '', isCorrect: false }), 2000);
+    answerTimeoutRef.current = setTimeout(() => setFeedback({ show: false, message: '', isCorrect: false }), 1500);
   };
 
-  const initializeGame = (mode, diff) => {
-    scrollToTop();
-    setGameMode(mode);
-    setDifficulty(diff);
-    setGameStarted(true);
-    setCurrentQuestion(generateQuestion());
-    setShowGameOver(false);
-    setScore(0);
-    setCorrectAnswers(0);
-    setCumulativeIncorrectAnswers(0);
-    setCurrentStreak(0);
-    setMultiplier(1);
-    setTimeRemaining(DIFFICULTY_LEVELS[diff].timeLimit);
-    setStartTime(Date.now());
-    setPowerUps(PORT_GAME_SETTINGS.INITIAL_POWER_UPS);
-    setActiveBonus(null);
-    setBonusTimeRemaining(0);
-    setAchievedMilestones([]);
-    SoundManager.play('gameStart');
+  const generateParticles = () => {
+    return Array.from({ length: 20 }, (_, i) => (
+      <div key={i} className="particles" style={{ '--delay': `${i * 0.05}s` }}></div>
+    ));
   };
 
+  const triggerRandomBonus = () => {
+    const bonusTypes = Object.values(BONUS_TYPES);
+    const randomBonus = bonusTypes[Math.floor(Math.random() * bonusTypes.length)];
+    setActiveBonus(randomBonus);
+    
+    switch (randomBonus) {
+      case BONUS_TYPES.DOUBLE_POINTS:
+        setBonusMessage('🔥 DOUBLE POINTS! 🔥');
+        setBonusTimeRemaining(15);
+        break;
+      case BONUS_TYPES.EXTRA_TIME:
+        if (gameMode === GAME_MODES.TIME_ATTACK) {
+          const extraTime = 30;
+          setTimeRemaining(prev => prev + extraTime);
+          setBonusMessage(`⏱️ +${extraTime} SECONDS! ⏱️`);
+        } else {
+          setPowerUps(prev => ({...prev, skipQuestion: prev.skipQuestion + 1}));
+          setBonusMessage('🎁 FREE SKIP POWER-UP! 🎁');
+        }
+        setBonusTimeRemaining(3);
+        break;
+      case BONUS_TYPES.POWER_UP:
+        setPowerUps(prev => ({
+          timeFreeze: prev.timeFreeze + 1,
+          categoryReveal: prev.categoryReveal + 1,
+          skipQuestion: prev.skipQuestion + 1
+        }));
+        setBonusMessage('🎁 ALL POWER-UPS +1! 🎁');
+        setBonusTimeRemaining(3);
+        break;
+      case BONUS_TYPES.INSTANT_POINTS:
+        const bonusPoints = 250;
+        setScore(prev => prev + bonusPoints);
+        setBonusMessage(`💰 +${bonusPoints} BONUS POINTS! 💰`);
+        setBonusTimeRemaining(3);
+        break;
+    }
+    
+    setShowBonusMessage(true);
+    const rect = questionRef.current?.getBoundingClientRect();
+    if (rect) {
+      setParticlePosition({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+      setShowParticles(true);
+    }
+    SoundManager.play('achievement');
+  };
+
+  // --- Game Over Logic ---
   const endGame = async () => {
     const updatedStats = {
       ...gameStats,
@@ -444,6 +443,7 @@ function PortGame() {
     SoundManager.play('gameOver');
   };
 
+  // --- Render Logic ---
   if (!gameStarted) {
     if (showDifficultySelect) {
       return (
