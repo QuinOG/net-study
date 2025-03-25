@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+When performing any code modifications, you must include clear and descriptive comments to ensure full transparency and maintainability of the codebase. This rule requires that:
+
+Purpose Explanation: Every code edit must be accompanied by a comment that explains why the change was made and what issue or improvement it addresses.
+
+Functionality Details: Comments should detail the logic behind modifications, including any assumptions or specific conditions relevant to the change.
+
+Standard Conventions: All comments must adhere to the established commenting conventions of the programming language in use, ensuring consistency and clarity.
+
+Context Provision: For non-trivial code sections, include inline comments to explain complex logic and block comments for broader context, making the code easier to understand for any future reviewer.

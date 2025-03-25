@@ -1,0 +1,1070 @@
+/* 
+ * Lesson Detail Page Styles
+ * Contains styles for all lesson components, tabs, and interactive elements
+ * Implements a modular design for digestible content sections
+ */
+
+/* Main container styles */
+.lesson-detail-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Lesson header with title and metadata */
+.lesson-header {
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.5rem;
+  position: relative;
+}
+
+/* Back button with animation effects */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #b1bdd0;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: rgba(30, 41, 59, 0.4);
+  width: fit-content;
+}
+
+/* Hover effect for back button with smooth translation */
+.back-button:hover {
+  color: #4ce082;
+  background: rgba(76, 224, 130, 0.1);
+  transform: translateX(-5px);
+}
+
+/* Lesson title with gradient underline */
+.lesson-header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1.2rem;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  position: relative;
+  display: inline-block;
+}
+
+/* Gradient underline for the title */
+.lesson-header h1::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* Container for lesson metadata like duration and prerequisites */
+.lesson-meta {
+  display: flex;
+  gap: 1.8rem;
+  flex-wrap: wrap;
+}
+
+/* Shared styles for metadata badges */
+.lesson-duration,
+.lesson-prerequisites {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #b1bdd0;
+  font-size: 0.95rem;
+  background: rgba(30, 41, 59, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+}
+
+/* Icon styling within metadata badges */
+.lesson-duration svg,
+.lesson-prerequisites svg {
+  color: #4ce082;
+}
+
+/* Tab navigation for different lesson sections */
+.lesson-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0;
+}
+
+/* Individual tab styling with hover effects */
+.lesson-tab {
+  padding: 0.85rem 1.5rem;
+  background: transparent;
+  color: #b1bdd0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient underline effect on tab hover */
+.lesson-tab::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  transition: width 0.3s ease;
+}
+
+/* Text color change on tab hover */
+.lesson-tab:hover {
+  color: #ffffff;
+}
+
+/* Expand underline on tab hover */
+.lesson-tab:hover::before {
+  width: 40%;
+}
+
+/* Active tab styling */
+.lesson-tab.active {
+  color: #4ce082;
+  font-weight: 600;
+}
+
+/* Full underline for active tab */
+.lesson-tab.active::before {
+  width: 100%;
+}
+
+/* Main content container styling with gradient background */
+.lesson-content-container {
+  background: linear-gradient(to bottom, rgba(30, 47, 87, 0.8), rgba(13, 27, 52, 0.8));
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 2rem;
+}
+
+/* Base markdown content styling */
+.markdown-content {
+  color: #e0e6f0;
+  line-height: 1.6;
+}
+
+/* Heading styles for markdown content */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5 {
+  margin-top: 2rem;
+  margin-bottom: 1.2rem;
+  color: #ffffff;
+  font-weight: 600;
+  position: relative;
+}
+
+/* Specific styling for H3 in markdown */
+.markdown-content h3 {
+  font-size: 1.8rem;
+  margin-top: 2.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Specific styling for H4 in markdown */
+.markdown-content h4 {
+  font-size: 1.4rem;
+}
+
+/* Specific styling for H5 in markdown with accent color */
+.markdown-content h5 {
+  font-size: 1.2rem;
+  color: #4ce082;
+  margin-top: 1.75rem;
+}
+
+/* Paragraph styling in markdown */
+.markdown-content p {
+  margin-bottom: 1.2rem;
+  line-height: 1.7;
+}
+
+/* List styling in markdown */
+.markdown-content ul,
+.markdown-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.8rem;
+}
+
+/* List item styling in markdown */
+.markdown-content li {
+  margin-bottom: 0.7rem;
+  line-height: 1.6;
+}
+
+/* Inline code styling in markdown */
+.markdown-content code {
+  background-color: rgba(0, 0, 0, 0.25);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+  color: #4ce082;
+}
+
+/* Code block styling in markdown */
+.markdown-content pre {
+  background-color: rgba(0, 0, 0, 0.25);
+  padding: 1.2rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  border-left: 3px solid #4ce082;
+}
+
+/* Blockquote styling in markdown */
+.markdown-content blockquote {
+  border-left: 4px solid #4ce082;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  background-color: rgba(76, 224, 130, 0.1);
+  border-radius: 0 8px 8px 0;
+  color: #b1bdd0;
+}
+
+/* Quiz container styling */
+.quiz-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Quiz form heading styling */
+.quiz-form h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  color: #ffffff;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+}
+
+/* Gradient underline for quiz heading */
+.quiz-form h3::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* Quiz introduction text */
+.quiz-form > p {
+  color: #b1bdd0;
+  font-size: 1.05rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+/* Individual quiz question container */
+.quiz-question {
+  margin-bottom: 2.5rem;
+  padding: 1.8rem;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+/* Question title styling */
+.quiz-question h4 {
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Container for multiple choice options */
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Option label styling with hover effects */
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+/* Hover effect for option labels */
+.option-label:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(76, 224, 130, 0.3);
+  transform: translateX(5px);
+}
+
+/* Radio button styling for multiple choice */
+.option-label input {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  accent-color: #4ce082;
+}
+
+/* Text styling for multiple choice options */
+.option-label span {
+  color: #e0e6f0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+/* Textarea styling for open-ended questions */
+.open-question-input {
+  width: 100%;
+  padding: 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 1rem;
+  resize: vertical;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+/* Focus effect for textarea */
+.open-question-input:focus {
+  outline: none;
+  border-color: rgba(76, 224, 130, 0.5);
+  box-shadow: 0 0 15px rgba(76, 224, 130, 0.2);
+}
+
+/* Submit button for quiz */
+.submit-quiz-btn {
+  padding: 0.9rem 2rem;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  color: #0d1b34;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 2.5rem auto 0;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+}
+
+/* Hover effect for submit button */
+.submit-quiz-btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Hover movement and shadow for submit button */
+.submit-quiz-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(76, 224, 130, 0.4);
+}
+
+/* Show gradient on hover */
+.submit-quiz-btn:hover::before {
+  opacity: 1;
+}
+
+/* Quiz completed state styling */
+.quiz-completed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+/* Success checkmark styling */
+.quiz-completed svg {
+  color: #4ce082;
+  margin-bottom: 1.5rem;
+}
+
+/* Quiz completed heading */
+.quiz-completed h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Quiz completed text */
+.quiz-completed p {
+  color: #b1bdd0;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* Next lesson button */
+.next-lesson-btn {
+  background: linear-gradient(135deg, #4ce082, #3bb0c9);
+  border: none;
+  color: #0d1b34;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 15px rgba(76, 224, 130, 0.3);
+}
+
+/* Hover effect for next lesson button */
+.next-lesson-btn:hover {
+  box-shadow: 0 6px 20px rgba(76, 224, 130, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Activities container styling */
+.activities-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Activity card styling */
+.activity-card {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Activity heading with gradient underline */
+.activity-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+/* Gradient underline for activity heading */
+.activity-card h3::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* Activity content styling */
+.activity-content {
+  color: #e0e6f0;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+/* Mark complete button styling */
+.mark-complete-btn {
+  background: linear-gradient(135deg, #4ce082, #3bb0c9);
+  border: none;
+  color: #0d1b34;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  box-shadow: 0 4px 15px rgba(76, 224, 130, 0.3);
+}
+
+/* Hover effect for mark complete button */
+.mark-complete-btn:hover {
+  box-shadow: 0 6px 20px rgba(76, 224, 130, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Loading and error states */
+.lesson-loading,
+.lesson-error {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #b1bdd0;
+  font-size: 1.2rem;
+}
+
+/* Loading state with spinner animation */
+.lesson-loading {
+  position: relative;
+}
+
+/* Loading spinner animation */
+.lesson-loading::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(76, 224, 130, 0.3);
+  border-top: 3px solid #4ce082;
+  border-radius: 50%;
+  margin: 2rem auto 0;
+  animation: spin 1.5s linear infinite;
+}
+
+/* Spinner rotation animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .lesson-detail-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .lesson-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .lesson-tabs {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  
+  .lesson-tab {
+    padding: 0.7rem 1rem;
+    white-space: nowrap;
+  }
+  
+  .lesson-content-container {
+    padding: 1.5rem;
+  }
+  
+  .quiz-question {
+    padding: 1.2rem;
+  }
+  
+  .option-label {
+    padding: 0.75rem 1rem;
+  }
+  
+  .markdown-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  .markdown-content h4 {
+    font-size: 1.3rem;
+  }
+  
+  .quiz-completed {
+    padding: 2.5rem 1rem;
+  }
+  
+  .quiz-completed h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Lesson completion overlay */
+.lesson-completion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 27, 52, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Content container for completion overlay */
+.completion-content {
+  background: linear-gradient(135deg, #1e2f57, #0d1b34);
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(76, 224, 130, 0.3);
+  max-width: 90%;
+  width: 500px;
+  animation: scaleIn 0.5s ease-in-out;
+}
+
+/* Award icon animation in completion overlay */
+.completion-icon {
+  font-size: 5rem;
+  color: #4ce082;
+  margin-bottom: 1.5rem;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* Completion message heading */
+.completion-content h2 {
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+/* Completion message text */
+.completion-content p {
+  font-size: 1.2rem;
+  color: #b1bdd0;
+  margin-bottom: 1.5rem;
+}
+
+/* Redirect message styling and animation */
+.redirect-message {
+  font-size: 1rem !important;
+  color: #4ce082 !important;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Fade in animation for overlay */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Scale in animation for content */
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Pulse animation for highlight elements */
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Lesson completed badge in lesson header */
+.lesson-completed-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #4ce082;
+  font-size: 0.95rem;
+  background: rgba(76, 224, 130, 0.15);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Icon in completed badge */
+.lesson-completed-badge svg {
+  color: #4ce082;
+}
+
+/* Action buttons container for content sections */
+.lesson-content-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Digestible content sections */
+.content-sections {
+  margin-top: 2rem;
+}
+
+/* Individual content section styling */
+.content-section {
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(13, 27, 52, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for content sections */
+.content-section:hover {
+  border-color: rgba(76, 224, 130, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Section header with toggle functionality */
+.section-header {
+  padding: 1.2rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(30, 47, 87, 0.5);
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for section header */
+.section-header:hover {
+  background: rgba(30, 47, 87, 0.7);
+}
+
+/* Section title styling */
+.section-header h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Chevron icon in section header */
+.section-header svg {
+  font-size: 1.2rem;
+  color: #4ce082;
+  transition: transform 0.3s ease;
+}
+
+/* Additional styling for expanded section */
+.section-header.expanded {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Rotate chevron icon when section is expanded */
+.section-header svg.rotate {
+  transform: rotate(180deg);
+}
+
+/* Section content container */
+.section-content {
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Key Takeaways tab */
+.takeaways-container {
+  padding: 1.5rem;
+  background: rgba(13, 27, 52, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Key takeaways heading */
+.takeaways-container h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.75rem;
+}
+
+/* Gradient underline for takeaways heading */
+.takeaways-container h3::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* Takeaways content styling */
+.takeaways-content {
+  color: #e0e6f0;
+  line-height: 1.7;
+}
+
+/* Takeaways list styling */
+.takeaways-content ul {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Takeaways list items with custom bullets */
+.takeaways-content li {
+  margin-bottom: 0.75rem;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+/* Custom bullet points for takeaways */
+.takeaways-content li::before {
+  content: "";
+  position: absolute;
+  left: -1rem;
+  top: 0.6rem;
+  width: 8px;
+  height: 8px;
+  background: #4ce082;
+  border-radius: 50%;
+}
+
+/* Responsive styles for digestible sections */
+@media (max-width: 768px) {
+  .section-header {
+    padding: 1rem;
+  }
+  
+  .section-header h4 {
+    font-size: 1.1rem;
+  }
+  
+  .section-content {
+    padding: 1rem;
+  }
+  
+  .completion-content {
+    padding: 2rem;
+  }
+  
+  .completion-icon {
+    font-size: 4rem;
+  }
+  
+  .completion-content h2 {
+    font-size: 1.8rem;
+  }
+}
+
+/* 
+ * Section-based tab navigation 
+ * Creates a flexible, wrap-friendly navigation for all sections in the lesson
+ * Allows users to jump directly to any section for more focused learning
+ */
+.section-tabs {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 
+ * Style for section tabs to make them more compact and visually distinct
+ * Uses pill-shaped buttons for better visual grouping and scannability
+ */
+.section-tabs .lesson-tab {
+  padding: 0.7rem 1.2rem;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  border-radius: 20px;
+  margin-bottom: 0.5rem;
+  background: rgba(13, 27, 52, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* 
+ * Hover effect for section tabs with subtle elevation 
+ * Provides clear visual feedback when users interact with tabs
+ */
+.section-tabs .lesson-tab:hover {
+  background: rgba(30, 47, 87, 0.7);
+  transform: translateY(-2px);
+}
+
+/* 
+ * Active state for section tabs with accent color background
+ * Makes the current section clearly visible in the navigation
+ */
+.section-tabs .lesson-tab.active {
+  background: rgba(76, 224, 130, 0.15);
+  color: #4ce082;
+  font-weight: 600;
+}
+
+/* 
+ * Special styling for the completion tab 
+ * Visually distinguished from content tabs to indicate its special purpose
+ * Uses the accent color to draw attention as the final action
+ */
+.lesson-tab.completion-tab {
+  background: rgba(76, 224, 130, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Icon sizing within the completion tab */
+.lesson-tab.completion-tab svg {
+  font-size: 1rem;
+}
+
+/* 
+ * Section content tab container 
+ * Provides consistent padding for all section content
+ */
+.section-content-tab {
+  padding: 0.5rem;
+}
+
+/* 
+ * Next section button navigation container
+ * Adds a subtle separator and consistent positioning
+ */
+.section-navigation {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 
+ * Next section button styling
+ * Provides a clear navigation path through the lesson
+ * Uses a subtle gradient and border to stand out from content
+ */
+.next-section-btn {
+  background: linear-gradient(135deg, #1e2f57, #0d1b34);
+  border: 1px solid rgba(76, 224, 130, 0.3);
+  color: #fff;
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 
+ * Hover effect for next section button
+ * Provides clear feedback and subtle elevation effect
+ */
+.next-section-btn:hover {
+  background: linear-gradient(135deg, #223463, #162442);
+  border-color: rgba(76, 224, 130, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 
+ * Improved heading styles for section content
+ * Makes section headings more prominent within the content
+ * Creates visual hierarchy with size, color, and border styling
+ */
+.markdown-content h5 {
+  font-size: 1.6rem;
+  color: #ffffff;
+  margin: 1.5rem 0 1.2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+/* 
+ * Gradient underline for section headings
+ * Adds visual interest and reinforces the design language
+ */
+.markdown-content h5::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* 
+ * Responsive style adjustments for section tabs
+ * Ensures usability across mobile and tablet devices
+ * Implements horizontal scrolling for smaller screens
+ */
+@media (max-width: 768px) {
+  .section-tabs {
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  
+  /* Custom scrollbar styling for better usability */
+  .section-tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .section-tabs::-webkit-scrollbar-track {
+    background: rgba(13, 27, 52, 0.3);
+    border-radius: 10px;
+  }
+  
+  .section-tabs::-webkit-scrollbar-thumb {
+    background: rgba(76, 224, 130, 0.3);
+    border-radius: 10px;
+  }
+  
+  /* Smaller tabs for mobile screens */
+  .section-tabs .lesson-tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  
+  /* Smaller navigation buttons for mobile screens */
+  .next-section-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Smaller heading size for mobile screens */
+  .markdown-content h5 {
+    font-size: 1.4rem;
+  }
+} 

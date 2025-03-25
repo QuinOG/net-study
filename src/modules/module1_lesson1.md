@@ -1,10 +1,6 @@
 # Fundamental Path - Detailed Lesson Breakdowns
-
 ## Module 1: Introduction to Networking Concepts
-
-### Section 1: What is Networking?
-
-#### Lesson 1.1: Definition and Importance of Computer Networks
+### Lesson 1.1: Definition and Importance of Computer Networks
 
 **Learning Goal:** Understand what computer networks are and why they are essential in modern computing.
 

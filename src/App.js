@@ -15,6 +15,8 @@ import Sidebar from './components/layout/Sidebar';
 import ScrollToTop from './components/layout/ScrollToTop';
 import Settings from './components/ui/Settings';
 import LandingPage from './components/ui/LandingPage';
+import LearningPaths from './components/ui/LearningPaths';
+import LessonDetail from './components/ui/LessonDetail';
 
 // New Gamification components
 import { UserProvider, UserContext } from './context/UserContext';
@@ -129,6 +131,8 @@ function AppContent() {
                 <Route path="/firewall-rules" element={<FirewallRulesGame />} />
                 <Route path="/encryption-challenge" element={<EncryptionChallengeGame />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/learning-paths" element={<LearningPaths />} />
+                <Route path="/learning/module/:moduleId/lesson/:lessonId" element={<LessonDetail />} />
                 <Route path="/achievements" element={
                   <div className="content">
                     <h3 className="section-title">Your Achievements</h3>
@@ -172,6 +176,7 @@ function AppContent() {
       <Route path="/firewall-rules" element={<Navigate to="/dashboard/firewall-rules" replace />} />
       <Route path="/encryption-challenge" element={<Navigate to="/dashboard/encryption-challenge" replace />} />
       <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
+      <Route path="/learning-paths" element={<Navigate to="/dashboard/learning-paths" replace />} />
       <Route path="/achievements" element={<Navigate to="/dashboard/achievements" replace />} />
       <Route path="/stats" element={<Navigate to="/dashboard/stats" replace />} />
     </Routes>
