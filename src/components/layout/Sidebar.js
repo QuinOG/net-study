@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FiHome, FiBarChart2, FiSettings, FiAward, FiChevronLeft } from 'react-icons/fi';
+import { FiHome, FiPlay, FiBarChart2, FiSettings, FiMap, FiChevronLeft } from 'react-icons/fi';
 import { UserContext } from '../../context/UserContext';
 import LevelProgress from '../ui/LevelProgress';
 import StreakCounter from '../ui/StreakCounter';
@@ -63,14 +63,26 @@ function Sidebar() {
           <ul>
             <li 
               className={isActive('/dashboard') && !location.pathname.includes('/dashboard/') ? 'active' : ''} 
-              data-title="Dashboard"
+              data-title="Games"
               onClick={navigateTo('/dashboard')}
+            >
+              <span className="nav-item-icon">
+                <FiPlay size={20} />
+              </span>
+              <span className="nav-item-text">
+                Games
+              </span>
+            </li>
+            <li 
+              className={isActive('/dashboard/learning-paths') ? 'active' : ''} 
+              data-title="Learning Paths"
+              onClick={navigateTo('/dashboard/learning-paths')}
             >
               <span className="nav-item-icon">
                 <FiHome size={20} />
               </span>
               <span className="nav-item-text">
-                Dashboard
+                Learning Paths
               </span>
             </li>
             <li 
@@ -91,7 +103,7 @@ function Sidebar() {
               onClick={navigateTo('/dashboard/achievements')}
             >
               <span className="nav-item-icon">
-                <FiAward size={20} />
+                <FiMap size={20} />
               </span>
               <span className="nav-item-text">
                 Achievements
@@ -122,3 +134,5 @@ function Sidebar() {
 }
 
 export default Sidebar;
+
+

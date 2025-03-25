@@ -155,29 +155,7 @@ function AppContent() {
               data={milestoneData.data} 
               onComplete={() => setShowMilestone(false)} 
             />
-            
-            {/* Add test button - positioned at the bottom right */}
-            {user && (
-              <button 
-                onClick={testMilestone}
-                style={{
-                  position: 'fixed',
-                  bottom: '20px',
-                  right: '20px',
-                  zIndex: 900,
-                  padding: '10px 15px',
-                  background: 'linear-gradient(135deg, #f6ad55, #ed8936)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
-              >
-                Test Level-Up
-              </button>
-            )}
+
           </div>
         ) : (
           <Navigate to="/" replace />
