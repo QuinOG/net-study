@@ -111,12 +111,93 @@ This network enables:
 3. Identify the central connection point (router/switch)
 4. Draw a simple diagram showing how these devices connect
 
+**Example: Using commands to identify network devices**
+
+On Windows, you can use the following command to view connected devices on your network:
+```powershell
+# List devices that your computer has communicated with
+arp -a
+
+# Show detailed information about your network adapters
+ipconfig /all
+
+# Scan your network to discover devices (requires administrator privileges)
+ping -n 1 192.168.1.255 
+```
+
+On Linux or macOS, you can use:
+```bash
+# Display the ARP table to see recently communicated devices
+arp -a
+
+# For more detailed information about network neighbors
+ip neigh show
+
+# Find devices on your network using nmap (may need to be installed)
+sudo nmap -sn 192.168.1.0/24
+```
+
+To check your network configuration:
+```bash
+# Windows
+ipconfig /all
+
+# Linux/macOS
+ifconfig
+# or on newer Linux systems
+# The following line shows your IP address and network interfaces #highlight
+ip addr show
+```
+
+To test connectivity to another device:
+```bash
+# Testing connectivity to Google's DNS server
+ping 8.8.8.8
+
+# Testing with more detailed information on Windows
+tracert 8.8.8.8
+
+# Testing with more detailed information on Linux/macOS
+traceroute 8.8.8.8
+```
+
+**Expected Output Examples:**
+
+When running `arp -a` on Windows, you might see something like:
+```
+Interface: 192.168.1.5 --- 0x10
+  Internet Address      Physical Address      Type
+  192.168.1.1           00-11-22-33-44-55     dynamic
+  192.168.1.20          aa-bb-cc-dd-ee-ff     dynamic
+  192.168.1.25          11-22-33-44-55-66     dynamic
+```
+
+When running `ip neigh show` on Linux:
+```
+192.168.1.1 dev wlan0 lladdr 00:11:22:33:44:55 REACHABLE
+192.168.1.20 dev wlan0 lladdr aa:bb:cc:dd:ee:ff STALE
+192.168.1.25 dev wlan0 lladdr 11:22:33:44:55:66 REACHABLE
+```
+
+**Advanced Network Mapping:**
+For a more comprehensive network map, you can use specialized tools:
+- **Wireshark**: For detailed packet analysis (https://www.wireshark.org/)
+- **Advanced IP Scanner**: For Windows users (https://www.advanced-ip-scanner.com/)
+- **Angry IP Scanner**: Cross-platform network scanner (https://angryip.org/)
+
 **Expected Outcome:**
 - You'll create a basic map of your personal network environment and understand how devices interact with each other.
+- You'll identify potential security issues like unauthorized devices.
+- You'll better understand the flow of data in your personal network.
 
-**Troubleshooting:**
+**Troubleshooting Tips:**
 - If you're unsure if a device is networked, check if it has a network icon or settings
 - Don't forget less obvious networked devices like smart speakers, thermostats, or appliances
+- If commands don't show expected devices, they might be inactive or in power-saving mode
+- For wireless devices, ensure they're connected to the same Wi-Fi network
+- Some devices may use IPv6 addresses, so check both IPv4 and IPv6 configurations
+- Administrator/root privileges might be required for some commands
+- Firewall settings might block discovery of some network devices
 
 ##### Knowledge Check
 1. What is the primary purpose of a computer network?

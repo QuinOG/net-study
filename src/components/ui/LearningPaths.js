@@ -36,7 +36,7 @@ const modules = [
         description: 'Explore different network classifications based on scale, technology, and architecture.',
         duration: '25-30 minutes',
         difficulty: 'Beginner',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/1/lesson/3'
       },
       {
@@ -45,7 +45,7 @@ const modules = [
         description: 'Learn about the physical and logical arrangements of network components.',
         duration: '30-35 minutes',
         difficulty: 'Beginner',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/1/lesson/4'
       },
       {
@@ -54,7 +54,7 @@ const modules = [
         description: 'Understand the hardware and software elements that make up computer networks.',
         duration: '30-35 minutes',
         difficulty: 'Beginner',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/1/lesson/5'
       }
     ]
@@ -72,7 +72,7 @@ const modules = [
         description: 'Understand the seven-layer conceptual model that standardizes network functions.',
         duration: '30-35 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/2/lesson/1'
       },
       {
@@ -81,7 +81,7 @@ const modules = [
         description: 'Learn about the model that forms the foundation of the modern internet.',
         duration: '30-35 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/2/lesson/2'
       },
       {
@@ -90,7 +90,7 @@ const modules = [
         description: 'Master the fundamentals of IPv4, IPv6, and subnet calculations.',
         duration: '40-45 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/2/lesson/3'
       },
       {
@@ -99,7 +99,7 @@ const modules = [
         description: 'Explore essential protocols like HTTP, DNS, DHCP, and more.',
         duration: '35-40 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/2/lesson/4'
       },
       {
@@ -108,7 +108,7 @@ const modules = [
         description: 'Understand how networks determine the optimal path for data transmission.',
         duration: '40-45 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/2/lesson/5'
       }
     ]
@@ -126,7 +126,7 @@ const modules = [
         description: 'Understand the core concepts and importance of network security.',
         duration: '30-35 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/3/lesson/1'
       },
       {
@@ -135,7 +135,7 @@ const modules = [
         description: 'Identify and understand various attacks that target networks.',
         duration: '35-40 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/3/lesson/2'
       },
       {
@@ -144,7 +144,7 @@ const modules = [
         description: 'Learn how to control traffic and protect network boundaries.',
         duration: '35-40 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/3/lesson/3'
       },
       {
@@ -153,7 +153,7 @@ const modules = [
         description: 'Understand how to secure data transmission across networks.',
         duration: '40-45 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/3/lesson/4'
       },
       {
@@ -162,7 +162,7 @@ const modules = [
         description: 'Learn techniques to detect and respond to network security incidents.',
         duration: '40-45 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/3/lesson/5'
       }
     ]
@@ -180,7 +180,7 @@ const modules = [
         description: 'Understand the basics of wireless communication and standards.',
         duration: '30-35 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/4/lesson/1'
       },
       {
@@ -189,7 +189,7 @@ const modules = [
         description: 'Learn about different Wi-Fi protocols and their capabilities.',
         duration: '35-40 minutes',
         difficulty: 'Intermediate',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/4/lesson/2'
       },
       {
@@ -198,7 +198,7 @@ const modules = [
         description: 'Explore security challenges and solutions specific to wireless networks.',
         duration: '40-45 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/4/lesson/3'
       },
       {
@@ -207,7 +207,7 @@ const modules = [
         description: 'Learn principles for planning and implementing effective wireless networks.',
         duration: '35-40 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/4/lesson/4'
       },
       {
@@ -216,7 +216,7 @@ const modules = [
         description: 'Discover new developments in wireless networking like 5G and IoT.',
         duration: '30-35 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/4/lesson/5'
       }
     ]
@@ -234,7 +234,7 @@ const modules = [
         description: 'Learn systematic approaches to diagnosing network problems.',
         duration: '35-40 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/5/lesson/1'
       },
       {
@@ -243,7 +243,7 @@ const modules = [
         description: 'Master essential tools like ping, traceroute, netstat, and packet analyzers.',
         duration: '40-45 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/5/lesson/2'
       },
       {
@@ -252,7 +252,7 @@ const modules = [
         description: 'Identify and resolve frequently encountered network problems.',
         duration: '35-40 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/5/lesson/3'
       },
       {
@@ -261,7 +261,7 @@ const modules = [
         description: 'Learn techniques to analyze and improve network performance.',
         duration: '40-45 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/5/lesson/4'
       },
       {
@@ -270,7 +270,7 @@ const modules = [
         description: 'Understand best practices for maintaining network infrastructure.',
         duration: '30-35 minutes',
         difficulty: 'Advanced',
-        status: 'locked',
+        status: 'available',
         path: '/dashboard/learning/module/5/lesson/5'
       }
     ]

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiClock, FiBookOpen, FiCheckCircle, FiHelpCircle, FiAward, FiChevronDown } from 'react-icons/fi';
+import { FiArrowLeft, FiClock, FiBookOpen, FiCheckCircle, FiHelpCircle, FiAward, FiChevronDown, FiCopy, FiCheck } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
+// Import syntax highlighter components
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import '../../styles/ui/LessonDetail.css';
 
 /**
@@ -21,6 +24,71 @@ const LessonDetail = () => {
   const [lessonCompleted, setLessonCompleted] = useState(false);
   // State to hold processed content sections for tabs
   const [sectionTabs, setSectionTabs] = useState([]);
+  // Add state for tracking which code block has been copied
+  const [copiedCode, setCopiedCode] = useState(null);
+
+  // Define custom components for ReactMarkdown
+  // This enhances code blocks with syntax highlighting
+  const customComponents = {
+    // Add syntax highlighting for code blocks
+    code({ node, inline, className, children, ...props }) {
+      // Extract language from className (format: language-jsx)
+      const match = /language-(\w+)/.exec(className || '');
+      const language = match ? match[1] : '';
+      const codeString = String(children).replace(/\n$/, '');
+      
+      // Handle copy functionality
+      const handleCopyCode = () => {
+        navigator.clipboard.writeText(codeString)
+          .then(() => {
+            setCopiedCode(codeString);
+            // Reset copy status after 2 seconds
+            setTimeout(() => setCopiedCode(null), 2000);
+          })
+          .catch(err => {
+            console.error('Failed to copy code: ', err);
+          });
+      };
+      
+      return !inline ? (
+        <div className="code-block-wrapper">
+          <div className="code-language-tag">{language || 'code'}</div>
+          <button 
+            className={`code-copy-button ${copiedCode === codeString ? 'copied' : ''}`}
+            onClick={handleCopyCode}
+            aria-label="Copy code to clipboard"
+          >
+            {copiedCode === codeString ? <FiCheck /> : <FiCopy />}
+          </button>
+          <SyntaxHighlighter
+            style={atomDark}
+            language={language || 'javascript'} // Default to javascript if no language specified
+            PreTag="div"
+            showLineNumbers={codeString.split('\n').length > 5} // Show line numbers if more than 5 lines
+            wrapLines={true}
+            lineNumberStyle={{ minWidth: '2.5em', textAlign: 'right', color: 'rgba(255, 255, 255, 0.3)' }}
+            lineProps={lineNumber => {
+              // Check if line should be highlighted - look for '#highlight' comment in previous line
+              const lines = codeString.split('\n');
+              const prevLine = lineNumber > 0 ? lines[lineNumber - 2] : '';
+              const shouldHighlight = prevLine && prevLine.includes('#highlight');
+              return {
+                style: { display: 'block' },
+                className: shouldHighlight ? 'highlight-line' : undefined
+              };
+            }}
+            {...props}
+          >
+            {codeString}
+          </SyntaxHighlighter>
+        </div>
+      ) : (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    }
+  };
 
   useEffect(() => {
     /**
@@ -442,7 +510,9 @@ const LessonDetail = () => {
             {/* Find and display the content for this tab */}
             {sectionTabs.find(section => section.id === activeTab) && (
               <div className="markdown-content">
-                <ReactMarkdown>
+                <ReactMarkdown
+                  components={customComponents}
+                >
                   {sectionTabs.find(section => section.id === activeTab).content}
                 </ReactMarkdown>
                 
