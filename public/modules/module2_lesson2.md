@@ -19,9 +19,7 @@ While VLANs effectively segment a network into isolated broadcast domains, most 
 - **Security Implementation:** Access control between VLANs
 - **Troubleshooting Methodology:** Common issues and resolution approaches
 
-##### Detailed Explanation
-
-**Inter-VLAN Routing Fundamentals:**
+##### Inter-VLAN Routing Fundamentals
 
 Inter-VLAN routing enables communication between devices in different VLANs by using Layer 3 routing processes to forward traffic between these logically separated network segments. This capability is essential in modern networks, where segmentation must balance security isolation with practical communication needs.
 
@@ -31,7 +29,7 @@ The routing process between VLANs follows standard IP routing principles. When a
 
 Inter-VLAN routing creates a strategic control point for network traffic, enabling security policy enforcement between segments. By routing between VLANs rather than switching, organizations can implement access control lists, firewall rules, and traffic inspection at the routing boundaries. This capability transforms VLANs from simple broadcast domain separators into fundamental building blocks for network security architecture, allowing granular control over which types of traffic can flow between different network segments.
 
-**Router-on-a-Stick Method:**
+##### Router-on-a-Stick Method
 
 The router-on-a-stick method represents the traditional approach to inter-VLAN routing, using a single physical router interface connected to a switch trunk port to route between multiple VLANs. This configuration earned its distinctive name because the network diagram resembles a router with a single "stick" (interface) connecting to the switched network.
 
@@ -43,7 +41,7 @@ The router-on-a-stick configuration offers several advantages, particularly for 
 
 However, this method has significant limitations that become apparent in larger or higher-throughput environments. The most notable limitation is performance: all inter-VLAN traffic must traverse a single physical link, creating a potential bottleneck. Additionally, this approach introduces a single point of failure, as all inter-VLAN communication depends on one physical interface and one trunk link. These limitations make router-on-a-stick most appropriate for smaller networks, testing environments, or situations where inter-VLAN traffic volume is relatively low.
 
-**Multilayer Switching:**
+##### Multilayer Switching
 
 Multilayer switching represents the modern approach to inter-VLAN routing, integrating Layer 2 switching and Layer 3 routing functions within a single device. This integration eliminates the external router requirement of traditional methods, providing significant performance and scalability advantages.
 
@@ -55,7 +53,7 @@ This approach offers several significant advantages over traditional methods. Pe
 
 Multilayer switching has become the standard approach for inter-VLAN routing in most modern networks, from medium-sized business environments to large enterprise deployments. The performance, scalability, and integration benefits typically outweigh the higher initial cost of multilayer switches compared to standard Layer 2 switches with separate routers. As these devices have become more affordable and their features more accessible, they've largely replaced traditional router-on-a-stick implementations except in very small networks or specialized scenarios.
 
-**Performance Considerations:**
+##### Performance Considerations
 
 Performance factors significantly influence the selection and implementation of inter-VLAN routing methods, with throughput, latency, and scalability representing key considerations for network designers.
 
@@ -67,7 +65,7 @@ Scalability considerations extend beyond raw performance to include factors like
 
 The impact of these performance factors varies based on network size and traffic patterns. Small networks with limited inter-VLAN traffic may function adequately with router-on-a-stick implementations, particularly if the router interface speed matches or exceeds the typical traffic volume. However, as networks grow in size and complexity, the performance advantages of multilayer switching become increasingly significant. Organizations should evaluate their current requirements and anticipated growth when selecting an inter-VLAN routing approach, considering not just current traffic volumes but future expansion and evolving application needs.
 
-**Security Implementation:**
+##### Security Implementation
 
 Security represents a critical dimension of inter-VLAN routing implementation, as the routing boundaries between VLANs create natural control points for enforcing network security policies.
 
@@ -81,7 +79,7 @@ Security monitoring at VLAN boundaries provides visibility into traffic patterns
 
 Defense in depth strategies combine multiple security controls at VLAN boundaries to create comprehensive protection. Rather than relying solely on routing infrastructure security, organizations typically implement layered defenses that might include ACLs at the routing layer, firewall inspection for critical traffic, intrusion prevention systems for threat detection, and application-level gateways for specific protocols. This layered approach ensures that a failure or bypass of any single security control doesn't compromise the entire security architecture. The inter-VLAN routing infrastructure provides the foundation for this defense in depth strategy by creating controlled pathways between network segments where security controls can be applied.
 
-**Troubleshooting Methodology:**
+##### Troubleshooting Methodology
 
 Effective troubleshooting of inter-VLAN routing issues requires a systematic approach that addresses the unique challenges of this technology, where problems can span multiple network layers and components.
 

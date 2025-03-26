@@ -1,0 +1,274 @@
+/* 
+ * Lesson Detail - Quiz and Assessment Styles
+ * Styling for quizzes, knowledge checks, and assessment components
+ */
+
+/* Quiz container styling */
+.quiz-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Quiz form heading styling */
+.quiz-form h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  color: #ffffff;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+}
+
+/* Gradient underline for quiz heading */
+.quiz-form h3::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* Quiz introduction text */
+.quiz-form > p {
+  color: #b1bdd0;
+  font-size: 1.05rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+/* Individual quiz question container */
+.quiz-question {
+  margin-bottom: 2.5rem;
+  padding: 1.8rem;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+/* Question title styling */
+.quiz-question h4 {
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Container for multiple choice options */
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Option label styling with hover effects */
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+/* Hover effect for option labels */
+.option-label:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(76, 224, 130, 0.3);
+  transform: translateX(5px);
+}
+
+/* Radio button styling for multiple choice */
+.option-label input {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  accent-color: #4ce082;
+}
+
+/* Text styling for multiple choice options */
+.option-label span {
+  color: #e0e6f0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+/* Textarea styling for open-ended questions */
+.open-question-input {
+  width: 100%;
+  padding: 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 1rem;
+  resize: vertical;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+/* Focus effect for textarea */
+.open-question-input:focus {
+  outline: none;
+  border-color: rgba(76, 224, 130, 0.5);
+  box-shadow: 0 0 15px rgba(76, 224, 130, 0.2);
+}
+
+/* Submit button for quiz */
+.submit-quiz-btn {
+  padding: 0.9rem 2rem;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  color: #0d1b34;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 2.5rem auto 0;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+}
+
+/* Hover effect for submit button */
+.submit-quiz-btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Hover movement and shadow for submit button */
+.submit-quiz-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(76, 224, 130, 0.4);
+}
+
+/* Show gradient on hover */
+.submit-quiz-btn:hover::before {
+  opacity: 1;
+}
+
+/* Quiz completed state styling */
+.quiz-completed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+/* Success checkmark styling */
+.quiz-completed svg {
+  color: #4ce082;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Quiz completed heading */
+.quiz-completed h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Quiz completed text */
+.quiz-completed p {
+  color: #b1bdd0;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* Next lesson button */
+.next-lesson-btn {
+  background: linear-gradient(135deg, #4ce082, #3bb0c9);
+  border: none;
+  color: #0d1b34;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 15px rgba(76, 224, 130, 0.3);
+}
+
+/* Hover effect for next lesson button */
+.next-lesson-btn:hover {
+  box-shadow: 0 6px 20px rgba(76, 224, 130, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Next section button styling */
+.next-section-btn {
+  background: linear-gradient(135deg, #1e2f57, #0d1b34);
+  border: 1px solid rgba(76, 224, 130, 0.3);
+  color: #fff;
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover effect for next section button */
+.next-section-btn:hover {
+  background: linear-gradient(135deg, #223463, #162442);
+  border-color: rgba(76, 224, 130, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive styles for quiz components */
+@media (max-width: 768px) {
+  .quiz-question {
+    padding: 1.2rem;
+  }
+  
+  .option-label {
+    padding: 0.75rem 1rem;
+  }
+  
+  .quiz-completed {
+    padding: 2.5rem 1rem;
+  }
+  
+  .quiz-completed h3 {
+    font-size: 1.5rem;
+  }
+  
+  .next-section-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+} 

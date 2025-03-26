@@ -1,0 +1,106 @@
+/* 
+ * Lesson Detail - Activities and Practical Components Styles
+ * Styling for hands-on activities, tasks, and interactive elements
+ */
+
+/* Activities container styling */
+.activities-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Activity card styling */
+.activity-card {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Activity heading with gradient underline */
+.activity-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+/* Gradient underline for activity heading */
+.activity-card h3::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* Activity content styling */
+.activity-content {
+  color: #e0e6f0;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+/* Mark complete button styling */
+.mark-complete-btn {
+  background: linear-gradient(135deg, #4ce082, #3bb0c9);
+  border: none;
+  color: #0d1b34;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  box-shadow: 0 4px 15px rgba(76, 224, 130, 0.3);
+}
+
+/* Hover effect for mark complete button */
+.mark-complete-btn:hover {
+  box-shadow: 0 6px 20px rgba(76, 224, 130, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Loading and error states */
+.lesson-error {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #b1bdd0;
+  font-size: 1.2rem;
+}
+
+/* Action buttons container for content sections */
+.lesson-content-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Responsive adjustments for activities */
+@media (max-width: 768px) {
+  .activity-card {
+    padding: 1.5rem;
+  }
+  
+  .activity-card h3 {
+    font-size: 1.3rem;
+    padding-bottom: 0.75rem;
+  }
+  
+  .mark-complete-btn {
+    padding: 0.75rem 1.2rem;
+    font-size: 0.95rem;
+  }
+} 

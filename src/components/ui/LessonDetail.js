@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import '../../styles/ui/LessonDetail.css';
+// Individual style modules will be imported through the main CSS file
 
 /**
  * LessonDetail Component

@@ -1,0 +1,441 @@
+/* 
+ * Lesson Detail - Markdown Content Styles
+ * Styling for all markdown-rendered content in lesson pages
+ */
+
+/* Base markdown content styling */
+.markdown-content {
+  color: #e0e6f0;
+  line-height: 1.6;
+}
+
+/* Heading styles for markdown content */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5 {
+  margin-top: 2rem;
+  margin-bottom: 1.2rem;
+  color: #ffffff;
+  font-weight: 600;
+  position: relative;
+}
+
+/* Specific styling for H3 in markdown */
+.markdown-content h3 {
+  font-size: 1.8rem;
+  margin-top: 2.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Specific styling for H4 in markdown */
+.markdown-content h4 {
+  font-size: 1.4rem;
+}
+
+/* Specific styling for H5 in markdown with accent color */
+.markdown-content h5 {
+  font-size: 1.2rem;
+  color: #4ce082;
+  margin-top: 1.75rem;
+}
+
+/* Improved heading styles for section content */
+.markdown-content h5.section-heading {
+  font-size: 1.6rem;
+  color: #ffffff;
+  margin: 1.5rem 0 1.2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+/* Gradient underline for section headings */
+.markdown-content h5.section-heading::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* Paragraph styling in markdown */
+.markdown-content p {
+  margin-bottom: 1.2rem;
+  line-height: 1.7;
+}
+
+/* List styling in markdown */
+.markdown-content ul,
+.markdown-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.8rem;
+}
+
+/* List item styling in markdown */
+.markdown-content li {
+  margin-bottom: 0.7rem;
+  line-height: 1.6;
+}
+
+/* Inline code styling in markdown */
+.markdown-content code {
+  background-color: rgba(0, 0, 0, 0.25);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+  color: #4ce082;
+}
+
+/* Inline code styling */
+.markdown-content code:not(pre code) {
+  background-color: rgba(76, 224, 130, 0.1);
+  color: #4ce082;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* Blockquote styling in markdown */
+.markdown-content blockquote {
+  border-left: 4px solid #4ce082;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  background-color: rgba(76, 224, 130, 0.1);
+  border-radius: 0 8px 8px 0;
+  color: #b1bdd0;
+}
+
+/* Key Takeaways section */
+.takeaways-container {
+  padding: 1.5rem;
+  background: rgba(13, 27, 52, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Key takeaways heading */
+.takeaways-container h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.75rem;
+}
+
+/* Gradient underline for takeaways heading */
+.takeaways-container h3::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #4ce082, #3bb0c9);
+  border-radius: 2px;
+}
+
+/* Takeaways content styling */
+.takeaways-content {
+  color: #e0e6f0;
+  line-height: 1.7;
+}
+
+/* Takeaways list styling */
+.takeaways-content ul {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Takeaways list items with custom bullets */
+.takeaways-content li {
+  margin-bottom: 0.75rem;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+/* Custom bullet points for takeaways */
+.takeaways-content li::before {
+  content: "";
+  position: absolute;
+  left: -1rem;
+  top: 0.6rem;
+  width: 8px;
+  height: 8px;
+  background: #4ce082;
+  border-radius: 50%;
+}
+
+/* Content sections */
+.content-sections {
+  margin-top: 2rem;
+}
+
+/* Individual content section styling */
+.content-section {
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(13, 27, 52, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for content sections */
+.content-section:hover {
+  border-color: rgba(76, 224, 130, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Section header with toggle functionality */
+.section-header {
+  padding: 1.2rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(30, 47, 87, 0.5);
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for section header */
+.section-header:hover {
+  background: rgba(30, 47, 87, 0.7);
+}
+
+/* Section title styling */
+.section-header h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Chevron icon in section header */
+.section-header svg {
+  font-size: 1.2rem;
+  color: #4ce082;
+  transition: transform 0.3s ease;
+}
+
+/* Additional styling for expanded section */
+.section-header.expanded {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Rotate chevron icon when section is expanded */
+.section-header svg.rotate {
+  transform: rotate(180deg);
+}
+
+/* Section content container */
+.section-content {
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 
+ * Section-based tab navigation 
+ * Creates a flexible, wrap-friendly navigation for all sections in the lesson
+ */
+.section-tabs {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Style for section tabs - pill-shaped buttons */
+.section-tabs .lesson-tab {
+  padding: 0.7rem 1.2rem;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  border-radius: 20px;
+  margin-bottom: 0.5rem;
+  background: rgba(13, 27, 52, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for section tabs */
+.section-tabs .lesson-tab:hover {
+  background: rgba(30, 47, 87, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Active state for section tabs */
+.section-tabs .lesson-tab.active {
+  background: rgba(76, 224, 130, 0.15);
+  color: #4ce082;
+  font-weight: 600;
+}
+
+/* Special styling for the completion tab */
+.lesson-tab.completion-tab {
+  background: rgba(76, 224, 130, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Icon sizing within the completion tab */
+.lesson-tab.completion-tab svg {
+  font-size: 1rem;
+}
+
+/* Section content tab container */
+.section-content-tab {
+  padding: 0.5rem;
+}
+
+/* Lesson completion overlay */
+.lesson-completion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 27, 52, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Content container for completion overlay */
+.completion-content {
+  background: linear-gradient(135deg, #1e2f57, #0d1b34);
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(76, 224, 130, 0.3);
+  max-width: 90%;
+  width: 500px;
+  animation: scaleIn 0.5s ease-in-out;
+}
+
+/* Award icon animation in completion overlay */
+.completion-icon {
+  font-size: 5rem;
+  color: #4ce082;
+  margin-bottom: 1.5rem;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* Completion message heading */
+.completion-content h2 {
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+/* Completion message text */
+.completion-content p {
+  font-size: 1.2rem;
+  color: #b1bdd0;
+  margin-bottom: 1.5rem;
+}
+
+/* Redirect message styling and animation */
+.redirect-message {
+  font-size: 1rem !important;
+  color: #4ce082 !important;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Lesson completed badge in lesson header */
+.lesson-completed-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #4ce082;
+  font-size: 0.95rem;
+  background: rgba(76, 224, 130, 0.15);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Icon in completed badge */
+.lesson-completed-badge svg {
+  color: #4ce082;
+}
+
+/* Responsive styles for content sections */
+@media (max-width: 768px) {
+  .section-header {
+    padding: 1rem;
+  }
+  
+  .section-header h4 {
+    font-size: 1.1rem;
+  }
+  
+  .section-content {
+    padding: 1rem;
+  }
+  
+  .completion-content {
+    padding: 2rem;
+  }
+  
+  .completion-icon {
+    font-size: 4rem;
+  }
+  
+  .completion-content h2 {
+    font-size: 1.8rem;
+  }
+  
+  .markdown-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  .markdown-content h4 {
+    font-size: 1.3rem;
+  }
+  
+  .markdown-content h5.section-heading {
+    font-size: 1.4rem;
+  }
+  
+  .section-tabs {
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  
+  .section-tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .section-tabs::-webkit-scrollbar-track {
+    background: rgba(13, 27, 52, 0.3);
+    border-radius: 10px;
+  }
+  
+  .section-tabs::-webkit-scrollbar-thumb {
+    background: rgba(76, 224, 130, 0.3);
+    border-radius: 10px;
+  }
+  
+  .section-tabs .lesson-tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+} 

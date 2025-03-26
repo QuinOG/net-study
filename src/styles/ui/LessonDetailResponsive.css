@@ -1,0 +1,127 @@
+/* 
+ * Lesson Detail - Responsive Design Styles
+ * Media queries and responsive adjustments for various screen sizes
+ */
+
+/* Base responsive adjustments */
+@media (max-width: 768px) {
+  /* Core layout responsive styles */
+  .lesson-detail-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .lesson-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .lesson-tabs {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  
+  .lesson-tab {
+    padding: 0.7rem 1rem;
+    white-space: nowrap;
+  }
+  
+  .lesson-content-container {
+    padding: 1.5rem;
+  }
+  
+  /* Navigation responsive styles */
+  .section-navigation {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .back-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .lesson-meta {
+    gap: 1rem;
+  }
+  
+  .lesson-duration,
+  .lesson-prerequisites {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .lesson-detail-container {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .lesson-header h1 {
+    font-size: 1.6rem;
+  }
+  
+  .lesson-content-container {
+    padding: 1.2rem;
+  }
+  
+  .completion-content {
+    padding: 1.5rem;
+  }
+  
+  .completion-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .completion-content h2 {
+    font-size: 1.5rem;
+  }
+  
+  .completion-content p {
+    font-size: 1rem;
+  }
+  
+  /* Minimize tab text overflow issues */
+  .lesson-tabs {
+    padding-bottom: 0.4rem;
+  }
+  
+  .lesson-tab {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Landscape orientation on small devices */
+@media (max-height: 500px) and (orientation: landscape) {
+  .completion-content {
+    padding: 1.5rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .completion-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .completion-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .completion-content p {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Large tablet and small desktop screens */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .lesson-detail-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .lesson-content-container {
+    padding: 1.75rem;
+  }
+} 
