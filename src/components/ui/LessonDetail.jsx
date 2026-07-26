@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from '../../router';
 import { FiArrowLeft, FiClock, FiBookOpen, FiCheckCircle, FiHelpCircle, FiAward, FiChevronDown, FiCopy, FiCheck } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
 // Import syntax highlighter components

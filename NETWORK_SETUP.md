@@ -20,7 +20,7 @@ This guide will help you set up the app to be accessible from other devices on y
    ```
 
 3. Other devices can now access your app using your computer's IP address:
-   - Frontend: `http://<YOUR_IP>:3000`
+   - Frontend: `http://<YOUR_IP>:5173`
    - Backend API: `http://<YOUR_IP>:5000`
 
 ## Manual Setup (If the script doesn't work)
@@ -41,7 +41,7 @@ This guide will help you set up the app to be accessible from other devices on y
 
 1. Create or edit `.env` file in the project root:
    ```
-   REACT_APP_API_URL=http://<YOUR_IP>:5000/api
+   VITE_API_URL=http://<YOUR_IP>:5000/api
    ```
    Replace `<YOUR_IP>` with your actual IP address.
 
@@ -53,7 +53,7 @@ This guide will help you set up the app to be accessible from other devices on y
    PORT=5000
    ```
 
-2. Make sure your firewall allows incoming connections to ports 3000 and 5000.
+2. Make sure your firewall allows incoming connections to ports 5173 and 5000.
 
 ## Troubleshooting
 
@@ -61,7 +61,7 @@ This guide will help you set up the app to be accessible from other devices on y
 
 1. **Check Firewall Settings**: Make sure Windows Firewall or other security software isn't blocking connections to your app.
    - Go to Control Panel > Windows Defender Firewall > Allow an app through the firewall
-   - Add exceptions for Node.js applications on ports 3000 and 5000
+   - Add exceptions for Node.js applications on ports 5173 and 5000
 
 2. **Verify Network Settings**: Ensure all devices are on the same network.
 

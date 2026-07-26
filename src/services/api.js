@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 // Determine the API host based on environment or configuration
-// 1. Use the REACT_APP_API_URL from environment if available and not containing placeholders
+// 1. Use the VITE_API_URL from environment if available and not containing placeholders
 // 2. Fallback to window.location.hostname to use the same host as the frontend
 // 3. Finally fallback to localhost if all else fails
-let API_HOST = process.env.REACT_APP_API_URL;
+let API_HOST = import.meta.env.VITE_API_URL;
 
 // Check if API_HOST contains placeholders (like YOUR_LOCAL_IP) and is therefore invalid
 if (!API_HOST || API_HOST.includes('YOUR_LOCAL_IP') || API_HOST.includes('your_local_ip')) {

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../router';
 import { UserContext } from '../../context/UserContext';
 import { FaUser, FaEnvelope, FaLock, FaTimes } from 'react-icons/fa';
 import '../../styles/ui/LoginSignup.css';

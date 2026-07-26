@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiBook, FiServer, FiWifi, FiShield, FiGlobe, FiCode, FiLock, FiLayers, FiCheck, FiCpu, FiChevronDown, FiLoader, FiStar, FiTrendingUp, FiAward, FiZap, FiTarget, FiActivity, FiFlag, FiBarChart2, FiCalendar } from 'react-icons/fi';
 import '../../styles/ui/LearningPaths.css';
-import { Link } from 'react-router-dom';
+import { Link } from '../../router';
 
 // Define modules array before the component
 const modules = [

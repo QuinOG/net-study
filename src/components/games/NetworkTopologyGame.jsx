@@ -4,7 +4,7 @@ import '../../styles/games/NetworkTopologyGame.css';
 import { UserContext } from '../../context/UserContext';
 import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../router';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 

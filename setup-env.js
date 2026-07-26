@@ -45,13 +45,13 @@ function updateEnvFile() {
       : '# Frontend Environment Variables\n';
     
     // Replace or add the API URL with the local IP
-    if (envContent.includes('REACT_APP_API_URL=')) {
+    if (envContent.includes('VITE_API_URL=')) {
       envContent = envContent.replace(
-        /REACT_APP_API_URL=.*/g,
-        `REACT_APP_API_URL=http://${ipAddress}:5000/api`
+        /VITE_API_URL=.*/g,
+        `VITE_API_URL=http://${ipAddress}:5000/api`
       );
     } else {
-      envContent += `\nREACT_APP_API_URL=http://${ipAddress}:5000/api\n`;
+      envContent += `\nVITE_API_URL=http://${ipAddress}:5000/api\n`;
     }
     
     fs.writeFileSync(frontendEnvPath, envContent);
@@ -86,7 +86,7 @@ function updateEnvFile() {
   console.log('\nSetup complete!');
   console.log('----------------------------------------------------');
   console.log('To access your app from other devices on the network:');
-  console.log(`1. Frontend: http://${ipAddress}:3000`);
+  console.log(`1. Frontend: http://${ipAddress}:5173`);
   console.log(`2. Backend API: http://${ipAddress}:5000`);
   console.log('----------------------------------------------------');
   console.log('Make sure your firewall allows incoming connections to these ports.');

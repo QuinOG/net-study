@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { UserContext } from '../../context/UserContext';
-import { Link } from 'react-router-dom';
+import { Link } from '../../router';
 import '../../styles/ui/Leaderboard.css';
 import firstPlaceIcon from '../../assets/images/1.png';
 import secondPlaceIcon from '../../assets/images/2.png';

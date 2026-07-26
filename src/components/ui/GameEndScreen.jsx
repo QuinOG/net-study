@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../router';
 import { FiBarChart2, FiAward, FiCheck, FiTrendingUp, FiTarget, FiShare2, FiRotateCw, FiHome, FiLayout } from 'react-icons/fi';
 import { 
   FaTwitter, 

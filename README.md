@@ -3,7 +3,7 @@
 <div align="center">
 
 [![BSD4 License](https://img.shields.io/badge/License-BSD4-blue.svg)](https://spdx.org/licenses/BSD-4-Clause)
-[![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.8-blue.svg)](https://react.dev/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-blue.svg?style=flat)](https://github.com/quinog/net-study/issues)
 
 A modern, interactive platform for learning network protocols, IT acronyms, and essential networking concepts through engaging games and challenges.
@@ -35,8 +35,8 @@ A modern, interactive platform for learning network protocols, IT acronyms, and 
 
 ### Prerequisites
 
-- Node.js (v14.0.0 or higher)
-- npm (v6.0.0 or higher)
+- Node.js (v20.19.0 or higher)
+- npm (v10.0.0 or higher)
 
 ### Installation
 
@@ -56,7 +56,7 @@ npm install
 npm start
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) to view it in your browser
+4. Open [http://localhost:5173](http://localhost:5173) to view it in your browser
 
 ## 🎯 Games Overview
 
@@ -82,7 +82,7 @@ npm start
 ## 🛠️ Built With
 
 - [React](https://reactjs.org/) - Frontend framework
-- [React Router](https://reactrouter.com/) - Navigation
+- Browser History API - Client-side navigation
 - [Context API](https://reactjs.org/docs/context.html) - State management
 
 ## 🤝 Contributing

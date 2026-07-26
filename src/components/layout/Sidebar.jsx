@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from '../../router';
 import { FiHome, FiPlay, FiBarChart2, FiSettings, FiMap, FiChevronLeft } from 'react-icons/fi';
 import { UserContext } from '../../context/UserContext';
 import LevelProgress from '../ui/LevelProgress';

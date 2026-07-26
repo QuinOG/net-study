@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './styles/layout/App.css';
 import logo from './assets/images/netquest.png';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from './router';
 import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode, FiChevronRight, FiTrendingUp, FiTarget, FiAward, FiFlag, FiArrowRight, FiMenu, FiShare2, FiShield, FiLock } from 'react-icons/fi';
 import PortGame from './components/games/PortGame';
 import ProtocolGame from './components/games/ProtocolGame';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '../../router';
 import { UserContext } from '../../context/UserContext';
 import '../../styles/ui/DailyChallenge.css';
 
