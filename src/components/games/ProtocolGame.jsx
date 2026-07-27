@@ -3,6 +3,7 @@ import { useNavigate } from '../../router';
 import { UserContext } from '../../context/UserContext';
 import SoundManager from '../../utils/SoundManager';
 import '../../styles/games/ProtocolGame.css';
+import '../../styles/games/SharedGameTemplate.css';
 import { getAllGames, submitGameResults } from '../../services/api';
 import scrollToTop from '../../utils/ScrollHelper';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
@@ -540,7 +541,7 @@ function ProtocolGame() {
   if (!gameStarted) {
     if (showDifficultySelect) {
       return (
-        <div className="protocol-game">
+        <div className="protocol-game nq-game nq-game--protocol">
           <h2 className="game-title">Protocol Challenge</h2>
           
           <DifficultySelectScreen 
@@ -559,7 +560,7 @@ function ProtocolGame() {
     }
     
     return (
-      <div className="protocol-game">
+      <div className="protocol-game nq-game nq-game--protocol">
         <h2 className="game-title">Protocol Challenge</h2>
         <p className="game-description">
           Test your knowledge of network protocols and their functions!
@@ -605,7 +606,7 @@ function ProtocolGame() {
 
   // Main game interface
   return (
-    <div className="protocol-game">
+    <div className="protocol-game nq-game nq-game--protocol nq-game--active">
       {/* Game Mode Display at the top */}
       <div className="game-mode-display">
         <div className="mode-indicator">

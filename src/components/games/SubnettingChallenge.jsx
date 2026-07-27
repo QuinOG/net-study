@@ -8,6 +8,7 @@ import GameEndScreen from '../ui/GameEndScreen';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/SubnettingChallenge.css';
+import '../../styles/games/SharedGameTemplate.css';
 
 // Game modes
 const GAME_MODES = {
@@ -489,7 +490,7 @@ function SubnettingChallenge() {
   if (!gameStarted) {
     if (showDifficultySelect) {
       return (
-        <div className="subnetting-game">
+        <div className="subnetting-game nq-game nq-game--subnetting">
           <h2 className="game-title">Subnetting Challenge</h2>
           
           <DifficultySelectScreen 
@@ -508,7 +509,7 @@ function SubnettingChallenge() {
     }
     
     return (
-      <div className="subnetting-game">
+      <div className="subnetting-game nq-game nq-game--subnetting">
         <h2 className="game-title">Subnetting Challenge</h2>
         <p className="game-description">
           Test your subnetting skills and calculate network addresses, broadcast addresses, and more!
@@ -554,7 +555,7 @@ function SubnettingChallenge() {
 
   // Main game interface
   return (
-    <div className="subnetting-game">
+    <div className="subnetting-game nq-game nq-game--subnetting nq-game--active">
       <div className="game-header">
         <div className="game-info">
           <div className="mode-indicator">

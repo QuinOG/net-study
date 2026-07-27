@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FiVolume2, FiVolumeX, FiMoon, FiSun, FiUser, FiBell, FiBellOff, FiSliders, FiRefreshCw, FiCheck, FiX, FiImage } from 'react-icons/fi';
+import { FiVolume2, FiVolumeX, FiMoon, FiSun, FiUser, FiBell, FiBellOff, FiSliders, FiRefreshCw, FiCheck, FiX, FiImage, FiMonitor } from 'react-icons/fi';
 import '../../styles/ui/Settings.css';
 import { UserContext } from '../../context/UserContext';
 import { updateUserProfile } from '../../services/api';
 import SoundManager from '../../utils/SoundManager';
+import { useTheme } from '../../hooks/useTheme';
 
 // Define localStorage keys
 const SETTINGS_PREFIX = 'net-study-settings-';
@@ -16,20 +17,15 @@ const EMAIL_KEY = `${SETTINGS_PREFIX}email`;
 const AVATAR_KEY = `${SETTINGS_PREFIX}avatar`;
 
 function Settings() {
-  // Get user context for logged-in user data
   const { user, loading } = useContext(UserContext);
+  const { theme, resolvedTheme, setTheme } = useTheme();
 
   // Initialize settings with localStorage values or defaults
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem(DARK_MODE_KEY);
-    return saved !== null ? JSON.parse(saved) : true;
-  });
-  
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem(SOUND_KEY);
     return saved !== null ? JSON.parse(saved) : SoundManager.isSoundEnabled();
   });
-  
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
     const saved = localStorage.getItem(NOTIFICATIONS_KEY);
     return saved !== null ? JSON.parse(saved) : true;
@@ -71,17 +67,7 @@ function Settings() {
     }
   }, [user, loading, username, email]);
 
-  // Apply theme effect
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.remove('light-mode');
-    } else {
-      document.body.classList.add('light-mode');
-    }
-    
-    // Save theme preference to localStorage
-    localStorage.setItem(DARK_MODE_KEY, JSON.stringify(darkMode));
-  }, [darkMode]);
+  // Theme application and persistence are handled centrally by ThemeProvider.
 
   // Save sound setting to localStorage and update SoundManager
   useEffect(() => {
@@ -137,22 +123,18 @@ function Settings() {
       // If user is logged in (and not a guest), update profile
       if (user && !user.isGuest && user.id) {
         try {
-          // Only attempt to update if there are changes
-          if (username !== (user.displayName || user.username) || 
-              email !== user.email || 
-              selectedAvatar !== (user.avatar || 'avatar1.png')) {
-            await updateUserProfile(user.id, {
-              displayName: username,
-              email: email,
-              avatar: selectedAvatar,
-              preferences: {
-                darkMode,
-                soundEnabled,
-                notificationsEnabled,
-                defaultDifficulty
-              }
-            });
-          }
+          await updateUserProfile(user.id, {
+            displayName: username,
+            email: email,
+            avatar: selectedAvatar,
+            preferences: {
+              theme,
+              darkMode: resolvedTheme === 'dark',
+              soundEnabled,
+              notificationsEnabled,
+              defaultDifficulty
+            }
+          });
         } catch (profileError) {
           console.error('Error updating user profile:', profileError);
           setErrorMessage('Failed to update profile. Please try again.');
@@ -179,7 +161,7 @@ function Settings() {
 
   const resetSettings = () => {
     // Reset to default values
-    setDarkMode(true);
+    setTheme('system');
     setSoundEnabled(true);
     setNotificationsEnabled(true);
     setDefaultDifficulty('medium');
@@ -191,8 +173,7 @@ function Settings() {
       setEmail('');
     }
     
-    // Apply changes immediately
-    document.body.classList.remove('light-mode');
+    // ThemeProvider applies the resolved theme immediately.
     // Update localStorage for sound
     localStorage.setItem('netQuestSoundEnabled', 'true');
     
@@ -219,7 +200,7 @@ function Settings() {
 
   return (
     <div className="content">
-      <h3 className="section-title">Settings</h3>
+      <header className="settings-page-header"><span className="nq-eyebrow">Account & preferences</span><h1 className="section-title">Settings</h1><p>Manage your profile, experience, and gameplay defaults.</p></header>
       
       {showSuccessMessage && (
         <div className="settings-success-message">
@@ -267,22 +248,24 @@ function Settings() {
           </div>
           
           <div className="settings-option avatar-selection">
-            <label>Select Avatar</label>
+            <span id="avatar-label">Select Avatar</span>
             <div className="avatar-options">
               {[1, 2, 3, 4, 5, 6].map((num) => {
                 const avatarFile = `avatar${num}.png`;
                 return (
-                  <div 
+                  <button type="button"
                     key={num}
                     className={`avatar-option ${selectedAvatar === avatarFile ? 'selected' : ''}`}
                     onClick={() => handleAvatarSelect(avatarFile)}
+                    aria-label={`Use avatar ${num}`}
+                    aria-pressed={selectedAvatar === avatarFile}
                   >
                     <img 
                       src={`/avatars/${avatarFile}`} 
                       alt={`Avatar ${num}`} 
                       title={`Avatar ${num}`}
                     />
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -294,25 +277,14 @@ function Settings() {
             <FiSliders size={20} />
             <span>Appearance</span>
           </h4>
-          <div className="settings-option">
-            <span>Theme</span>
-            <button 
-              className={`settings-toggle-btn ${!darkMode ? 'active' : ''}`}
-              onClick={() => setDarkMode(!darkMode)}
-            >
-              {darkMode ? (
-                <>
-                  <FiSun size={18} />
-                  <span>Light Mode</span>
-                </>
-              ) : (
-                <>
-                  <FiMoon size={18} />
-                  <span>Dark Mode</span>
-                </>
-              )}
-            </button>
-          </div>
+          <fieldset className="settings-option theme-choice">
+            <legend>Theme</legend>
+            <div className="settings-radio-group" role="radiogroup" aria-label="Theme preference">
+              <label className={theme === 'system' ? 'active' : ''}><input type="radio" name="theme" value="system" checked={theme === 'system'} onChange={() => setTheme('system')} /><FiMonitor size={18} /><span>System</span></label>
+              <label className={theme === 'dark' ? 'active' : ''}><input type="radio" name="theme" value="dark" checked={theme === 'dark'} onChange={() => setTheme('dark')} /><FiMoon size={18} /><span>Dark</span></label>
+              <label className={theme === 'light' ? 'active' : ''}><input type="radio" name="theme" value="light" checked={theme === 'light'} onChange={() => setTheme('light')} /><FiSun size={18} /><span>Light</span></label>
+            </div>
+          </fieldset>
         </div>
 
         <div className="settings-section">
@@ -325,6 +297,7 @@ function Settings() {
             <button 
               className={`settings-toggle-btn ${soundEnabled ? 'active' : ''}`}
               onClick={toggleSound}
+              aria-pressed={soundEnabled}
             >
               {soundEnabled ? (
                 <>
@@ -351,6 +324,7 @@ function Settings() {
             <button 
               className={`settings-toggle-btn ${notificationsEnabled ? 'active' : ''}`}
               onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+              aria-pressed={notificationsEnabled}
             >
               {notificationsEnabled ? (
                 <>

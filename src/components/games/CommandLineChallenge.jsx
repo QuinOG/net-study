@@ -8,6 +8,7 @@ import GameEndScreen from '../ui/GameEndScreen';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import '../../styles/games/CommandLineChallenge.css';
+import '../../styles/games/SharedGameTemplate.css';
 import CollectXpButton from '../ui/CollectXpButton';
 
 // Command line commands and their descriptions for different operating systems
@@ -803,7 +804,7 @@ function CommandLineChallenge() {
   // Render the game menu
   if (!gameStarted && !showGameOver && !showDifficultySelect) {
     return (
-      <div className="command-line-game">
+      <div className="command-line-game nq-game nq-game--command">
         <h2 className="game-title">Command Line Challenge</h2>
         <p className="game-description">
           Test your knowledge of command line commands and their functions!
@@ -821,7 +822,7 @@ function CommandLineChallenge() {
   // Rendering difficulty selection
   if (showDifficultySelect) {
     return (
-      <div className="command-line-game">
+      <div className="command-line-game nq-game nq-game--command">
         <h2 className="game-title">Command Line Challenge</h2>
         
         <DifficultySelectScreen
@@ -892,7 +893,7 @@ function CommandLineChallenge() {
   
   // Rendering main game interface
   return (
-    <div className="command-line-game">
+    <div className="command-line-game nq-game nq-game--command nq-game--active">
       {showReward && <RewardAnimation text={rewardText} onComplete={() => setShowReward(false)} />}
       <div className="game-header">
         <div className="game-info">

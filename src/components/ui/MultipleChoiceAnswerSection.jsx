@@ -53,6 +53,7 @@ function MultipleChoiceAnswerSection({
               (option === correctAnswer ? 'correct' : 'incorrect') : ''}`}
             onClick={() => onAnswerClick(option)}
             disabled={answerCooldown}
+            aria-pressed={userAnswer === option}
           >
             {option}
           </button>
@@ -65,4 +66,4 @@ function MultipleChoiceAnswerSection({
   );
 }
 
-export default MultipleChoiceAnswerSection; 
+export default MultipleChoiceAnswerSection;

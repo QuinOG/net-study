@@ -1,141 +1,34 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import React, { useMemo, useState } from 'react';
+import { FiAward, FiCheck, FiCompass, FiLock, FiRadio, FiTarget, FiTrendingUp, FiZap } from 'react-icons/fi';
+import { Badge, ProgressBar, StatTile, Tabs } from '../foundations/Primitives';
 import '../../styles/ui/Achievements.css';
 
 const achievements = [
-  // Network Fundamentals
-  { id: 'proto_beginner', name: 'Protocol Beginner', description: 'Complete 5 protocol challenges', requirement: 5, category: 'protocol', icon: '🔰' },
-  { id: 'proto_novice', name: 'Protocol Novice', description: 'Complete 15 protocol challenges', requirement: 15, category: 'protocol', icon: '📡' },
-  { id: 'proto_expert', name: 'Protocol Expert', description: 'Complete 50 protocol challenges', requirement: 50, category: 'protocol', icon: '🏆' },
-  { id: 'proto_master', name: 'Protocol Master', description: 'Achieve 100% accuracy in 10 protocol challenges', requirement: 10, category: 'protocol', icon: '👑' },
-  
-  // Port Numbers
-  { id: 'port_beginner', name: 'Port Explorer', description: 'Match 10 ports correctly', requirement: 10, category: 'port', icon: '🚪' },
-  { id: 'port_novice', name: 'Port Navigator', description: 'Match 30 ports correctly', requirement: 30, category: 'port', icon: '🔌' },
-  { id: 'port_expert', name: 'Port Authority', description: 'Match 100 ports correctly', requirement: 100, category: 'port', icon: '⚓' },
-  { id: 'port_master', name: 'Port Master', description: 'Get a perfect score 5 times in a row', requirement: 5, category: 'port', icon: '🌟' },
-  
-  // Subnetting
-  { id: 'subnet_beginner', name: 'Subnet Starter', description: 'Complete 5 subnetting challenges', requirement: 5, category: 'subnet', icon: '🌐' },
-  { id: 'subnet_novice', name: 'Subnet Solver', description: 'Complete 15 subnetting challenges', requirement: 15, category: 'subnet', icon: '🧩' },
-  { id: 'subnet_expert', name: 'Subnet Wizard', description: 'Complete 30 subnetting challenges', requirement: 30, category: 'subnet', icon: '🧙' },
-  { id: 'subnet_master', name: 'Subnet Master', description: 'Solve CIDR /30 and below challenges with 90% accuracy', requirement: 5, category: 'subnet', icon: '⭐' },
-  
-  // Streak Achievements
-  { id: 'streak_beginner', name: 'Habit Forming', description: 'Maintain a 3-day streak', requirement: 3, category: 'streak', icon: '🔥' },
-  { id: 'streak_novice', name: 'Commitment', description: 'Maintain a 7-day streak', requirement: 7, category: 'streak', icon: '🔥' },
-  { id: 'streak_expert', name: 'Dedication', description: 'Maintain a 14-day streak', requirement: 14, category: 'streak', icon: '🔥' },
-  { id: 'streak_master', name: 'Unstoppable', description: 'Maintain a 30-day streak', requirement: 30, category: 'streak', icon: '🔥' },
-];
+  ['proto_beginner', 'First signal', 'Complete 5 protocol challenges', 5, 'protocol', FiRadio], ['proto_novice', 'Protocol operator', 'Complete 15 protocol challenges', 15, 'protocol', FiRadio], ['proto_expert', 'Protocol specialist', 'Complete 50 protocol challenges', 50, 'protocol', FiAward], ['proto_master', 'Protocol mastery', 'Complete 100 protocol challenges', 100, 'protocol', FiAward],
+  ['port_beginner', 'Port explorer', 'Match 10 ports correctly', 10, 'port', FiCompass], ['port_novice', 'Port navigator', 'Match 30 ports correctly', 30, 'port', FiCompass], ['port_expert', 'Port authority', 'Match 100 ports correctly', 100, 'port', FiAward], ['port_master', 'Port mastery', 'Match 250 ports correctly', 250, 'port', FiAward],
+  ['subnet_beginner', 'Subnet starter', 'Complete 5 subnetting challenges', 5, 'subnet', FiTarget], ['subnet_novice', 'Subnet solver', 'Complete 15 subnetting challenges', 15, 'subnet', FiTarget], ['subnet_expert', 'Subnet specialist', 'Complete 30 subnetting challenges', 30, 'subnet', FiAward], ['subnet_master', 'Subnet mastery', 'Complete 75 subnetting challenges', 75, 'subnet', FiAward],
+  ['streak_beginner', 'Habit forming', 'Maintain a 3-day streak', 3, 'streak', FiZap], ['streak_novice', 'Connected week', 'Maintain a 7-day streak', 7, 'streak', FiZap], ['streak_expert', 'Dedicated operator', 'Maintain a 14-day streak', 14, 'streak', FiZap], ['streak_master', 'Unstoppable', 'Maintain a 30-day streak', 30, 'streak', FiAward],
+].map(([id, name, description, requirement, category, Icon]) => ({ id, name, description, requirement, category, Icon }));
+const filters = [{ id: 'all', label: 'All' }, { id: 'earned', label: 'Earned' }, { id: 'in-progress', label: 'In progress' }];
+const progressFor = (stats, category) => ({ protocol: stats?.protocolChallengesCompleted, port: stats?.portsMatchedCorrectly, subnet: stats?.subnettingChallengesCompleted, streak: stats?.currentStreak }[category] || 0);
 
-const AchievementSystem = ({ userStats }) => {
-  const [unlockedAchievements, setUnlockedAchievements] = useState([]);
-  const [recentUnlock, setRecentUnlock] = useState(null);
-
-  useEffect(() => {
-    // If userStats is not yet loaded, don't process achievements
-    if (!userStats) {
-      return;
-    }
-    
-    // Check for unlocked achievements based on user stats
-    const newUnlocked = achievements.filter(achievement => {
-      const progress = getUserProgressForAchievement(userStats, achievement);
-      return progress >= achievement.requirement;
-    }).map(a => a.id);
-    
-    // Find newly unlocked achievements
-    const newlyUnlocked = newUnlocked.filter(id => !unlockedAchievements.includes(id));
-    
-    if (newlyUnlocked.length > 0) {
-      // Get the most recent achievement unlocked
-      const recentAchievement = achievements.find(a => a.id === newlyUnlocked[0]);
-      setRecentUnlock(recentAchievement);
-      
-      // Clear the notification after 5 seconds
-      setTimeout(() => {
-        setRecentUnlock(null);
-      }, 5000);
-    }
-    
-    setUnlockedAchievements(newUnlocked);
-  }, [userStats]);
-
-  // If userStats is not loaded yet, show a loading state
-  if (!userStats) {
-    return (
-      <div className="achievements-container">
-        <p>Loading achievements...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="achievements-container">
-      {recentUnlock && (
-        <div className="achievement-notification">
-          <div className="achievement-icon">{recentUnlock.icon}</div>
-          <div className="achievement-details">
-            <h4>Achievement Unlocked!</h4>
-            <p className="achievement-name">{recentUnlock.name}</p>
-            <p className="achievement-description">{recentUnlock.description}</p>
-          </div>
-        </div>
-      )}
-      
-      <div className="achievements-list">
-        <h3>Your Achievements</h3>
-        {achievements.map(achievement => {
-          const progress = getUserProgressForAchievement(userStats, achievement);
-          const isUnlocked = unlockedAchievements.includes(achievement.id);
-          const progressPercent = Math.min(100, (progress / achievement.requirement) * 100);
-          
-          return (
-            <div 
-              key={achievement.id} 
-              className={`achievement-item ${isUnlocked ? 'unlocked' : 'locked'}`}
-            >
-              <span className="achievement-icon">{achievement.icon}</span>
-              <div className="achievement-content">
-                <h4>{achievement.name}</h4>
-                <p>{achievement.description}</p>
-                {!isUnlocked && (
-                  <div className="progress-container">
-                    <div 
-                      className="progress-bar" 
-                      style={{ width: `${progressPercent}%` }}
-                    ></div>
-                    <span className="progress-text">{progress}/{achievement.requirement}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+export default function AchievementSystem({ userStats }) {
+  const [filter, setFilter] = useState('all');
+  const items = useMemo(() => achievements.map(item => ({ ...item, progress: progressFor(userStats, item.category), earned: progressFor(userStats, item.category) >= item.requirement })), [userStats]);
+  const earned = items.filter(item => item.earned).length;
+  const visible = items.filter(item => filter === 'all' || (filter === 'earned' ? item.earned : !item.earned));
+  const closest = items.filter(item => !item.earned).sort((a, b) => b.progress / b.requirement - a.progress / a.requirement)[0];
+  return <div className="nq-achievements">
+    <div className="nq-achievements__summary">
+      <StatTile icon={<FiAward />} tone="xp" label="Achievements earned" value={`${earned} / ${items.length}`} detail={`${Math.round(earned / items.length * 100)}% complete`} />
+      <StatTile icon={<FiTrendingUp />} label="Closest milestone" value={closest ? closest.name : 'All complete'} detail={closest ? `${closest.requirement - closest.progress} remaining` : 'Excellent work'} />
+      <StatTile icon={<FiZap />} tone="streak" label="Current streak" value={`${userStats?.currentStreak || 0} days`} detail="Keep the signal active" />
     </div>
-  );
-};
-
-// Helper function to calculate progress towards an achievement
-const getUserProgressForAchievement = (userStats, achievement) => {
-  // Check if userStats is null or undefined
-  if (!userStats) {
-    return 0;
-  }
-  
-  switch(achievement.category) {
-    case 'protocol':
-      return userStats.protocolChallengesCompleted || 0;
-    case 'port':
-      return userStats.portsMatchedCorrectly || 0;
-    case 'subnet':
-      return userStats.subnettingChallengesCompleted || 0;
-    case 'streak':
-      return userStats.currentStreak || 0;
-    default:
-      return 0;
-  }
-};
-
-export default AchievementSystem; 
+    <section className="achievements-container" aria-labelledby="achievement-list-title">
+      <div className="nq-achievements__toolbar"><div><h2 id="achievement-list-title">Achievement collection</h2><p>Earned milestones and your progress toward what comes next.</p></div><Tabs label="Achievement status" items={filters} activeId={filter} onChange={setFilter} /></div>
+      <div className="achievements-list">{visible.map(item => { const bounded = Math.min(item.progress, item.requirement); return <article key={item.id} className={`achievement-item ${item.earned ? 'unlocked' : 'locked'}`}>
+        <span className="achievement-icon" aria-hidden="true"><item.Icon /></span><div className="achievement-content"><div className="achievement-content__title"><h3>{item.name}</h3><Badge tone={item.earned ? 'success' : 'neutral'}>{item.earned ? <><FiCheck /> Earned</> : <><FiLock /> Locked</>}</Badge></div><p>{item.description}</p><ProgressBar label={`${item.name} progress`} value={bounded} max={item.requirement} valueLabel={`${bounded} / ${item.requirement}`} tone={item.earned ? 'success' : 'xp'} /></div>
+      </article>; })}</div>
+    </section>
+  </div>;
+}

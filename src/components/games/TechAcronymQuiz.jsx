@@ -11,6 +11,7 @@ import DifficultySelectScreen from '../ui/DifficultySelectScreen';
 import GameHUD from '../ui/GameHUD';
 import GameStatsRow from '../ui/GameStatsRow';
 import '../../styles/games/TechAcronymQuiz.css';
+import '../../styles/games/SharedGameTemplate.css';
 
 // Organize acronyms by category
 const ACRONYM_CATEGORIES = {
@@ -660,7 +661,7 @@ function TechAcronymQuiz() {
   const [topicsProgress, setTopicsProgress] = useState([]);
   
   return (
-    <div className="acronym-game">
+    <div className={`acronym-game nq-game nq-game--acronym ${gameStarted && !showGameOver ? 'nq-game--active' : ''}`}>
       <h2 className="game-title">Tech Acronym Quiz</h2>
       <p className="game-description">
         Test your knowledge of common technology acronyms and what they stand for!

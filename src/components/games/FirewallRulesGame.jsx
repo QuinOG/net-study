@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FiShield, FiCheck, FiX, FiArrowRight, FiClock, FiTarget, FiZap, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import '../../styles/games/FirewallRulesGame.css';
+import '../../styles/games/SharedGameTemplate.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
@@ -232,7 +233,7 @@ function FirewallRulesGame() {
   };
 
   return (
-    <div className="firewall-rules-game">
+    <div className={`firewall-rules-game nq-game nq-game--firewall ${gameStarted ? 'nq-game--active' : ''}`}>
       <h2 className="game-title">Firewall Rules Challenge</h2>
       <p className="game-description">
         Test your knowledge of firewall rules and network security concepts!

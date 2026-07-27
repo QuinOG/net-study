@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FiLock, FiUnlock, FiKey, FiCheck, FiX, FiArrowRight, FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import '../../styles/games/EncryptionChallengeGame.css';
+import '../../styles/games/SharedGameTemplate.css';
 import { UserContext } from '../../context/UserContext';
 import GameModeSelectScreen from '../ui/GameModeSelectScreen';
 import DifficultySelectScreen from '../ui/DifficultySelectScreen';
@@ -265,7 +266,7 @@ function EncryptionChallengeGame() {
   };
 
   return (
-    <div className="encryption-challenge-game">
+    <div className={`encryption-challenge-game nq-game nq-game--encryption ${gameStarted ? 'nq-game--active' : ''}`}>
       <h2 className="game-title">Encryption Challenge</h2>
       <p className="game-description">
         Test your knowledge of encryption algorithms and cryptographic concepts!

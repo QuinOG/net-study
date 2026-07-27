@@ -12,6 +12,7 @@ const PowerUpBar = ({ powerUps, onPowerUpUse, isTimeAttack, currentQuestion }) =
         onClick={() => onPowerUpUse('timeFreeze')}
         disabled={powerUps.timeFreeze <= 0}
         title="Freeze the timer for 10 seconds"
+        aria-label={`Freeze timer, ${powerUps.timeFreeze} remaining`}
       >
         <FiClock size={16} /> Freeze ({powerUps.timeFreeze})
       </button>
@@ -21,6 +22,7 @@ const PowerUpBar = ({ powerUps, onPowerUpUse, isTimeAttack, currentQuestion }) =
         onClick={() => onPowerUpUse('categoryReveal')}
         disabled={powerUps.categoryReveal <= 0 || currentQuestion?.showCategory}
         title="Reveal the protocol category"
+        aria-label={`Reveal category, ${powerUps.categoryReveal} remaining`}
       >
         <FiTarget size={16} /> Category ({powerUps.categoryReveal})
       </button>
@@ -30,6 +32,7 @@ const PowerUpBar = ({ powerUps, onPowerUpUse, isTimeAttack, currentQuestion }) =
         onClick={() => onPowerUpUse('skipQuestion')}
         disabled={powerUps.skipQuestion <= 0}
         title="Skip this question without penalty"
+        aria-label={`Skip question, ${powerUps.skipQuestion} remaining`}
       >
         <FiSkipForward size={16} /> Skip ({powerUps.skipQuestion})
       </button>
@@ -37,4 +40,4 @@ const PowerUpBar = ({ powerUps, onPowerUpUse, isTimeAttack, currentQuestion }) =
   );
 };
 
-export default PowerUpBar; 
+export default PowerUpBar;

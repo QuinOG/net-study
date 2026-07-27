@@ -145,7 +145,7 @@ const GameHUD = ({
   return (
     <>
       {/* Overlay container for all HUD elements */}
-      <div className="game-hud-overlay">
+      <div className="game-hud-overlay" aria-live="polite" aria-atomic="true">
         {/* Active Bonus Notification */}
         {activeBonus && bonusVisible && (
           <div className={`hud-bonus-status ${activeBonus}`}>
@@ -166,7 +166,7 @@ const GameHUD = ({
         
         {/* Feedback Message (Correct/Incorrect) */}
         {feedbackVisible && (
-          <div className={`hud-feedback ${feedbackIsCorrect ? 'correct' : 'incorrect'}`}>
+          <div className={`hud-feedback ${feedbackIsCorrect ? 'correct' : 'incorrect'}`} role="status">
             {feedbackMessage}
           </div>
         )}
@@ -208,4 +208,4 @@ const GameHUD = ({
   );
 };
 
-export default GameHUD; 
+export default GameHUD;

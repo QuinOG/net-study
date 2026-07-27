@@ -1,418 +1,82 @@
-import React, { useState, useContext, useEffect } from 'react';
-import './styles/layout/App.css';
-import logo from './assets/images/netquest.png';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from './router';
-import { FiHome, FiPlay, FiBarChart2, FiSettings, FiPlus, FiBookOpen, FiTerminal, FiServer, FiWifi, FiCode, FiChevronRight, FiTrendingUp, FiTarget, FiAward, FiFlag, FiArrowRight, FiMenu, FiShare2, FiShield, FiLock } from 'react-icons/fi';
-import PortGame from './components/games/PortGame';
-import ProtocolGame from './components/games/ProtocolGame';
-import SubnettingChallenge from './components/games/SubnettingChallenge';
-import TechAcronymQuiz from './components/games/TechAcronymQuiz';
-import CommandLineChallenge from './components/games/CommandLineChallenge';
-import NetworkTopologyGame from './components/games/NetworkTopologyGame';
-import FirewallRulesGame from './components/games/FirewallRulesGame';
-import EncryptionChallengeGame from './components/games/EncryptionChallengeGame';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import './styles/layout/AppShell.css';
+import { BrowserRouter as Router } from './router';
+import AppRoutes from './routes/AppRoutes';
 import Sidebar from './components/layout/Sidebar';
-import ScrollToTop from './components/layout/ScrollToTop';
+import AppHeader from './components/layout/AppHeader';
+import Dashboard from './components/dashboard/Dashboard';
 import Settings from './components/ui/Settings';
 import LandingPage from './components/ui/LandingPage';
 import LearningPaths from './components/ui/LearningPaths';
-import LessonDetail from './components/ui/LessonDetail';
-
-// New Gamification components
 import { UserProvider, UserContext } from './context/UserContext';
 import AchievementSystem from './components/ui/AchievementSystem';
 import RewardAnimation from './components/ui/RewardAnimation';
 import Leaderboard from './components/ui/Leaderboard';
-import SoundManager from './utils/SoundManager';
 import { defaultUserStats } from './utils/GuestUser';
 import MilestoneCelebration from './components/ui/MilestoneCelebration';
+import { LoadingState } from './components/foundations/Primitives';
+import { ThemeProvider, useTheme } from './hooks/useTheme';
 
 function AppContent() {
-  const { 
-    user, 
-    userStats, 
-    loading, 
-    showReward, 
-    rewardXP, 
-    handleRewardComplete, 
-    startGuestSession, 
-    showMilestone, 
-    setShowMilestone, 
-    milestoneData,
-    setMilestoneData 
-  } = useContext(UserContext);
-  
+  const context = useContext(UserContext);
+  const {
+    user, userStats, loading, showReward, rewardXP, handleRewardComplete,
+    startGuestSession, showMilestone, setShowMilestone, milestoneData,
+  } = context;
+  const { resolvedTheme, setTheme } = useTheme();
   const [initializingGuest, setInitializingGuest] = useState(false);
-  
-  // Fixed testMilestone function - using context values from the outer scope
-  const testMilestone = () => {
-    // Create test milestone data
-    const testData = {
-      type: 'level-up',
-      data: {
-        level: userStats?.level + 1 || 5,
-        rewards: [
-          "Access to more difficult questions",
-          "New achievement badges",
-          "Enhanced profile customization"
-        ]
-      }
-    };
-    
-    // Set the milestone data and show the celebration
-    setMilestoneData(testData);
-    setShowMilestone(true);
-  };
-  
-  // Handle guest mode from URL parameter
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const menuButtonRef = useRef(null);
+  const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
+  const toggleMobileNav = useCallback(() => setMobileNavOpen(open => !open), []);
+
   useEffect(() => {
-    // Parse the URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
-    
+    const mode = new URLSearchParams(window.location.search).get('mode');
     if (mode === 'guest' && !user && !initializingGuest) {
-      console.log('[App] Detected guest mode parameter, initializing guest session');
-      
-      // Set flag to prevent repeated initialization
       setInitializingGuest(true);
-      
-      // Remove the parameter from URL without page reload
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
-      
-      // Initialize guest session immediately
-      try {
-        startGuestSession();
-        console.log('[App] Guest session started successfully');
-      } catch (error) {
-        console.error('[App] Failed to start guest session:', error);
-        // Reset the flag if initialization failed
-        setInitializingGuest(false);
-      }
+      window.history.replaceState({}, document.title, window.location.pathname);
+      try { startGuestSession(); } catch { setInitializingGuest(false); }
     }
   }, [loading, startGuestSession, user, initializingGuest]);
-  
-  // Reset initialization flag when user is set
-  useEffect(() => {
-    if (user && initializingGuest) {
-      setInitializingGuest(false);
-    }
-  }, [user, initializingGuest]);
-  
-  // Determine if user is authenticated or a guest
-  const isAuthenticated = !!user;
-  const isGuest = user?.isGuest || false;
-  
-  // If still loading or initializing guest session, show a loading indicator
-  if (loading || initializingGuest) {
-    return <div className="loading-container">Loading...</div>;
-  }
-  
-  return (
-    <Routes>
-      {/* Landing page is accessible by everyone, but authenticated users will see a special version */}
-      <Route path="/" element={<LandingPage />} />
-      
-      {/* Dashboard routes - accessible by both authenticated and guest users */}
-      <Route path="/dashboard/*" element={
-        isAuthenticated ? (
-          <div className="app-container">
-            <Header />
-            <div className="main-layout">
-              <Sidebar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/protocol" element={<ProtocolGame />} />
-                <Route path="/port" element={<PortGame />} />
-                <Route path="/subnet" element={<SubnettingChallenge />} />
-                <Route path="/acronym" element={<TechAcronymQuiz />} />
-                <Route path="/command" element={<CommandLineChallenge />} />
-                <Route path="/network-topology" element={<NetworkTopologyGame />} />
-                <Route path="/firewall-rules" element={<FirewallRulesGame />} />
-                <Route path="/encryption-challenge" element={<EncryptionChallengeGame />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/learning-paths" element={<LearningPaths />} />
-                <Route path="/learning/module/:moduleId/lesson/:lessonId" element={<LessonDetail />} />
-                <Route path="/achievements" element={
-                  <div className="content">
-                    <h3 className="section-title">Your Achievements</h3>
-                    <AchievementSystem userStats={userStats || defaultUserStats} />
-                  </div>
-                } />
-                <Route path="/stats" element={
-                  <div className="content">
-                    <h3 className="section-title">Player Statistics</h3>
-                    <Leaderboard minimized={false} />
-                  </div>
-                } />
-              </Routes>
-            </div>
-            
-            {showReward && (
-              <RewardAnimation xp={rewardXP} onComplete={handleRewardComplete} />
-            )}
-            
-            {/* Add Milestone Celebration */}
-            <MilestoneCelebration 
-              show={showMilestone} 
-              type={milestoneData.type} 
-              data={milestoneData.data} 
-              onComplete={() => setShowMilestone(false)} 
-            />
 
-          </div>
-        ) : (
-          <Navigate to="/" replace />
-        )
-      } />
-      
-      {/* Redirect for legacy routes */}
-      <Route path="/protocol" element={<Navigate to="/dashboard/protocol" replace />} />
-      <Route path="/port" element={<Navigate to="/dashboard/port" replace />} />
-      <Route path="/subnet" element={<Navigate to="/dashboard/subnet" replace />} />
-      <Route path="/acronym" element={<Navigate to="/dashboard/acronym" replace />} />
-      <Route path="/command" element={<Navigate to="/dashboard/command" replace />} />
-      <Route path="/network-topology" element={<Navigate to="/dashboard/network-topology" replace />} />
-      <Route path="/firewall-rules" element={<Navigate to="/dashboard/firewall-rules" replace />} />
-      <Route path="/encryption-challenge" element={<Navigate to="/dashboard/encryption-challenge" replace />} />
-      <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
-      <Route path="/learning-paths" element={<Navigate to="/dashboard/learning-paths" replace />} />
-      <Route path="/achievements" element={<Navigate to="/dashboard/achievements" replace />} />
-      <Route path="/stats" element={<Navigate to="/dashboard/stats" replace />} />
-    </Routes>
-  );
+  useEffect(() => {
+    if (user && initializingGuest) setInitializingGuest(false);
+  }, [user, initializingGuest]);
+
+  if (loading || initializingGuest) {
+    return <main className="nq-route-state" data-route-focus tabIndex="-1"><LoadingState label="Loading your dashboard" /></main>;
+  }
+
+  const pages = {
+    landing: <LandingPage />,
+    settings: <div className="nq-shell-page"><Settings /></div>,
+    learningPaths: <div className="nq-shell-page"><LearningPaths /></div>,
+    achievements: <div className="nq-shell-page content progression-page"><header className="progression-page__header"><span className="nq-eyebrow">Personal progress</span><h1>Your Achievements</h1><p>Track milestones you have earned and see what to work toward next.</p></header><AchievementSystem userStats={userStats || defaultUserStats} /></div>,
+    stats: <div className="nq-shell-page content progression-page"><header className="progression-page__header"><span className="nq-eyebrow">Social ranking</span><h1>Leaderboard</h1><p>Compare recent performance while keeping your own learning goals in focus.</p></header><Leaderboard minimized={false} /></div>,
+  };
+  const overlays = <>
+    {showReward && <RewardAnimation xpGained={rewardXP} show onComplete={handleRewardComplete} />}
+    <MilestoneCelebration show={showMilestone} type={milestoneData.type} data={milestoneData.data} onComplete={() => setShowMilestone(false)} />
+  </>;
+  const header = <Header
+    menuOpen={mobileNavOpen}
+    onToggleMenu={toggleMobileNav}
+    menuButtonRef={menuButtonRef}
+    resolvedTheme={resolvedTheme}
+    onToggleTheme={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+  />;
+  const sidebar = <Sidebar mobileOpen={mobileNavOpen} onClose={closeMobileNav} menuButtonRef={menuButtonRef} />;
+
+  return <AppRoutes authenticated={!!user} shell={{ header, sidebar }} home={<Dashboard />} overlays={overlays} pages={pages} />;
 }
 
 function App() {
-  return (
-    <Router>
-      <UserProvider>
-        <ScrollToTop />
-        <AppContent />
-      </UserProvider>
-    </Router>
-  );
+  return <ThemeProvider><Router><UserProvider><AppContent /></UserProvider></Router></ThemeProvider>;
 }
 
-function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+export function Header(props) {
   const { user, isGuest, logout } = useContext(UserContext);
-  
-  const toggleMobileMenu = () => {
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) {
-      sidebar.classList.toggle('mobile-open');
-      setIsMobileMenuOpen(!isMobileMenuOpen);
-    }
-  };
-  
-  // Handle logo click to go to landing page
-  const handleLogoClick = (e) => {
-    e.preventDefault();
-    // Use window.location.href instead of React Router navigation
-    // to ensure a clean page load
-    window.location.href = "/";
-  };
-  
-  // Handle sign in click for guest users
-  const handleSignInClick = (e) => {
-    e.preventDefault();
-    // Direct to landing page for sign in
-    window.location.href = "/";
-  };
-
-  return (
-    <header className="top-bar">
-      <div className="top-bar-left">
-        {/* Mobile menu toggle */}
-        <button 
-          className="mobile-menu-toggle" 
-          onClick={toggleMobileMenu}
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-        >
-          <FiMenu size={24} />
-        </button>
-        
-        {/* Logo with click handler instead of Link */}
-        <div 
-          className="logo" 
-          onClick={handleLogoClick}
-          style={{ cursor: 'pointer' }}
-        >
-          <img 
-            src={logo} 
-            alt="NetQuest Logo" 
-            style={{ flexShrink: 0 }}
-          />
-          <span>NetQuest</span>
-        </div>
-      </div>
-      <div className="top-bar-right">
-        {isGuest && (
-          <div className="guest-indicator">
-            Guest Mode
-            <button 
-              className="login-prompt" 
-              onClick={handleSignInClick}
-            >
-              Sign in to save progress
-            </button>
-          </div>
-        )}
-        <img
-          className="user-avatar"
-          src={(() => {
-            // Get the avatar from localStorage
-            const storedAvatar = localStorage.getItem('net-study-settings-avatar');
-            
-            // Guest user - use stored avatar or default
-            if (isGuest) {
-              return storedAvatar ? `/avatars/${storedAvatar}` : "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png";
-            }
-            
-            // Logged in user - use user.avatar, stored avatar, or default
-            if (user?.avatar) {
-              return `/avatars/${user.avatar}`;
-            }
-            
-            return storedAvatar ? `/avatars/${storedAvatar}` : "https://www.pngkey.com/png/full/159-1593637_photo-angry-face-meme.png";
-          })()}
-          alt="User Avatar"
-        />
-        {user && !isGuest && (
-          <button className="logout-button" onClick={logout}>
-            Logout
-          </button>
-        )}
-      </div>
-    </header>
-  );
-}
-
-function Home() {
-  const { userStats, loading } = useContext(UserContext);
-  
-  // Play click sound when game is selected
-  const handleGameSelect = () => {
-    SoundManager.play('click');
-  };
-  
-  return (
-    <main className="content">
-      {/* Minimized Leaderboard - will handle loading state internally */}
-      <Leaderboard minimized={true} />
-      
-      <h3 className="section-title">Choose a Game</h3>
-      <div className="game-grid">
-        <div className="game-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiServer size={32} />
-            </div>
-            <h4>Port Number Game</h4>
-          </div>
-          <p className="card-description">Match common networking ports with their services. Test your knowledge of TCP/UDP ports.</p>
-          <Link to="/dashboard/port" onClick={handleGameSelect}>
-            <button className="start-btn">Start Game</button>
-          </Link>
-        </div>
-        
-        <div className="game-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiWifi size={32} />
-            </div>
-            <h4>Protocol Matcher</h4>
-          </div>
-          <p className="card-description">Match networking protocols with their functions. Learn protocol fundamentals and their uses.</p>
-          <Link to="/dashboard/protocol" onClick={handleGameSelect}>
-            <button className="start-btn">Start Game</button>
-          </Link>
-        </div>
-        
-        <div className="game-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiCode size={32} />
-            </div>
-            <h4>Subnetting Challenge</h4>
-          </div>
-          <p className="card-description">Practice IP addressing and subnetting. Calculate network and broadcast addresses for IP ranges.</p>
-          <Link to="/dashboard/subnet" onClick={handleGameSelect}>
-            <button className="start-btn">Start Game</button>
-          </Link>
-        </div>
-        
-        <div className="game-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiBookOpen size={32} />
-            </div>
-            <h4>Tech Acronym Quiz</h4>
-          </div>
-          <p className="card-description">Test your knowledge of networking acronyms and terminology from basic to advanced levels.</p>
-          <Link to="/dashboard/acronym" onClick={handleGameSelect}>
-            <button className="start-btn">Start Game</button>
-          </Link>
-        </div>
-        
-        <div className="game-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiTerminal size={32} />
-            </div>
-            <h4>Command Line</h4>
-          </div>
-          <p className="card-description">Practice essential networking commands for different operating systems and network devices.</p>
-          <Link to="/dashboard/command" onClick={handleGameSelect}>
-            <button className="start-btn">Start Game</button>
-          </Link>
-        </div>
-
-        {/* New Game: Network Topology */}
-        <div className="game-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiShare2 size={32} />
-            </div>
-            <h4>Network Topology</h4>
-          </div>
-          <p className="card-description">Build and analyze different network topologies. Learn about network design and optimization.</p>
-          <Link to="/dashboard/network-topology" onClick={handleGameSelect}>
-            <button className="start-btn">Start Game</button>
-          </Link>
-        </div>
-
-        {/* New Game: Firewall Rules */}
-        <div className="game-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiShield size={32} />
-            </div>
-            <h4>Firewall Rules</h4>
-          </div>
-          <p className="card-description">Create and test firewall rule configurations. Learn about network security and access control.</p>
-          <Link to="/dashboard/firewall-rules" onClick={handleGameSelect}>
-            <button className="start-btn">Start Game</button>
-          </Link>
-        </div>
-
-        {/* New Game: Encryption Challenge */}
-        <div className="game-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiLock size={32} />
-            </div>
-            <h4>Encryption Challenge</h4>
-          </div>
-          <p className="card-description">Learn about encryption techniques and protocols used in networking and cybersecurity.</p>
-          <Link to="/dashboard/encryption-challenge" onClick={handleGameSelect}>
-            <button className="start-btn">Start Game</button>
-          </Link>
-        </div>
-      </div>
-    </main>
-  );
+  return <AppHeader user={user} isGuest={isGuest ?? user?.isGuest} logout={logout} {...props} />;
 }
 
 export default App;

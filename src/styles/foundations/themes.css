@@ -1,0 +1,146 @@
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Canvas and surfaces */
+  --color-canvas: #071425;
+  --color-canvas-subtle: #0a1a2e;
+  --color-surface-1: #0f2036;
+  --color-surface-2: #152a43;
+  --color-surface-3: #1d3652;
+  --color-surface-raised: #203c59;
+  --color-surface-inverse: #f4f8fc;
+
+  /* Text and borders */
+  --color-text-primary: #f4f9ff;
+  --color-text-secondary: #c6d5e5;
+  --color-text-muted: #91a8c0;
+  --color-text-inverse: #071425;
+  --color-link: #73ddff;
+  --color-link-hover: #b2eeff;
+  --color-border-subtle: #29415b;
+  --color-border-strong: #4c6985;
+
+  /* Actions and component states */
+  --color-action-primary: #42c9f5;
+  --color-action-hover: #76dcfb;
+  --color-action-pressed: #1aa4d2;
+  --color-action-contrast: #05131e;
+  --color-action-secondary: #203b56;
+  --color-action-secondary-hover: #2b4d6c;
+  --color-focus: #82e5ff;
+  --color-focus-ring: rgb(130 229 255 / .42);
+  --color-state-hover: rgb(115 221 255 / .1);
+  --color-state-pressed: rgb(115 221 255 / .18);
+  --color-state-selected: #153e55;
+  --color-state-selected-border: #42c9f5;
+  --color-state-disabled: #182a3e;
+  --color-state-disabled-border: #304357;
+  --color-text-disabled: #71869c;
+
+  /* Feedback and progression */
+  --color-success-fg: #a0efc2;
+  --color-success-bg: #123b32;
+  --color-success-border: #38b879;
+  --color-warning-fg: #ffda91;
+  --color-warning-bg: #463516;
+  --color-warning-border: #dda23a;
+  --color-danger-fg: #ffb0b0;
+  --color-danger-bg: #491f2a;
+  --color-danger-border: #ef7080;
+  --color-info-fg: #b7d8ff;
+  --color-info-bg: #17365f;
+  --color-info-border: #5a9de5;
+  --color-xp-fg: #d7c6ff;
+  --color-xp-bg: #302558;
+  --color-xp-border: #8f72db;
+  --color-streak-fg: #ffdb91;
+  --color-streak-bg: #443216;
+  --color-streak-border: #e2a43b;
+  --color-rank-gold: #ffd56a;
+  --color-rank-silver: #c9d5e2;
+  --color-rank-bronze: #df9a68;
+
+  /* Data visualization */
+  --color-data-1: #55d6ff;
+  --color-data-2: #64dda0;
+  --color-data-3: #ffc660;
+  --color-data-4: #ff8790;
+  --color-data-5: #b49af5;
+  --color-data-6: #67d9d1;
+
+  /* Overlays and utilities */
+  --color-overlay: rgb(3 10 22 / .78);
+  --color-skeleton: #253b51;
+  --color-skeleton-highlight: #35526d;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-canvas: #f4f8fc;
+  --color-canvas-subtle: #eaf2f8;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #eaf1f8;
+  --color-surface-3: #dce8f4;
+  --color-surface-raised: #ffffff;
+  --color-surface-inverse: #0b1d31;
+
+  --color-text-primary: #14243a;
+  --color-text-secondary: #344b65;
+  --color-text-muted: #5e748d;
+  --color-text-inverse: #ffffff;
+  --color-link: #006f9f;
+  --color-link-hover: #004d70;
+  --color-border-subtle: #ccd9e5;
+  --color-border-strong: #8fa5b9;
+
+  --color-action-primary: #087db6;
+  --color-action-hover: #056391;
+  --color-action-pressed: #044e70;
+  --color-action-contrast: #ffffff;
+  --color-action-secondary: #e5eef6;
+  --color-action-secondary-hover: #d5e3ef;
+  --color-focus: #006b91;
+  --color-focus-ring: rgb(0 107 145 / .28);
+  --color-state-hover: rgb(0 111 159 / .08);
+  --color-state-pressed: rgb(0 111 159 / .15);
+  --color-state-selected: #dff3fb;
+  --color-state-selected-border: #087da8;
+  --color-state-disabled: #e7edf3;
+  --color-state-disabled-border: #c4d0db;
+  --color-text-disabled: #6e8193;
+
+  --color-success-fg: #176c46;
+  --color-success-bg: #dff5e8;
+  --color-success-border: #368d61;
+  --color-warning-fg: #754d00;
+  --color-warning-bg: #fff2cf;
+  --color-warning-border: #a9700d;
+  --color-danger-fg: #97253a;
+  --color-danger-bg: #ffe1e5;
+  --color-danger-border: #bd4255;
+  --color-info-fg: #175891;
+  --color-info-bg: #dcecff;
+  --color-info-border: #4c86bc;
+  --color-xp-fg: #543494;
+  --color-xp-bg: #eee8ff;
+  --color-xp-border: #8165bd;
+  --color-streak-fg: #704800;
+  --color-streak-bg: #fff0ce;
+  --color-streak-border: #a66a00;
+  --color-rank-gold: #8a6100;
+  --color-rank-silver: #52677a;
+  --color-rank-bronze: #8a4a24;
+
+  --color-data-1: #087da8;
+  --color-data-2: #19764c;
+  --color-data-3: #946000;
+  --color-data-4: #af3043;
+  --color-data-5: #6848a7;
+  --color-data-6: #08756f;
+
+  --color-overlay: rgb(10 24 42 / .55);
+  --color-skeleton: #dce6ef;
+  --color-skeleton-highlight: #eef4f9;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FiShare2, FiSmile, FiFrown, FiArrowRight, FiClock, FiTarget, FiZap, FiShield, FiRefreshCw, FiSkipForward, FiAward, FiStar } from 'react-icons/fi';
 import '../../styles/games/NetworkTopologyGame.css';
+import '../../styles/games/SharedGameTemplate.css';
 import { UserContext } from '../../context/UserContext';
 import GameEndScreen from '../ui/GameEndScreen';
 import SoundManager from '../../utils/SoundManager';
@@ -208,7 +209,7 @@ function NetworkTopologyGame() {
 
   // Render the game
   return (
-    <div className="network-topology-game">
+    <div className={`network-topology-game nq-game nq-game--topology ${gameStarted ? 'nq-game--active' : ''}`}>
       <h2 className="game-title">Network Topology Challenge</h2>
       <p className="game-description">
         Test your knowledge of network topologies and their characteristics!

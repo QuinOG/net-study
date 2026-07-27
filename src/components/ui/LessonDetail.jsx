@@ -379,12 +379,12 @@ const LessonDetail = () => {
 
   // Show loading state while fetching content
   if (loading) {
-    return <div className="lesson-loading">Loading lesson content...</div>;
+    return <div className="lesson-loading" role="status" aria-live="polite">Loading lesson content...</div>;
   }
 
   // Show error state if lesson content couldn't be loaded
   if (!lesson) {
-    return <div className="lesson-error">Lesson not found</div>;
+    return <div className="lesson-error" role="alert"><h1>Lesson not found</h1><p>This lesson may not be available yet.</p><Link to="/dashboard/learning-paths">Return to learning paths</Link></div>;
   }
 
   return (
@@ -419,12 +419,14 @@ const LessonDetail = () => {
       </div>
 
       {/* Navigation tabs for each section */}
-      <div className="lesson-tabs section-tabs">
+      <div className="lesson-tabs section-tabs" role="tablist" aria-label="Lesson sections">
         {sectionTabs.map(section => (
           <button 
             key={section.id}
             className={`lesson-tab ${activeTab === section.id ? 'active' : ''}`}
             onClick={() => setActiveTab(section.id)}
+            role="tab"
+            aria-selected={activeTab === section.id}
           >
             {section.title}
           </button>
@@ -433,6 +435,8 @@ const LessonDetail = () => {
         <button 
           className={`lesson-tab completion-tab ${activeTab === 'completion' ? 'active' : ''}`}
           onClick={() => setActiveTab('completion')}
+          role="tab"
+          aria-selected={activeTab === 'completion'}
         >
           <FiCheckCircle /> Complete Lesson
         </button>

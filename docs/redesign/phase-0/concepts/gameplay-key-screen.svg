@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1024" viewBox="0 0 1440 1024" role="img" aria-labelledby="title desc">
+  <title id="title">NetQuest gameplay key screen</title><desc id="desc">A high fidelity dark-mode Port Number Game concept with a stable HUD, notification lane, central question, and bottom answer zone.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#0a1b31"/></linearGradient><linearGradient id="cta" x2="1"><stop stop-color="#27d3ff"/><stop offset="1" stop-color="#5b8cff"/></linearGradient><style>.ui{font-family:Inter,Arial,sans-serif}.mono{font-family:'IBM Plex Mono',Consolas,monospace}.muted{fill:#8ea4bd}.card{fill:#0f2036;stroke:#29415b}.small{font-size:12px}</style></defs>
+  <rect width="1440" height="1024" fill="url(#bg)"/>
+  <g opacity=".32" fill="none" stroke="#24536d"><path d="M0 176h210l86 60h206"/><path d="M1440 156h-180l-92 74h-166"/><circle cx="210" cy="176" r="7" fill="#07111f" stroke="#27d3ff"/><circle cx="1260" cy="156" r="7" fill="#07111f" stroke="#27d3ff"/></g>
+  <g class="ui">
+    <g transform="translate(42 30)"><circle cx="18" cy="18" r="17" fill="#102c43" stroke="#27d3ff"/><text x="48" y="25" fill="#f4f9ff" font-size="21" font-weight="800">NetQuest</text></g>
+    <text x="720" y="55" text-anchor="middle" fill="#f4f9ff" font-size="17" font-weight="800">Port Number Game</text><text x="720" y="78" text-anchor="middle" class="mono muted small">TIME ATTACK · EASY</text>
+    <rect x="1266" y="30" width="132" height="42" rx="9" fill="none" stroke="#3d5b76"/><text x="1332" y="56" text-anchor="middle" fill="#cbd9e7" font-size="13" font-weight="700">End mission</text>
+    <line x1="0" x2="1440" y1="104" y2="104" stroke="#29415b"/>
+
+    <g transform="translate(176 126)"><rect class="card" width="1088" height="104" rx="16"/>
+      <g transform="translate(28 22)"><text class="muted small" font-weight="700">SCORE</text><text y="46" fill="#f4f9ff" class="mono" font-size="27" font-weight="700">1,240</text></g><line x1="226" x2="226" y1="18" y2="86" stroke="#29415b"/>
+      <g transform="translate(258 22)"><text class="muted small" font-weight="700">ANSWER STREAK</text><text y="46" fill="#ffbd4a" class="mono" font-size="27" font-weight="700">6 ×2</text></g><line x1="512" x2="512" y1="18" y2="86" stroke="#29415b"/>
+      <g transform="translate(544 22)"><text class="muted small" font-weight="700">TIME</text><text y="46" fill="#f4f9ff" class="mono" font-size="27" font-weight="700">01:24</text></g><line x1="748" x2="748" y1="18" y2="86" stroke="#29415b"/>
+      <g transform="translate(780 22)"><text class="muted small" font-weight="700">PROGRESS</text><text y="46" fill="#f4f9ff" class="mono" font-size="27" font-weight="700">04 / 10</text><rect x="156" y="10" width="116" height="7" rx="4" fill="#20364d"/><rect x="156" y="10" width="46" height="7" rx="4" fill="#39d98a"/></g>
+    </g>
+
+    <g transform="translate(390 250)"><rect width="660" height="50" rx="12" fill="#123529" stroke="#2e7457"/><circle cx="28" cy="25" r="11" fill="#39d98a"/><path d="m22 25 4 4 8-9" fill="none" stroke="#062619" stroke-width="3"/><text x="52" y="22" fill="#bdf7d9" font-size="14" font-weight="800">Correct · +240 points</text><text x="52" y="39" fill="#81bea0" class="small">Fast answer +40 · streak multiplier ×2</text><text x="628" y="30" text-anchor="end" fill="#81bea0" class="mono small">+24 XP</text></g>
+
+    <g transform="translate(280 330)"><rect class="card" width="880" height="304" rx="20"/>
+      <rect x="344" y="30" width="192" height="30" rx="15" fill="#14364a"/><text x="440" y="50" text-anchor="middle" fill="#8be6ff" class="mono small">PORT → SERVICE</text>
+      <text x="440" y="112" text-anchor="middle" class="muted" font-size="16">Which service commonly listens on this port?</text>
+      <text x="440" y="206" text-anchor="middle" fill="#f4f9ff" class="mono" font-size="80" font-weight="500">443</text>
+      <text x="440" y="250" text-anchor="middle" class="mono muted" font-size="13">TCP · SECURE WEB TRAFFIC</text>
+      <circle cx="74" cy="54" r="5" fill="#27d3ff" opacity=".8"/><path d="M74 54h104l48 40" fill="none" stroke="#24536d"/><circle cx="806" cy="246" r="5" fill="#39d98a" opacity=".8"/><path d="M806 246H702l-48-40" fill="none" stroke="#24536d"/>
+    </g>
+
+    <g transform="translate(280 660)"><text y="14" fill="#8ea4bd" class="small" font-weight="700" letter-spacing="1">SELECT AN ANSWER</text>
+      <g transform="translate(0 34)"><rect width="428" height="68" rx="12" fill="#10243a" stroke="#35536d"/><text x="24" y="42" fill="#dce8f4" font-size="16" font-weight="700">HTTP</text><text x="396" y="41" text-anchor="end" class="mono muted small">1</text></g>
+      <g transform="translate(452 34)"><rect width="428" height="68" rx="12" fill="#123529" stroke="#39d98a" stroke-width="2"/><circle cx="26" cy="34" r="11" fill="#39d98a"/><path d="m20 34 4 4 8-9" fill="none" stroke="#062619" stroke-width="3"/><text x="50" y="42" fill="#d8f8e8" font-size="16" font-weight="800">HTTPS</text><text x="396" y="41" text-anchor="end" class="mono" fill="#80cba4" font-size="12">2</text></g>
+      <g transform="translate(0 118)"><rect width="428" height="68" rx="12" fill="#10243a" stroke="#35536d"/><text x="24" y="42" fill="#dce8f4" font-size="16" font-weight="700">SSH</text><text x="396" y="41" text-anchor="end" class="mono muted small">3</text></g>
+      <g transform="translate(452 118)"><rect width="428" height="68" rx="12" fill="#10243a" stroke="#35536d"/><text x="24" y="42" fill="#dce8f4" font-size="16" font-weight="700">DNS</text><text x="396" y="41" text-anchor="end" class="mono muted small">4</text></g>
+    </g>
+
+    <g transform="translate(280 890)"><rect width="274" height="54" rx="11" fill="#0d1d30" stroke="#35536d"/><text x="20" y="22" class="muted small">FREEZE TIMER</text><text x="20" y="42" fill="#d8e6f3" class="mono small">2 REMAINING</text><text x="246" y="33" text-anchor="end" fill="#71e4ff">❄</text>
+      <g transform="translate(294)"><rect width="274" height="54" rx="11" fill="#0d1d30" stroke="#35536d"/><text x="20" y="22" class="muted small">REVEAL CATEGORY</text><text x="20" y="42" fill="#d8e6f3" class="mono small">1 REMAINING</text><text x="246" y="33" text-anchor="end" fill="#71e4ff">◉</text></g>
+      <g transform="translate(588)"><rect width="292" height="54" rx="11" fill="#0a1726" stroke="#24384c"/><text x="20" y="22" fill="#627991" class="small">SKIP QUESTION</text><text x="20" y="42" fill="#627991" class="mono small">COOLDOWN</text><text x="264" y="33" text-anchor="end" fill="#526a82">↠</text></g>
+    </g>
+    <text x="52" y="990" class="muted small">Directional high-fidelity concept · stable feedback/HUD geometry · not production UI</text>
+  </g>
+</svg>

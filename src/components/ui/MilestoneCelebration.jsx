@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrophy, FaAward } from 'react-icons/fa';
+import { Button } from '../foundations/Primitives';
 import '../../styles/ui/MilestoneCelebration.css';
 
 /**
@@ -85,10 +86,12 @@ const MilestoneCelebration = ({ show, type = 'level-up', data = {}, onComplete }
     }
   };
   
+  const close = () => { setVisible(false); if (onComplete) onComplete(); };
   return (
-    <div className={`milestone-celebration-overlay ${visible ? 'visible' : ''}`}>
+    <div className={`milestone-celebration-overlay ${visible ? 'visible' : ''}`} role="dialog" aria-modal="true" aria-label="Milestone celebration">
       <div className="milestone-celebration-container">
         {renderMilestone()}
+        <Button className="milestone-continue" onClick={close}>Continue</Button>
       </div>
     </div>
   );

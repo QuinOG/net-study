@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1024" viewBox="0 0 1440 1024" role="img" aria-labelledby="title desc">
+  <title id="title">NetQuest Living Network visual direction board</title>
+  <desc id="desc">A dark visual design board showing brand colors, typography, interface surfaces, controls, feedback, and a network topology motif.</desc>
+  <defs>
+    <linearGradient id="canvas" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#0b1830"/></linearGradient>
+    <linearGradient id="cyan" x2="1"><stop stop-color="#27d3ff"/><stop offset="1" stop-color="#5b8cff"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#02060c" flood-opacity=".38"/></filter>
+    <style>
+      .ui{font-family:Inter,Arial,sans-serif}.mono{font-family:'IBM Plex Mono',Consolas,monospace}.muted{fill:#8ea4bd}.soft{fill:#c6d5e5}.label{font-size:13px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase}.card{fill:#0f2036;stroke:#29415b;stroke-width:1}.line{stroke:#1c5570;stroke-width:1.5;fill:none}.node{fill:#0c1a2b;stroke:#27d3ff;stroke-width:2}
+    </style>
+  </defs>
+  <rect width="1440" height="1024" fill="url(#canvas)"/>
+  <g opacity=".38">
+    <path class="line" d="M0 110H210l70 70h170l58-58h170l80 80h280l80-80h402"/>
+    <path class="line" d="M850 0v76l72 72v108l88 88h240l72 72h118"/>
+    <g class="node"><circle cx="210" cy="110" r="6"/><circle cx="450" cy="180" r="6"/><circle cx="678" cy="122" r="6"/><circle cx="938" cy="202" r="6"/><circle cx="1250" cy="344" r="6"/></g>
+  </g>
+  <g class="ui">
+    <text x="72" y="82" fill="#f4f9ff" font-size="34" font-weight="800">NetQuest / The Living Network</text>
+    <text x="72" y="113" class="muted" font-size="16">Network operations academy · precise, energetic, approachable</text>
+    <rect x="72" y="150" width="1296" height="1" fill="#29415b"/>
+
+    <text x="72" y="205" fill="#8ea4bd" class="label">Semantic color roles</text>
+    <g transform="translate(72 230)">
+      <g><rect width="176" height="112" rx="14" fill="#07111f" stroke="#29415b"/><text x="16" y="78" fill="#f4f9ff" font-size="15" font-weight="700">Canvas</text><text x="16" y="99" class="mono muted" font-size="12">#07111F</text></g>
+      <g transform="translate(192)"><rect width="176" height="112" rx="14" fill="#0f2036" stroke="#29415b"/><text x="16" y="78" fill="#f4f9ff" font-size="15" font-weight="700">Surface</text><text x="16" y="99" class="mono muted" font-size="12">#0F2036</text></g>
+      <g transform="translate(384)"><rect width="176" height="112" rx="14" fill="#27d3ff"/><text x="16" y="78" fill="#04121d" font-size="15" font-weight="800">Action</text><text x="16" y="99" class="mono" fill="#073246" font-size="12">#27D3FF</text></g>
+      <g transform="translate(576)"><rect width="176" height="112" rx="14" fill="#39d98a"/><text x="16" y="78" fill="#042015" font-size="15" font-weight="800">Connected</text><text x="16" y="99" class="mono" fill="#0c5134" font-size="12">#39D98A</text></g>
+      <g transform="translate(768)"><rect width="176" height="112" rx="14" fill="#ffbd4a"/><text x="16" y="78" fill="#2b1900" font-size="15" font-weight="800">Streak</text><text x="16" y="99" class="mono" fill="#694300" font-size="12">#FFBD4A</text></g>
+      <g transform="translate(960)"><rect width="176" height="112" rx="14" fill="#ff6b6b"/><text x="16" y="78" fill="#2c0808" font-size="15" font-weight="800">Error</text><text x="16" y="99" class="mono" fill="#711b1b" font-size="12">#FF6B6B</text></g>
+      <g transform="translate(1152)"><rect width="144" height="112" rx="14" fill="#f4f9ff"/><text x="16" y="78" fill="#07111f" font-size="15" font-weight="800">Text</text><text x="16" y="99" class="mono" fill="#526a82" font-size="12">#F4F9FF</text></g>
+    </g>
+
+    <text x="72" y="396" fill="#8ea4bd" class="label">Typography &amp; technical values</text>
+    <g transform="translate(72 420)">
+      <rect class="card" width="624" height="200" rx="16" filter="url(#shadow)"/>
+      <text x="28" y="54" fill="#f4f9ff" font-size="34" font-weight="800">Continue your journey</text>
+      <text x="28" y="89" class="soft" font-size="17">Interface and reading use Inter for an open, calm rhythm.</text>
+      <text x="28" y="138" fill="#27d3ff" class="mono" font-size="26" font-weight="500">192.168.10.0/24</text>
+      <text x="28" y="170" class="mono muted" font-size="14">PORT 443  ·  01:24  ·  +120 XP</text>
+      <rect x="508" y="24" width="88" height="28" rx="14" fill="#15344a" stroke="#27d3ff"/><text x="552" y="43" text-anchor="middle" fill="#8be6ff" class="mono" font-size="11">LIVE</text>
+    </g>
+    <g transform="translate(720 420)">
+      <rect class="card" width="648" height="200" rx="16"/>
+      <text x="28" y="42" fill="#8ea4bd" class="label">Network motif</text>
+      <path d="M58 121H172l54-48h130l76 68h128" stroke="#24536d" stroke-width="3" fill="none"/>
+      <circle cx="58" cy="121" r="13" class="node"/><circle cx="226" cy="73" r="13" class="node"/><circle cx="356" cy="73" r="13" class="node"/><circle cx="432" cy="141" r="13" fill="#10283c" stroke="#39d98a" stroke-width="3"/><circle cx="560" cy="141" r="13" class="node"/>
+      <circle cx="294" cy="73" r="5" fill="#27d3ff"/>
+      <text x="58" y="164" text-anchor="middle" class="mono muted" font-size="11">CLIENT</text><text x="226" y="116" text-anchor="middle" class="mono muted" font-size="11">SWITCH</text><text x="432" y="183" text-anchor="middle" class="mono" fill="#72e7ad" font-size="11">ROUTE OK</text>
+    </g>
+
+    <text x="72" y="674" fill="#8ea4bd" class="label">Components &amp; interaction states</text>
+    <g transform="translate(72 700)">
+      <rect class="card" width="1296" height="238" rx="16"/>
+      <rect x="28" y="28" width="176" height="48" rx="10" fill="url(#cyan)"/><text x="116" y="59" text-anchor="middle" fill="#03131f" font-size="15" font-weight="800">Begin mission</text>
+      <rect x="220" y="28" width="156" height="48" rx="10" fill="none" stroke="#4e6a85"/><text x="298" y="59" text-anchor="middle" fill="#d7e5f2" font-size="15" font-weight="700">Review lesson</text>
+      <rect x="392" y="28" width="126" height="32" rx="16" fill="#143c35"/><circle cx="412" cy="44" r="5" fill="#39d98a"/><text x="466" y="49" text-anchor="middle" fill="#8bf0bf" class="mono" font-size="11">CONNECTED</text>
+      <rect x="534" y="28" width="108" height="32" rx="16" fill="#3e2d13"/><text x="588" y="49" text-anchor="middle" fill="#ffd27f" class="mono" font-size="11">STREAK ×6</text>
+
+      <rect x="28" y="102" width="380" height="104" rx="14" fill="#132942" stroke="#27d3ff" stroke-width="2"/>
+      <circle cx="64" cy="138" r="12" fill="#27d3ff"/><circle cx="64" cy="138" r="5" fill="#07111f"/>
+      <text x="90" y="139" fill="#f4f9ff" font-size="16" font-weight="700">Time Attack</text><text x="90" y="164" class="muted" font-size="13">Race the clock. Score and streak enabled.</text>
+
+      <rect x="432" y="102" width="380" height="104" rx="14" fill="#101f31" stroke="#29415b"/>
+      <circle cx="468" cy="138" r="12" fill="none" stroke="#587087" stroke-width="2"/>
+      <text x="494" y="139" fill="#f4f9ff" font-size="16" font-weight="700">Practice</text><text x="494" y="164" class="muted" font-size="13">Learn at your pace with guided hints.</text>
+
+      <g transform="translate(836 28)">
+        <rect width="432" height="56" rx="12" fill="#123529" stroke="#2e7457"/><circle cx="28" cy="28" r="12" fill="#39d98a"/><path d="m22 28 4 4 8-9" stroke="#062619" stroke-width="3" fill="none"/><text x="52" y="25" fill="#bdf7d9" font-size="14" font-weight="800">Correct</text><text x="52" y="43" fill="#81bea0" font-size="12">Port 443 carries HTTPS traffic.</text>
+        <rect y="72" width="432" height="56" rx="12" fill="#402228" stroke="#87434b"/><circle cx="28" cy="100" r="12" fill="#ff6b6b"/><path d="m23 95 10 10m0-10-10 10" stroke="#36080c" stroke-width="3"/><text x="52" y="97" fill="#ffd1d1" font-size="14" font-weight="800">Not quite</text><text x="52" y="115" fill="#dba0a0" font-size="12">The correct service is HTTPS.</text>
+        <text y="164" fill="#8ea4bd" class="mono" font-size="11">FOCUS 2PX CYAN · TARGET ≥44PX · MOTION 120–240MS</text>
+      </g>
+    </g>
+    <text x="72" y="982" class="muted" font-size="13">Directional concept — validate semantic tokens, contrast, focus, and theme parity in Phase 1.</text>
+  </g>
+</svg>

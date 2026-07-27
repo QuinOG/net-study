@@ -1,0 +1,13 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { min-width: 320px; background: var(--color-canvas); }
+body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--color-canvas); color: var(--color-text-primary); }
+main, section, article, aside, nav, header, footer { display: block; }
+h1, h2, h3, h4, p, figure { margin: 0; }
+ul, ol { padding-left: revert; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button, input, textarea, select { font: inherit; }
+button, a, input, textarea, select { color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; box-shadow: var(--shadow-focus); }
+@media (forced-colors: active) { :focus-visible { outline: 3px solid CanvasText; box-shadow: none; } }

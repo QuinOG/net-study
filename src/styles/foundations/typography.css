@@ -1,0 +1,6 @@
+:root { font-family: var(--font-family-ui); font-size: 16px; line-height: var(--line-height-body); font-weight: var(--font-weight-regular); text-rendering: optimizeLegibility; }
+body { font-family: var(--font-family-ui); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+h1, h2, h3, h4, h5, h6 { line-height: var(--line-height-tight); font-weight: var(--font-weight-semibold); }
+h1 { font-size: var(--font-size-3xl); } h2 { font-size: var(--font-size-2xl); } h3 { font-size: var(--font-size-xl); } h4 { font-size: var(--font-size-lg); }
+code, pre, kbd, samp, [data-mono], .mono { font-family: var(--font-family-mono); }
+[data-technical], .technical-value { font-family: var(--font-family-mono); font-variant-numeric: tabular-nums; letter-spacing: var(--letter-spacing-mono); }

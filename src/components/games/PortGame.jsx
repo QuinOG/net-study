@@ -14,6 +14,7 @@ import GameModeDisplay from '../ui/GameModeDisplay';
 import QuestionCard from '../ui/QuestionCard';
 import GameHUD from '../ui/GameHUD';
 import MultipleChoiceAnswerSection from '../ui/MultipleChoiceAnswerSection';
+import { FiHash, FiRadio } from 'react-icons/fi';
 import { 
   PORT_DATA, QUESTION_TYPES, GAME_MODES, DEFAULT_STATS, 
   DIFFICULTY_LEVELS, BONUS_TYPES, PORT_GAME_SETTINGS
@@ -448,8 +449,11 @@ function PortGame() {
     if (showDifficultySelect) {
       return (
         <div className="port-game">
-          <h2 className="game-title">Network Protocol Challenge</h2>
-          <p className="game-description">Test your knowledge of common network protocols and port numbers!</p>
+          <header className="port-game-identity">
+            <span className="port-game-kicker"><FiRadio aria-hidden="true" /> Port Number Game</span>
+            <h1 className="game-title">Choose your difficulty</h1>
+            <p className="game-description">Set the pace for a timed run through essential ports and protocols.</p>
+          </header>
           <DifficultySelectScreen 
             difficultyLevels={DIFFICULTY_LEVELS}
             onSelectDifficulty={(difficulty) => initializeGame(GAME_MODES.TIME_ATTACK, difficulty)}
@@ -460,8 +464,12 @@ function PortGame() {
     }
     return (
       <div className="port-game">
-        <h2 className="game-title">Network Protocol Challenge</h2>
-        <p className="game-description">Test your knowledge of common network protocols and port numbers!</p>
+        <header className="port-game-identity">
+          <span className="port-game-kicker"><FiRadio aria-hidden="true" /> Port Number Game</span>
+          <span className="port-game-mark" aria-hidden="true"><FiHash /></span>
+          <h1 className="game-title">Master the ports that power the network</h1>
+          <p className="game-description">Match common services, protocols, and port numbers in a focused practice session or against the clock.</p>
+        </header>
         <GameModeSelectScreen 
           gameStats={gameStats}
           onTimeAttackSelect={() => setShowDifficultySelect(true)}
@@ -491,7 +499,7 @@ function PortGame() {
   }
 
   return (
-    <div className={`port-game ${gameStarted ? 'game-active' : ''}`}>
+    <div className={`port-game ${gameStarted ? 'game-active' : ''}`} aria-label="Port Number Game">
       <GameHUD 
         activeBonus={activeBonus}
         bonusTimeRemaining={bonusTimeRemaining}
@@ -508,8 +516,10 @@ function PortGame() {
         speedBonus={speedBonus}
         score={score}
       />
-      <GameModeDisplay gameMode={gameMode} difficulty={difficulty} difficultyLevels={DIFFICULTY_LEVELS} />
-      <GameStatsRow 
+      <div className="port-game-session-bar">
+        <GameModeDisplay gameMode={gameMode} difficulty={difficulty} difficultyLevels={DIFFICULTY_LEVELS} />
+      </div>
+      <GameStatsRow
         score={score}
         streak={currentStreak}
         multiplier={multiplier}

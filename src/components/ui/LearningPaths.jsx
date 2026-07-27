@@ -674,6 +674,12 @@ const LearningPaths = () => {
     );
   }
 
+  const nextLesson = modulesData
+    .flatMap(module => module.lessons.map(lesson => ({ ...lesson, moduleTitle: module.title })))
+    .find(lesson => lesson.status !== 'locked' && !userProgress.completedLessons.includes(
+      `module${lesson.path.split('/')[3]}_lesson${lesson.path.split('/')[5]}`
+    ));
+
   return (
     <div className="learning-paths-container">
       {/* Level up notification */}
@@ -752,9 +758,21 @@ const LearningPaths = () => {
       </div>
 
       <div className="learning-paths-header">
+        <span className="nq-eyebrow">Learning route</span>
         <h1>Learning Paths</h1>
         <p>Master networking concepts through structured learning paths with interactive lessons and hands-on activities</p>
       </div>
+
+      {nextLesson && (
+        <section className="learning-next" aria-labelledby="learning-next-title">
+          <div>
+            <span className="learning-next__label">Next available lesson</span>
+            <h2 id="learning-next-title">{nextLesson.title}</h2>
+            <p>{nextLesson.moduleTitle} · {nextLesson.duration} · {nextLesson.xpReward} XP</p>
+          </div>
+          <Link className="nq-button nq-button--primary nq-button--md" to={nextLesson.path}>Continue learning</Link>
+        </section>
+      )}
 
       {/* Activity Heatmap Calendar */}
       <div className="activity-heatmap-section">
@@ -801,19 +819,12 @@ const LearningPaths = () => {
 
       <div className="learning-paths-content">
         {modulesData.map((module, index) => (
-          <div 
+          <section
             key={module.id} 
             className={`learning-module ${expandedModule === module.id ? 'expanded' : ''}`}
             style={{ '--animation-order': index }}
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                toggleModule(module.id);
-                e.preventDefault();
-              }
-            }}
           >
-            <div 
+            <button type="button"
               className="module-header" 
               onClick={() => toggleModule(module.id)}
               aria-expanded={expandedModule === module.id}
@@ -857,7 +868,7 @@ const LearningPaths = () => {
                 <FiChevronDown className={expandedModule === module.id ? 'rotate' : ''} />
                 <span className="sr-only">{expandedModule === module.id ? 'Collapse' : 'Expand'} module</span>
               </div>
-            </div>
+            </button>
             
             <div 
               className="module-lessons" 
@@ -919,7 +930,7 @@ const LearningPaths = () => {
                 </div>
               )}
             </div>
-          </div>
+          </section>
         ))}
       </div>
       
